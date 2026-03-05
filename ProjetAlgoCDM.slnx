@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ProjetAlgoCDM.vcxproj" />
+  <Project Path="ProjetAlgoCDM.vcxproj" Id="b4411e2b-226f-4a88-8b8e-f92fc579da32" />
 </Solution>
