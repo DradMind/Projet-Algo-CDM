@@ -6,12 +6,12 @@
 #include <stdio.h>
 
 
-void main()
+int main()
 {
     plein_ecran();
     system("pause");
 	//ggffg
 	//bite
 	//feuksfsuj
-	return;
+	return 0;
 }
