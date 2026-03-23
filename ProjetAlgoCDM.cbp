@@ -31,7 +31,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="include/Graphiques.h" />
+		<Unit filename="src/Graphiques.h" />
 		<Unit filename="src/Grapiques.c">
 			<Option compilerVar="CC" />
 		</Unit>
