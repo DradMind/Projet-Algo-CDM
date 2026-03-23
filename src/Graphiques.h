@@ -1,11 +1,7 @@
-#ifndef BIBLIO_H_INCLUDED
-#define BIBLIO_H_INCLUDED
-
-#define LAR 14
-#define LON 6
+#define BG_RGB(r, g, b) "\x1b[48;2;" #r ";" #g ";" #b "m"
+#define FG_RGB(r, g, b) "\x1b[38;2;" #r ";" #g ";" #b "m"
+#define RESET           "\x1b[0m"
 
 void positionner_curseur(int ligne, int colonne);
-void color (int couleurDuTexte, int couleurDuFond);
 void plein_ecran();
-
-#endif // BIBLIO_H_INCLUDED
+void initialiser_rendu();
