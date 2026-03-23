@@ -7,6 +7,5 @@
 void positionner_curseur(int ligne, int colonne);
 void color (int couleurDuTexte, int couleurDuFond);
 void plein_ecran();
-void affichage_caractere_speciaux();
 
 #endif // BIBLIO_H_INCLUDED
