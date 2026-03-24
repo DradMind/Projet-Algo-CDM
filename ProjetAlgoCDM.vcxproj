@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Grapiques.c" />
-    <ClCompile Include="src\main.c" />
+    <ClCompile Include="Grapiques.c" />
+    <ClCompile Include="Logique.c" />
+    <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Graphiques.h" />
+    <ClInclude Include="Graphiques.h" />
+    <ClInclude Include="Logique.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

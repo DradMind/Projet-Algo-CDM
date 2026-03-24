@@ -31,11 +31,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="src/Graphiques.h" />
-		<Unit filename="src/Grapiques.c">
+		<Unit filename="Graphiques.h" />
+		<Unit filename="Grapiques.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/main.c">
+		<Unit filename="Logique.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Logique.h" />
+		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions />
