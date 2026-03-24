@@ -19,7 +19,7 @@ int main() {
 
 
 
-    dessiner_image_ppm("Images/CMF.ppm", 0, 0);
+    //dessiner_image_ppm("Images/CMF.ppm", 0, 0);
 
 
 

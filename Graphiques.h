@@ -3,15 +3,16 @@
 // ===================================================================================
 // RÉSOLUTION VIRTUELLE DU JEU
 // Changez ces deux valeurs pour définir combien de "pixels" votre jeu utilise.
-// Le code s'adapte automatiquement à n'importe quelle résolution d'écran.
+// La taille de la police est calculée automatiquement pour remplir l'écran.
 // ===================================================================================
-#define CANVAS_LARGEUR  1920   // nombre de pixels horizontaux
-#define CANVAS_HAUTEUR  1080  // nombre de pixels verticaux
+#define CANVAS_LARGEUR  80   // nombre de pixels horizontaux
+#define CANVAS_HAUTEUR  45   // nombre de pixels verticaux
 
-// Initialisation — appelez calculer_dezoom_auto() puis initialiser_console()
+// Initialisation
+int  calculer_dezoom_auto(void);
 void initialiser_console(void);
 
-// Déplacement du curseur (en coordonnées "pixels", pas en caractères)
+// Déplacement du curseur (coordonnées en "pixels" virtuels)
 void bouger_curseur(int x, int y);
 
 // Dessin de base
