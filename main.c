@@ -46,7 +46,7 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
 //             Programme Principal
 // ==========================================
 int main() {
-    initialiser_console(20);
+    initialiser_console(10);
 // Efface l'ecran (Clear Screen)
     printf("\x1b[2J");
 
