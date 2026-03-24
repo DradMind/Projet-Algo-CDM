@@ -7,8 +7,7 @@
 //             Programme Principal
 // ==========================================
 int main() {
-	int zoom = calculer_dezoom_auto(); //calcule le zoom nécessaire pour que le rendu soit adapté à la taille de l'écran
-    initialiser_console(zoom);      
+    initialiser_console();//calcule le zoom nécessaire pour que le rendu soit adapté à la taille de l'écran
     printf("\x1b[2J");// Efface l'ecran (Clear Screen)
 
 
@@ -20,7 +19,7 @@ int main() {
 
 
 
-    //dessiner_image_ppm("Images/CMF.ppm", 0, 0);
+    dessiner_image_ppm("Images/CMF.ppm", 0, 0);
 
 
 
