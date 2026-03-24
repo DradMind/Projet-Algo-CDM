@@ -2,21 +2,64 @@
 #include <stdio.h>
 #include <windows.h>
 
-// 1. Enables colors in the Windows Console
-void initialiser_console() {
+// ==========================================
+// 1. INITIALIZATION & SCALING
+// ==========================================
+void initialiser_console(int dezoom_count) {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Enable 24-bit TrueColor ANSI Escape Sequences
     DWORD dwMode = 0;
     GetConsoleMode(hOut, &dwMode);
     SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+    // Teacher's Trick: Alt + Enter (Toggle Fullscreen)
+    keybd_event(VK_MENU, 0x38, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
+    Sleep(500); // Wait for fullscreen animation
+
+    // Teacher's Trick: Ctrl + Minus (Zoom Out)
+    for (int i = 0; i < dezoom_count; i++) {
+        keybd_event(VK_CONTROL, 0x1D, 0, 0);
+        keybd_event(VK_OEM_MINUS, 0xBD, 0, 0);
+        keybd_event(VK_OEM_MINUS, 0xBD, KEYEVENTF_KEYUP, 0);
+        keybd_event(VK_CONTROL, 0x1D, KEYEVENTF_KEYUP, 0);
+        Sleep(50);
+    }
 }
 
-// 2. Moves the cursor. Multiply X by 2 for "square" pixels
+// ==========================================
+// 2. DRAWING PRIMITIVES (HEX COLORS)
+// ==========================================
 void bouger_curseur(int x, int y) {
-    // Console coordinates start at 1,1 (not 0,0)
+    // Console coordinates start at 1,1. 
+    // We multiply x by 2 to make the characters "square" pixels.
     printf("\x1b[%d;%dH", y + 1, (x * 2) + 1);
 }
 
-// 3. The Function to read and draw the PPM P3 image
+void dessine_pixel_hex(int x, int y, int hex_couleur) {
+    // Extract R, G, B from the Hex integer (e.g., 0xFF5733)
+    int r = (hex_couleur >> 16) & 0xFF;
+    int g = (hex_couleur >> 8) & 0xFF;
+    int b = hex_couleur & 0xFF;
+
+    bouger_curseur(x, y);
+    // Print two spaces with the extracted RGB background color
+    printf("\x1b[48;2;%d;%d;%dm  \x1b[0m", r, g, b);
+}
+
+void dessiner_rectangle(int x, int y, int longueur, int hauteur, int hex_couleur) {
+    for (int j = 0; j < hauteur; j++) {
+        for (int i = 0; i < longueur; i++) {
+            dessine_pixel_hex(x + i, y + j, hex_couleur);
+        }
+    }
+    bouger_curseur(0, 42);
+}
+
+// Charge et dessine une image PPM ASCII (P3) à partir d'un fichier
 void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
     FILE* fichier = fopen(nom_fichier, "r");
     if (!fichier) {
@@ -27,49 +70,50 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
     char type[3];
     int width, height, max_color;
 
-    // Read the header (Expects "P3", then width, height, and max color)
     if (fscanf(fichier, "%2s %d %d %d", type, &width, &height, &max_color) != 4) {
-        printf("Erreur de lecture de l'en-tete.\n");
         fclose(fichier);
         return;
     }
 
-    // Verify it is actually an ASCII PPM file
     if (type[0] != 'P' || type[1] != '3') {
-        printf("Erreur: Le fichier n'est pas au format P3 ASCII.\n");
+        printf("Erreur: Le fichier n'est pas un P3 ASCII.\n");
         fclose(fichier);
         return;
     }
 
-    // Read every pixel and draw it
     int r, g, b;
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             if (fscanf(fichier, "%d %d %d", &r, &g, &b) == 3) {
                 bouger_curseur(start_x + x, start_y + y);
-                // Print two spaces with the RGB background color
                 printf("\x1b[48;2;%d;%d;%dm  \x1b[0m", r, g, b);
             }
         }
     }
 
     fclose(fichier);
-
-    // Move cursor out of the way when finished
-    bouger_curseur(0, start_y + height + 2);
+    bouger_curseur(0, 42);
 }
 
-// 4. The Main loop
-int main() {
-    initialiser_console();
 
-    // Clear screen
+
+
+// ==========================================
+//             Programme Principal
+// ==========================================
+int main() {
+    initialiser_console(20);
+// Efface l'ecran (Clear Screen)
     printf("\x1b[2J");
 
-    // Make sure your file is in the same folder as the executable!
-    dessiner_image_ppm("Images/VERT_test2.ppm", 5, 5);
+    dessiner_rectangle(0, 0, 80, 40, 0x2A2A2A);
+    dessiner_rectangle(5, 5, 70, 30, 0x0055FF);
+    dessiner_image_ppm("Images/estaca.ppm", 10, 10);
 
-    printf("\nImage terminee! Appuyez sur Entree...");
+    // Move cursor out of the way at the bottom so text doesn't overlap graphics
+    bouger_curseur(0, 42);
+    printf("Rendu termine! Appuyez sur Entree pour quitter...");
     getchar();
+
     return 0;
 }
