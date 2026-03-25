@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #pragma once
 
 // ===================================================================================
@@ -14,6 +15,9 @@ int  calculer_dezoom_auto(void);
 void initialiser_console(void);
 
 // Déplacement du curseur (coordonnées en "pixels" virtuels)
+=======
+void initialiser_console(int dezoom_count);
+>>>>>>> parent of 9316425 (fix de claude (ia))
 =======
 void initialiser_console(int dezoom_count);
 >>>>>>> parent of 9316425 (fix de claude (ia))
