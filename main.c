@@ -3,34 +3,31 @@
 #include <windows.h>
 #include "Graphiques.h"
 
-// ==========================================
-//             Programme Principal
-// ==========================================
 int main() {
-	int zoom = calculer_dezoom_auto(); //calcule le zoom nécessaire pour que le rendu soit adapté à la taille de l'écran
-    initialiser_console(zoom);      
-    printf("\x1b[2J");// Efface l'ecran (Clear Screen)
+    // =========================================================================
+    // PARAMÈTRE D'AFFICHAGE (POUR L'ÉVALUATEUR) :
+    // Si l'affichage déborde de l'écran ou semble mal cadré, modifiez le zoom :
+    // - Pour un écran standard 1080p : utilisez 4 ou 5
+    // - Pour un écran Haute Résolution (2K/4K) : utilisez 10 ou 12
+    // =========================================================================
+    int dezoom_manuel = 5;
 
+    // Initialise le plein écran et applique le dézoom
+    initialiser_console(dezoom_manuel);
 
-	dessiner_rectangle(20, 20, 1, 1, 0xFFCC8A); //Rectangle de fond autorisé pour le jeu (au dessus le zoom bug)
+    // Efface l'écran (Clear Screen)
+    printf("\x1b[2J");
 
-
-
-
-
-
+    dessiner_rectangle(10, 10, 5, 5, 0xFFCC8A);
 
     //dessiner_image_ppm("Images/CMF.ppm", 0, 0);
 
 
 
-
-
-
-	// Déplace le curseur en bas pour éviter les artefacts de rendu
-    bouger_curseur(0, 42);
-    printf("Rendu termine! Appuyez sur Entree pour quitter...");
-	getchar(); //permet de garder la console ouverte jusqu'à ce que l'utilisateur appuie sur Entrée
+    // Déplace le curseur tout en bas pour ne pas casser l'affichage
+    bouger_curseur(0, 45);
+    printf("\nRendu termine! Appuyez sur Entree pour quitter...");
+    getchar();
 
     return 0;
 }
