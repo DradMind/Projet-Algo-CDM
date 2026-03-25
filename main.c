@@ -7,7 +7,8 @@
 //             Programme Principal
 // ==========================================
 int main() {
-    initialiser_console();//calcule le zoom nécessaire pour que le rendu soit adapté à la taille de l'écran
+	int zoom = calculer_dezoom_auto(); //calcule le zoom nécessaire pour que le rendu soit adapté à la taille de l'écran
+    initialiser_console(zoom);      
     printf("\x1b[2J");// Efface l'ecran (Clear Screen)
 
 

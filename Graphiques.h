@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #pragma once
 
 // ===================================================================================
@@ -13,14 +14,11 @@ int  calculer_dezoom_auto(void);
 void initialiser_console(void);
 
 // Déplacement du curseur (coordonnées en "pixels" virtuels)
+=======
+void initialiser_console(int dezoom_count);
+>>>>>>> parent of 9316425 (fix de claude (ia))
 void bouger_curseur(int x, int y);
-
-// Dessin de base
 void dessine_pixel_hex(int x, int y, int hex_couleur);
-
-// Formes
 void dessiner_rectangle(int x, int y, int longueur, int hauteur, int hex_couleur);
 void dessiner_cercle(int centre_x, int centre_y, int rayon, int hex_couleur);
-
-// Image
-void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y);
+int calculer_dezoom_auto();
