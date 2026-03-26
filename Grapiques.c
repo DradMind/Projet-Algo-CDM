@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include "Logique.h"
-
+#include <conio.h>
 
 // Échelle verrouillée à 2 pour garantir des pixels carrés
 const int SCALE_FACTOR = 2;
@@ -126,4 +126,15 @@ void afficherplateau(int posx, int posy) {
             dessiner_rectangle(posx + x * 10, posy + y * 10, 10, 10, couleur_case);
         }
     }
+}
+
+int lire_touche() {
+    if (_kbhit()) {
+        int c = _getch();
+        if (c == 0 || c == 224) { // Touche spéciale (Flèches)
+            return _getch(); // Retourne le code spécifique (72=Haut, 80=Bas, 75=Gauche, 77=Droite)
+        }
+        return c; // Retourne le caractère (ex: 'z', 'q', etc.)
+    }
+    return -1; // Rien n'a été pressé
 }

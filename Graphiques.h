@@ -2,6 +2,7 @@
 
 // Initialisation
 void initialiser_console(int dezoom_count);
+int lire_touche();
 
 // Fonctions de dessin
 void bouger_curseur(int x, int y);

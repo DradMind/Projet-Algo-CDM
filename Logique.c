@@ -55,3 +55,5 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
 		}
 	}
 }
+
+

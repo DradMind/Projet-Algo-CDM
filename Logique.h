@@ -21,6 +21,11 @@ typedef struct {
 } Case;
 // Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.	
 
+typedef struct {
+	bool bloque;
+	int action;
+} De;
+
 extern Pion pions[4][4][10];
 extern Case plateau[4][4];
 extern int InventaireCase[16];
