@@ -47,11 +47,11 @@ void dessine_pixel_hex(int x, int y, int hex_couleur) {
     int b = hex_couleur & 0xFF;
 
     // Rendu du pixel "Scale 2" (Carré parfait)
-    for (int dy = 0; dy < SCALE_FACTOR; dy++) {
-        bouger_curseur(x * SCALE_FACTOR, (y * SCALE_FACTOR) + dy);
+    for (int dx = 0; dx < SCALE_FACTOR; dx++) {
+        bouger_curseur(x * SCALE_FACTOR, (y * SCALE_FACTOR) + dx);
         printf("\x1b[48;2;%d;%d;%dm", r, g, b);
 
-        for (int dx = 0; dx < SCALE_FACTOR; dx++) {
+        for (int dy = 0; dy < SCALE_FACTOR; dy++) {
             printf("  "); // 2 espaces = 1 sub-pixel carré
         }
         printf("\x1b[0m"); // Reset couleur
@@ -59,16 +59,16 @@ void dessine_pixel_hex(int x, int y, int hex_couleur) {
 }
 
 void dessiner_rectangle(int x, int y, int longueur, int hauteur, int hex_couleur) {
-    for (int j = 0; j < hauteur; j++) {
-        for (int i = 0; i < longueur; i++) {
+    for (int i = 0; i < longueur; i++) {
+        for (int j = 0; j < hauteur; j++) {
             dessine_pixel_hex(x + i, y + j, hex_couleur);
         }
     }
 }
 
 void dessiner_cercle(int centre_x, int centre_y, int rayon, int hex_couleur) {
-    for (int y = -rayon; y <= rayon; y++) {
-        for (int x = -rayon; x <= rayon; x++) {
+    for (int x = -rayon; x <= rayon; x++) {
+        for (int y = -rayon; y <= rayon; y++) {
             if (x * x + y * y <= rayon * rayon) {
                 dessine_pixel_hex(centre_x + x, centre_y + y, hex_couleur);
             }
@@ -112,10 +112,10 @@ void afficher_texte(const char* texte, int x, int y, int hex_couleur) {
     printf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", r, g, b, texte);
 }
 
-void afficherplateau() {
+void afficherplateau(int posx, int posy) {
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
-            int type_case = plateau[x][y].TypeCase;
+            int type_case = plateau[y][x].TypeCase;
             int couleur_case;
             switch (type_case) {
                 case 0: couleur_case = 0xFF4500; break; // Volcan
@@ -126,7 +126,7 @@ void afficherplateau() {
                 case 5: couleur_case = 0xA9A9A9; break; // Caverne
                 default: couleur_case = 0x000000; break;
             }
-            dessiner_rectangle(x * 10, y * 10, 10, 10, couleur_case);
+            dessiner_rectangle(posx + x * 10, posy + y * 10, 10, 10, couleur_case);
         }
     }
 }

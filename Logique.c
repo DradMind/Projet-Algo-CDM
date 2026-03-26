@@ -1,9 +1,17 @@
 #include "Logique.h"
 #include <stdbool.h>
+#include <string.h>
+
+Pion pions[4][4][10];
+Case plateau[4][4];
+int InventaireCase[16];
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
 	srand((unsigned int)time(NULL));
 	int temp[16]; // le tableau temporaire pour le mélange aléatoire des cases
+	for (int i = 0; i < 16; i++) {
+		temp[i] = 0; //initialisation du tableau TEMP
+	}
 	memcpy(InventaireCase, (int[]) { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4, 5 }, sizeof(InventaireCase)); //permet d'initialiser l'inventaire des cases avec les bonnes quantités de chaque type de case
 	switch (nbJoueurs) { //pour le volcan avec 2,3,4 joueurs (a faire plus tard)
 	case 2:
