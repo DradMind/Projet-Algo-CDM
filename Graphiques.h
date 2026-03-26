@@ -1,7 +1,6 @@
 #pragma once
 
 // Initialisation
-// Passez le nombre de dézooms souhaités (ex: 4 pour 1080p, 10+ pour 4K)
 void initialiser_console(int dezoom_count);
 
 // Fonctions de dessin

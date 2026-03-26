@@ -14,16 +14,18 @@ int main() {
 
     // Initialise le plein écran et applique le dézoom
     initialiser_console(dezoom_manuel);
-
     // Efface l'écran (Clear Screen)
     printf("\x1b[2J");
 
-    dessiner_rectangle(10, 10, 5, 5, 0xFFCC8A);
+	//============================================================================
 
+
+    dessiner_rectangle(10, 10, 5, 5, 0xFFCC8A);
     //dessiner_image_ppm("Images/CMF.ppm", 0, 0);
 
 
-
+	//============================================================================
+    
     // Déplace le curseur tout en bas pour ne pas casser l'affichage
     bouger_curseur(0, 45);
     printf("\nRendu termine! Appuyez sur Entree pour quitter...");
