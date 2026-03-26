@@ -11,3 +11,5 @@ void dessiner_cercle(int centre_x, int centre_y, int rayon, int hex_couleur);
 
 // Image
 void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y);
+void afficher_texte(const char* texte, int x, int y, int hex_couleur);
+void afficherplateau(void);

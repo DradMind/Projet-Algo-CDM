@@ -2,6 +2,8 @@
 #include "Graphiques.h"
 #include <stdio.h>
 #include <windows.h>
+#include "Logique.h"
+
 
 // Échelle verrouillée à 2 pour garantir des pixels carrés
 const int SCALE_FACTOR = 2;
@@ -100,4 +102,31 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
     }
 
     fclose(fichier);
+}
+
+void afficher_texte(const char* texte, int x, int y, int hex_couleur) {
+    int r = (hex_couleur >> 16) & 0xFF;
+    int g = (hex_couleur >> 8) & 0xFF;
+    int b = hex_couleur & 0xFF;
+    bouger_curseur(x, y);
+    printf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", r, g, b, texte);
+}
+
+void afficherplateau() {
+    for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 4; y++) {
+            int type_case = plateau[x][y].TypeCase;
+            int couleur_case;
+            switch (type_case) {
+                case 0: couleur_case = 0xFF4500; break; // Volcan
+                case 1: couleur_case = 0x1E90FF; break; // Eau
+                case 2: couleur_case = 0x228B22; break; // Jungle
+                case 3: couleur_case = 0x7CFC00; break; // Prairie
+                case 4: couleur_case = 0x8B4513; break; // Hutte
+                case 5: couleur_case = 0xA9A9A9; break; // Caverne
+                default: couleur_case = 0x000000; break;
+            }
+            dessiner_rectangle(x * 10, y * 10, 10, 10, couleur_case);
+        }
+    }
 }

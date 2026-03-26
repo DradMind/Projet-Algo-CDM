@@ -9,8 +9,8 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour c
 
 typedef struct {
 	int TypePion;
-	int couleur;
 	char CheminImage[100];
+	int couleur;
 
 } Pion;
 

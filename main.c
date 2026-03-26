@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <windows.h>
 #include "Graphiques.h"
+#include "Logique.h"
+#include <stdbool.h>
 
 int main() {
     // =========================================================================
@@ -19,7 +21,8 @@ int main() {
 
 	//============================================================================
 
-
+	initialiser_plateau(true, 4); // Initialise le plateau de base pour 4 joueurs
+	afficherplateau(); // Affiche le plateau à l'écran
     
 
 
