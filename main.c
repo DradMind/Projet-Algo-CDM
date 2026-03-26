@@ -9,7 +9,7 @@ int main() {
     // =========================================================================
     // PARAMÈTRE D'AFFICHAGE :
     // Si l'affichage déborde de l'écran ou semble mal cadré, modifie le zoom 
-    int dezoom_manuel = 5;
+    int dezoom_manuel = 6;
     // =========================================================================
     initialiser_console(dezoom_manuel); // Initialise le plein écran et applique le dézoom
     printf("\x1b[2J");// Efface l'écran (Clear Screen)
@@ -24,8 +24,11 @@ int main() {
 
 	initialiser_plateau(true, 4); // Initialise le plateau de base pour 4 joueurs
 	afficherplateau(10,10); // Affiche le plateau à l'écran
-    
-
+	
+	dessiner_rectangle(1, 55, 50, 10, 0xFFFFFF); // bare d'info en bas en bleu
+	dessiner_rectangle(70, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
+    afficher_texte("Zone de pions/items/etc", 1, 55, 0x0FF000);
+    afficher_texte("Zone du plateau de jeu ", 70, 10, 0x0FF000);
 
 	//============================================================================
     

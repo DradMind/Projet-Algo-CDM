@@ -66,16 +66,6 @@ void dessiner_rectangle(int x, int y, int longueur, int hauteur, int hex_couleur
     }
 }
 
-void dessiner_cercle(int centre_x, int centre_y, int rayon, int hex_couleur) {
-    for (int x = -rayon; x <= rayon; x++) {
-        for (int y = -rayon; y <= rayon; y++) {
-            if (x * x + y * y <= rayon * rayon) {
-                dessine_pixel_hex(centre_x + x, centre_y + y, hex_couleur);
-            }
-        }
-    }
-}
-
 void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
     FILE* fichier = fopen(nom_fichier, "r");
     if (!fichier) {
