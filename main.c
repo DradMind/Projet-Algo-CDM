@@ -27,8 +27,8 @@ int main() {
 	
 	dessiner_rectangle(1, 55, 50, 10, 0xFFFFFF); // bare d'info en bas en bleu
 	dessiner_rectangle(70, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
-    afficher_texte("Zone de pions/items/etc", 1, 55, 0x0FF000);
-    afficher_texte("Zone du plateau de jeu ", 70, 10, 0x0FF000);
+    afficher_texte("Zone de pions/items/etc", 1, 55, 0xFF0000, 0xFFFFFF);
+    afficher_texte("Zone du plateau de jeu ", 70, 10, 0xFF0000, 0xFFFFFF);
 
 	//============================================================================
     
@@ -38,7 +38,7 @@ int main() {
 
 
     
-    bouger_curseur(0, 45);// Déplace le curseur tout en bas pour ne pas casser l'affichage
+    bouger_curseur(0, 200);// Déplace le curseur tout en bas pour ne pas casser l'affichage
 	
     printf("\nRendu termine! Appuyez sur Entree pour quitter...");
     getchar(); // jsp ( a voir ce que sa fait plus tard)

@@ -94,12 +94,19 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y) {
     fclose(fichier);
 }
 
-void afficher_texte(const char* texte, int x, int y, int hex_couleur) {
-    int r = (hex_couleur >> 16) & 0xFF;
-    int g = (hex_couleur >> 8) & 0xFF;
-    int b = hex_couleur & 0xFF;
-    bouger_curseur(x, y);
-    printf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", r, g, b, texte);
+void afficher_texte(const char* texte, int x, int y, int hex_texte, int hex_fond) {
+    // Extraction RGB pour le texte 
+    int r_t = (hex_texte >> 16) & 0xFF;
+    int g_t = (hex_texte >> 8) & 0xFF;
+    int b_t = hex_texte & 0xFF;
+
+    // pour ele fond
+    int r_f = (hex_fond >> 16) & 0xFF;
+    int g_f = (hex_fond >> 8) & 0xFF;
+    int b_f = hex_fond & 0xFF;
+
+    bouger_curseur(x * SCALE_FACTOR, y * SCALE_FACTOR);
+    printf("\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm%s\x1b[0m",r_t, g_t, b_t, r_f, g_f, b_f, texte);
 }
 
 void afficherplateau(int posx, int posy) {
