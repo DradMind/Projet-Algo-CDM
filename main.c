@@ -23,7 +23,8 @@ int main() {
 	bool partie = true;
 	bool fin_jeu = false;
     //scanf("%d", &nbjoueur);
-    initialiser_plateau(true, nbjoueur); // Initialise le plateau de base pour 4 joueurs
+    initialiser_plateau(false
+        , nbjoueur); // Initialise le plateau de base pour 4 joueurs
 	printf("%d", nbjoueur);
     int curseur_x = 0, curseur_y = 0;
 	
@@ -58,8 +59,6 @@ int main() {
         Sleep(100); // Petit délai pour ne pas saturer le processeur
         //============================================================================
     }
-
-
 
 
 
