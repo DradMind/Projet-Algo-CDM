@@ -57,3 +57,14 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
 }
 
 
+int lire_touche() {
+	if (_kbhit()) {
+		int c = _getch();
+		if (c == 0 || c == 224) { // Touche spéciale (Flèches)
+			return _getch(); // Retourne le code spécifique (72=Haut, 80=Bas, 75=Gauche, 77=Droite)
+		}
+		return c; // Retourne le caractère (ex: 'z', 'q', etc.)
+	}
+	return -1; //pas d'action
+}
+

@@ -10,7 +10,8 @@ int main() {
     // =========================================================================
     // PARAMÈTRE D'AFFICHAGE :
     // Si l'affichage déborde de l'écran ou semble mal cadré, modifie le zoom 
-    int dezoom_manuel = 6;
+    int dezoom_manuel = 8;
+
     // =========================================================================
     initialiser_console(dezoom_manuel); // Initialise le plein écran et applique le dézoom
     printf("\x1b[2J");// Efface l'écran (Clear Screen)
@@ -22,44 +23,34 @@ int main() {
 	int nbjoueur = 2;
 	bool partie = true;
 	bool fin_jeu = false;
-    //scanf("%d", &nbjoueur);
-    initialiser_plateau(false
-        , nbjoueur); // Initialise le plateau de base pour 4 joueurs
-	printf("%d", nbjoueur);
-    int curseur_x = 0, curseur_y = 0;
+	int etapejeu = 0;
+    initialiser_plateau(false, nbjoueur); // Initialise le plateau de base pour 4 joueurs
+    int curseur_x = 0;
+    int curseur_y = 0;
+
+    
 	
 	//==================== Affichage =========================
-    afficherplateau(10, 10); // Affiche le plateau à l'écran
-    dessiner_rectangle(1, 55, 50, 10, 0xFFFFFF); // bare d'info en bas en bleu
-    dessiner_rectangle(70, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
-    afficher_texte("Zone de pions/items/etc", 1, 55, 0xFF0000, 0xFFFFFF);
-    afficher_texte("Zone du plateau de jeu ", 70, 10, 0xFF0000, 0xFFFFFF);
-
+    afficherplateau(1, 1); // Affiche le plateau à l'écran
+    dessiner_rectangle(1, 45, 50, 10, 0xFFFFFF); // bare d'info en bas en bleu
+    dessiner_rectangle(60, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
+    afficher_texte("Zone de pions/items/etc", 1, 45, 0xFF0000, 0xFFFFFF);
+    afficher_texte("Zone du plateau de jeu ", 60, 10, 0xFF0000, 0xFFFFFF);
+	dessiner_image_ppm("Images/img.ppm", 0, 0);
 
 	//======================= Code du jeu ========================================
+	while (partie && !fin_jeu) {
+		//afficherclavier(&curseur_x, &curseur_y, &partie);
+        afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
+		
 
-    while (partie && !fin_jeu) {
-        afficherplateau(10, 10);
-
-        // On dessine un petit curseur visuel sur la case actuelle
-        dessiner_rectangle(12 + (curseur_x), 12 + (curseur_y), 1, 1, 0xFFFFFF);
-
-        // 2. Gestion des entrées
-        int k = lire_touche();
-        if (k != -1) {
-            switch (k) {
-            case 72: if (curseur_y > 0) curseur_y--; break; // Haut
-            case 80: if (curseur_y < 3) curseur_y++; break; // Bas
-            case 75: if (curseur_x > 0) curseur_x--; break; // Gauche
-            case 77: if (curseur_x < 3) curseur_x++; break; // Droite
-            case 'q': case 27: partie = false; break;     // Quitter
-            }
-        }
-
-        Sleep(100); // Petit délai pour ne pas saturer le processeur
-        //============================================================================
+        
+        
+        
+        
+        
     }
-
+    //============================================================================
 
 
     

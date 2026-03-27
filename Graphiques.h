@@ -1,8 +1,8 @@
 #pragma once
+#include <stdbool.h>
 
 // Initialisation
 void initialiser_console(int dezoom_count);
-int lire_touche();
 
 // Fonctions de dessin
 void bouger_curseur(int x, int y);
@@ -16,3 +16,4 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y);
 
 //affichage
 void afficherplateau(int posx, int posy);
+void afficherclavier(int* curseur_x, int* curseur_y, bool* partie);

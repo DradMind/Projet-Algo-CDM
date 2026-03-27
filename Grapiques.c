@@ -128,13 +128,29 @@ void afficherplateau(int posx, int posy) {
     }
 }
 
-int lire_touche() {
-    if (_kbhit()) {
-        int c = _getch();
-        if (c == 0 || c == 224) { // Touche spéciale (Flèches)
-            return _getch(); // Retourne le code spécifique (72=Haut, 80=Bas, 75=Gauche, 77=Droite)
+void afficherclavier (int* curseur_x, int* curseur_y, bool* partie) {
+	int k = lire_touche();
+	if (k != -1) {
+		switch (k) {
+		case 72: (*curseur_y)--; 
+			afficherplateau(1, 1);
+			break; // Haut
+		case 80: (*curseur_y)++;
+            afficherplateau(1, 1);
+			break; // Bas
+		case 75: (*curseur_x)--;
+            afficherplateau(1, 1);
+			break; // Gauche
+		case 77: (*curseur_x)++;
+            afficherplateau(1, 1);
+			break; // Droite
+		case 27: 
+			dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
+			Sleep(10); // Petit délai pour ne pas saturer le processeur
+			*partie = false;
+            break;// Quitter
         }
-        return c; // Retourne le caractère (ex: 'z', 'q', etc.)
-    }
-    return -1; // Rien n'a été pressé
+	}
+	dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
+	Sleep(10); // Petit délai pour ne pas saturer le processeur
 }

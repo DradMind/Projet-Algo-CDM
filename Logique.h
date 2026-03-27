@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour configuration du plateau de base bool = true/false, avec false la config aléatoire
-
+int lire_touche();
 
 typedef struct {
 	int TypePion;
