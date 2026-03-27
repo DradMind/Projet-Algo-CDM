@@ -4,6 +4,9 @@
 
 Pion pions[4][4][10];
 Case plateau[4][4];
+De Listede[7];
+De DeBloque[5];
+Pion plateaupion[4][4];
 int InventaireCase[16];
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
@@ -66,5 +69,13 @@ int lire_touche() {
 		return c; // Retourne le caractère (ex: 'z', 'q', etc.)
 	}
 	return -1; //pas d'action
+}
+
+void lancerde(int joueur) {
+	int titanosaure = 0;
+	if 
+	for () {
+
+	}
 }
 

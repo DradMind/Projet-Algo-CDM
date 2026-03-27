@@ -39,11 +39,16 @@ int main() {
 	//dessiner_image_ppm("Images/img.ppm", 0, 0);
 
 	//======================= Code du jeu ========================================
+    afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
+    scanf("%d", &nbjoueur);
 	while (partie && !fin_jeu) {
-		//if (etapejeu == 0) {
-		afficherclavier(&curseur_x, &curseur_y, &partie);
-        afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
-		
+        if (etapejeu == 0) {
+            afficherclavier(&curseur_x, &curseur_y, &partie);
+			
+			
+			
+
+        }
 
         
         

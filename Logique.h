@@ -6,10 +6,12 @@
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour configuration du plateau de base bool = true/false, avec false la config aléatoire
 int lire_touche();
+void lancerde(int joueur);
 
 typedef struct {
-	int TypePion;
+	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8
 	char CheminImage[100];
+	int nboeuf;
 	int couleur;
 
 } Pion;
@@ -26,6 +28,15 @@ typedef struct {
 	int action;
 } De;
 
+typedef struct {
+	int numerojoueur;
+	int dino;
+} Joueur;
+
+
 extern Pion pions[4][4][10];
+extern Pion plateaupion[4][4]; 
 extern Case plateau[4][4];
+extern De Listede[7];
+extern De DeBloque[5];
 extern int InventaireCase[16];
