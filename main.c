@@ -36,11 +36,12 @@ int main() {
     dessiner_rectangle(60, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
     afficher_texte("Zone de pions/items/etc", 1, 45, 0xFF0000, 0xFFFFFF);
     afficher_texte("Zone du plateau de jeu ", 60, 10, 0xFF0000, 0xFFFFFF);
-	dessiner_image_ppm("Images/img.ppm", 0, 0);
+	//dessiner_image_ppm("Images/img.ppm", 0, 0);
 
 	//======================= Code du jeu ========================================
 	while (partie && !fin_jeu) {
-		//afficherclavier(&curseur_x, &curseur_y, &partie);
+		//if (etapejeu == 0) {
+		afficherclavier(&curseur_x, &curseur_y, &partie);
         afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
 		
 
