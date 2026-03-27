@@ -5,8 +5,8 @@
 Pion pions[4][4][10];
 Case plateau[4][4];
 De Listede[7];
-De DeBloque[5];
 Pion plateaupion[4][4];
+Joueur Joueurs[4][6];
 int InventaireCase[16];
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
@@ -71,11 +71,17 @@ int lire_touche() {
 	return -1; //pas d'action
 }
 
-void lancerde(int joueur) {
-	int titanosaure = 0;
-	if 
-	for () {
-
+void logiquede(int joueur) {
+	int nbtitanosaurus = 0;
+	for (int i = 0; i < 6; i++) {
+		if (Joueurs[joueur][i].dino == 1) {
+			nbtitanosaurus++;
+		}
+	}
+	for (int j = 0; j < 5 + nbtitanosaurus; j++) {
+		if (!Listede[j].bloque) {
+			Listede[j].action = rand() % 6 ; // Génère une action aléatoire entre 0 et 5
+		}
 	}
 }
 

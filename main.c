@@ -15,7 +15,7 @@ int main() {
     // =========================================================================
     initialiser_console(dezoom_manuel); // Initialise le plein écran et applique le dézoom
     printf("\x1b[2J");// Efface l'écran (Clear Screen)
-
+    
 
 
 	//===================== Initialisation =========================
@@ -27,7 +27,8 @@ int main() {
     initialiser_plateau(false, nbjoueur); // Initialise le plateau de base pour 4 joueurs
     int curseur_x = 0;
     int curseur_y = 0;
-
+    int lancerde;
+	int choixdes;
     
 	
 	//==================== Affichage =========================
@@ -40,14 +41,19 @@ int main() {
 
 	//======================= Code du jeu ========================================
     afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
-    scanf("%d", &nbjoueur);
+    //scanf("%d", &nbjoueur);
 	while (partie && !fin_jeu) {
         if (etapejeu == 0) {
-            afficherclavier(&curseur_x, &curseur_y, &partie);
-			
-			
-			
-
+            afficherclavier(&curseur_x, &curseur_y, &partie); // c'est la fonction qui permet de faire bouger le curseur et/ou de quitter la partie 
+            for (int p = 3; p > 0; p++) {
+                scanf("%d", &lancerde); // demande au joueur si il veut lancer le de ou non 
+                printf("Lancer de de : %d\n", lancerde);
+                if (lancerde == 1) {
+                    logiquede(joueur);
+                }
+				printf("Veuillez choisir les des que vous voulez garder\n");
+				scanf("%d", &choixdes); // demande au joueur de choisir les des qu'il veut garder
+            }
         }
 
         
