@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "Logique.h"
 #include <conio.h>
+#include "Police.h"
 
 // Échelle verrouillée à 2 pour garantir des pixels carrés
 const int SCALE_FACTOR = 2;
@@ -47,11 +48,11 @@ void dessine_pixel_hex(int x, int y, int hex_couleur) {
     int b = hex_couleur & 0xFF;
 
     // Rendu du pixel "Scale 2" (Carré parfait)
-    for (int dx = 0; dx < SCALE_FACTOR; dx++) {
-        bouger_curseur(x * SCALE_FACTOR, (y * SCALE_FACTOR) + dx);
+    for (int dx = 0; dx < 1; dx++) {
+        bouger_curseur(x, y + dx);
         printf("\x1b[48;2;%d;%d;%dm", r, g, b);
 
-        for (int dy = 0; dy < SCALE_FACTOR; dy++) {
+        for (int dy = 0; dy < 1; dy++) {
             printf("  "); // 2 espaces = 1 sub-pixel carré
         }
         printf("\x1b[0m"); // Reset couleur
@@ -123,7 +124,7 @@ void afficherplateau(int posx, int posy) {
                 case 5: couleur_case = 0xA9A9A9; break; // Caverne
                 default: couleur_case = 0x000000; break;
             }
-            dessiner_rectangle(posx + x * 10, posy + y * 10, 10, 10, couleur_case);
+            dessiner_rectangle(posx + x * 25, posy + y * 25, 25, 25, couleur_case);
         }
     }
 }
@@ -153,4 +154,35 @@ void afficherclavier (int* curseur_x, int* curseur_y, bool* partie) {
 	}
 	dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
 	Sleep(10); // Petit délai pour ne pas saturer le processeur
+}
+
+void afficher_texte_pixel(const char* texte, int x, int y, int hex_couleur) {
+    int cur_x = x;
+
+    for (int i = 0; texte[i] != '\0'; i++) {
+        char c = texte[i];
+        int index = -1;
+
+        // Conversion minuscule en majuscule pour l'index
+        if (c >= 'A' && c <= 'Z') index = c - 'A';
+        else if (c >= 'a' && c <= 'z') index = c - 'a';
+        else if (c == ' ') { // Gestion de l'espace
+            cur_x += 4;
+            continue;
+        }
+
+        if (index >= 0 && index < 26) {
+            for (int row = 0; row < 5; row++) {
+                unsigned char row_data = alphabet5x5[index][row];
+                for (int col = 0; col < 5; col++) {
+                    // Vérifie si le bit à la position (4-col) est à 1
+                    if ((row_data >> (4 - col)) & 1) {
+                        dessine_pixel_hex(cur_x + col, y + row, hex_couleur);
+                    }
+                }
+            }
+            // Espacement entre les lettres (largeur 5 + 1 pixel vide)
+            cur_x += 6;
+        }
+    }
 }
