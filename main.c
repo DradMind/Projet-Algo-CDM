@@ -29,23 +29,23 @@ int main() {
     int curseur_y = 0;
     int lancerde;
 	int choixdes;
-    
+	
 	
 	//==================== Affichage =========================
     afficherplateau(1, 1); // Affiche le plateau à l'écran
-    dessiner_rectangle(1, 45, 50, 10, 0xFFFFFF); // bare d'info en bas en bleu
-    dessiner_rectangle(60, 10, 30, 50, 0xFFFFFF); // Zone de jeu en rouge
+    dessiner_rectangle(1, 45, 50, 10, 0xFFFFFF); // bare d'info en bas a gauche
+    dessiner_rectangle(60, 0, 30, 58, 0xFFFFFF); // Plateau des oeufs et tt 
     afficher_texte("Zone de pions/items/etc", 1, 45, 0xFF0000, 0xFFFFFF);
     afficher_texte("Zone du plateau de jeu ", 60, 10, 0xFF0000, 0xFFFFFF);
 	//dessiner_image_ppm("Images/img.ppm", 0, 0);
 
 	//======================= Code du jeu ========================================
-    afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
+    //afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
     //scanf("%d", &nbjoueur);
 	while (partie && !fin_jeu) {
         if (etapejeu == 0) {
             afficherclavier(&curseur_x, &curseur_y, &partie); // c'est la fonction qui permet de faire bouger le curseur et/ou de quitter la partie 
-            for (int p = 3; p > 0; p++) {
+            for (int p = 3; p > 0; p--) {
                 scanf("%d", &lancerde); // demande au joueur si il veut lancer le de ou non 
                 printf("Lancer de de : %d\n", lancerde);
                 if (lancerde == 1) {
@@ -54,6 +54,7 @@ int main() {
 				printf("Veuillez choisir les des que vous voulez garder\n");
 				scanf("%d", &choixdes); // demande au joueur de choisir les des qu'il veut garder
             }
+            
         }
 
         

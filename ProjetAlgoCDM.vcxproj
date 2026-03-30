@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Grapiques.c" />
+    <ClCompile Include="Graphiques.c" />
     <ClCompile Include="Logique.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>

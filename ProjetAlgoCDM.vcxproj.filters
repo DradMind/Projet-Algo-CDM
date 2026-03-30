@@ -18,7 +18,7 @@
     <ClCompile Include="Logique.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Grapiques.c">
+    <ClCompile Include="Graphiques.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
