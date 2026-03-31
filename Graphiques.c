@@ -222,5 +222,6 @@ void afficher_de(int joueur) {
         }
         dessiner_rectangle(140, 10 + i * 12, 10, 10, couleur_de);
 	}
+	printf("fdzadza\n"); // Reset couleur
 }
         

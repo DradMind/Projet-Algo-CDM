@@ -43,29 +43,26 @@ int main() {
 		Sleep(10); // Petite pause pour éviter de lire trop de touches à la fois)
         if (etapejeu == 0) {
             afficherclavier(&curseur_x, &curseur_y, &partie); // c'est la fonction qui permet de faire bouger le curseur et/ou de quitter la partie 
-
+            selectiondes(&choixdes);
+			
             for (int p = 3; p > 0; p--) {
                 afficher_texte_pixel("Voulez vous lancer les de ? ", 0, 0, 0xFF0040);
-                afficher_de(joueur);
+                afficher_de(joueur);// demande au joueur de choisir les des qu'il veut garder
+
 				if (lancerde == 0) { // j'ai mis un if car dans la fonction il faut que des éléments boucle pour l'affichage 
-                    scanf("%d", &lancerde); // demande au joueur si il veut lancer le de ou non 
+                    lancerde = lire_touche(); // demande au joueur si il veut lancer le de ou non 
                 }
                 
-
                 if (lancerde == 1) {
                     logiquede(joueur);
                     afficher_texte_pixel("Vous gardez quels des ? B pour bloquer, Entrer pour finir", 0, 0, 0xFF0040);
-
-                    if (!selectiondes(&choixdes)) { // demande au joueur de choisir les des qu'il veut garder
-                        lancerde = 0; // si le joueur a choisi les des qu'il veut garder, il peut relancer les des restants, sinon il passe au prochain lancer ou phase de jeu
-                    }
-
+					lancerde = 0; // réinitialise le lancer de dé pour le prochain tour
+                    afficher_de(joueur); // Affiche les dés à l'écran pour le joueur actuel
                 }
-                
 				
             }
 			etapejeu = 1; // Passe à l'étape suivante du tour de jeu
-            
+			lancerde = 0; // réinitialise le lancer de dé pour le prochain tour
         }
         else if (etapejeu == 1) {
             etapejeu = 2;

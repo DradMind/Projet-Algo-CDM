@@ -8,7 +8,7 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour c
 int lire_touche();
 void logiquede(int joueur);
 int possedetitanosaure(int joueur);
-bool selectiondes(int* choixdes);
+bool selectiondes();
 
 
 typedef struct {

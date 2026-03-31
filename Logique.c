@@ -89,7 +89,7 @@ int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nom
 	return nbtitanosaurus;
 }
 
-bool selectiondes(int* choixdes) { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
+bool selectiondes() { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
 	int valeurtableau = 0;
 	switch(lire_touche()) {
 		case '38 ': // flèche du haut
