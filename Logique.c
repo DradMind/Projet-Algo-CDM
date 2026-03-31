@@ -9,7 +9,7 @@ Pion plateaupion[4][4];
 Joueur Joueurs[4][6];
 int InventaireCase[16];
 
-void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
+void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction permet d'initialiser le plateau de jeu, soit avec une configuration de base, soit de manière aléatoire
 	srand((unsigned int)time(NULL));
 	memcpy(InventaireCase, (int[]) { 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 5 }, sizeof(InventaireCase)); //permet d'initialiser l'inventaire des cases avec les bonnes quantités de chaque type de case
 	int temp[16]; // le tableau temporaire pour le mélange aléatoire des cases
@@ -60,7 +60,7 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) {
 }
 
 
-int lire_touche() {
+int lire_touche() { // cette fonction permet de lire la valeur code d'une touche de clavier genre 'z', 'q', 's', 'd' pour les déplacements et les flèches pour la sélection des dés
 	if (_kbhit()) {
 		int c = _getch();
 		if (c == 0 || c == 224) { // Touche spéciale (Flèches)
@@ -71,17 +71,44 @@ int lire_touche() {
 	return -1; //pas d'action
 }
 
-void logiquede(int joueur) {
-	int nbtitanosaurus = 0;
-	for (int i = 0; i < 6; i++) {
-		if (Joueurs[joueur][i].dino == 1) {
-			nbtitanosaurus++;
-		}
-	}
-	for (int j = 0; j < 5 + nbtitanosaurus; j++) {
+void logiquede(int joueur) { // cette fonction permet de lancer les dés en fonction du nombre de titanosaures que le joueur possède
+	for (int j = 0; j < 5 + possedetitanosaure(joueur); j++) {
 		if (!Listede[j].bloque) {
 			Listede[j].action = rand() % 6 ; // Génère une action aléatoire entre 0 et 5
 		}
 	}
 }
 
+int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nombre de titanosaure que possède le joueur 
+	int nbtitanosaurus = 0;
+	for (int i = 0; i < 6; i++) {
+		if (Joueurs[joueur][i].dino == 1) {
+			nbtitanosaurus++;
+		}
+	}
+	return nbtitanosaurus;
+}
+
+bool selectiondes(int* choixdes) { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
+	int valeurtableau = 0;
+	switch(lire_touche()) {
+		case '38 ': // flèche du haut
+			valeurtableau--;
+			break;
+		case '40':// flèche du bas
+			valeurtableau++;
+			break;
+		case '13':// Touche entrer
+			return true;
+			break;
+		case '66':// Touche B pour bloquer un dé
+			if (Listede[valeurtableau].bloque) { // inverse la valeur de bloque du dé sélectionné, si il est bloqué il devient débloqué et inversement
+				Listede[valeurtableau].bloque = false;
+			} else {
+				Listede[valeurtableau].bloque = true;
+			}
+			break;
+	}
+	return false;
+
+}

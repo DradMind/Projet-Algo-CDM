@@ -163,26 +163,64 @@ void afficher_texte_pixel(const char* texte, int x, int y, int hex_couleur) {
         char c = texte[i];
         int index = -1;
 
-        // Conversion minuscule en majuscule pour l'index
         if (c >= 'A' && c <= 'Z') index = c - 'A';
         else if (c >= 'a' && c <= 'z') index = c - 'a';
-        else if (c == ' ') { // Gestion de l'espace
-            cur_x += 4;
+        else if (c == '.') index = 26;
+        else if (c == ',') index = 27;
+        else if (c == ':') index = 28;
+        else if (c == ';') index = 29;
+        else if (c == '!') index = 30;
+        else if (c == '?') index = 31;
+        else if (c == '(') index = 32;
+        else if (c == ')') index = 33;
+        else if (c == '-') index = 34;
+        else if (c == '+') index = 35;
+        else if (c == '=') index = 36;
+        else if (c == ' ') {
+            cur_x += 4; // Espace entre les mots
             continue;
         }
 
-        if (index >= 0 && index < 26) {
+        if (index != -1) {
             for (int row = 0; row < 5; row++) {
-                unsigned char row_data = alphabet5x5[index][row];
+                unsigned char row_data = font5x5_extended[index][row];
                 for (int col = 0; col < 5; col++) {
-                    // Vérifie si le bit à la position (4-col) est à 1
                     if ((row_data >> (4 - col)) & 1) {
+                        // Utilise votre fonction de dessin existante
                         dessine_pixel_hex(cur_x + col, y + row, hex_couleur);
                     }
                 }
             }
-            // Espacement entre les lettres (largeur 5 + 1 pixel vide)
-            cur_x += 6;
+            cur_x += 6; // Espacement standard entre caractères
         }
     }
 }
+
+void afficher_arrière_plan() {
+	printf("\x1b[2J"); //permet d'effacer l'écran avant de tout afficher
+    dessiner_rectangle(9, 9, 102, 102, 0xFFFFFF); // Fond du plateau 
+    afficherplateau(10, 10); // Affiche le plateau à l'écran
+    dessiner_rectangle(120, 0, 67, 116, 0xFFFFFF); // Plateau des oeufs et tt 
+}
+
+void afficher_de(int joueur) {
+    for (int i = 0; i < 5 + possedetitanosaure(joueur); i++) {
+        int type_de = Listede[i].action;
+        int couleur_de;
+        switch (type_de) {
+            case 0: couleur_de = 0xFF0000; break; // Rouge
+            case 1: couleur_de = 0x0000FF; break; // Bleu
+            case 2: couleur_de = 0x00FF00; break; // Vert
+            case 3: couleur_de = 0x800080; break; // Violet
+            case 4: couleur_de = 0xFFFF00; break; // Jaune
+            case 5: couleur_de = 0xFFA500; break; // Orange
+            case 6: couleur_de = 0xA52A2A; break; // Marron
+            default: couleur_de = 0x000000; break;
+        }
+		if (Listede[i].selectionne) {
+			dessiner_rectangle(139, 9 + i * 12, 12, 12, 0x00FFF7); // Fond vert pour les dés sélectionnés
+        }
+        dessiner_rectangle(140, 10 + i * 12, 10, 10, couleur_de);
+	}
+}
+        

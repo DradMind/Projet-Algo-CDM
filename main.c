@@ -19,61 +19,77 @@ int main() {
 
 
 	//===================== Initialisation =========================
+
     int joueur = 0; // 0 = rouge, 1 = bleu, 2 = vert, 3 = violet (a faire plus tard)
 	int nbjoueur = 2;
 	bool partie = true;
 	bool fin_jeu = false;
-	int etapejeu = 0;
-    initialiser_plateau(false, nbjoueur); // Initialise le plateau de base pour 4 joueurs
+	int etapejeu = 0; // 0 = lancer de de, 1 = Bouger les figurines, 2 = Vérifier les séismes, 3 = déplacement du pion, Vérifier les éruptions (décompte des points)
     int curseur_x = 0;
     int curseur_y = 0;
-    int lancerde;
+	int lancerde = 0;
 	int choixdes;
-	
-	
+	//scanf("%d", &nbjoueur);
+	initialiser_plateau(false, nbjoueur);// Initialise le plateau de base pour 4 joueurs
+
 	//==================== Affichage =========================
-    dessiner_rectangle(9, 9, 102, 102, 0xFFFFFF); // Fond du plateau 
-    afficherplateau(10, 10); // Affiche le plateau à l'écran
 
-    //dessiner_rectangle(0, 103, 20, 14, 0xFFFFFF); // bare d'info en bas a gauche
-    afficher_texte("Colere de la Montagne de Feu", 0, 116, 0xFF0000, 0x000000);
-    dessiner_rectangle(120, 0, 67, 116, 0xFFFFFF); // Plateau des oeufs et tt 
-	
-	//dessiner_image_ppm("Images/img.ppm", 0, 0);
-	//afficher_texte_pixel("Colere de la Montagne de Feu", 1, 0, 0xFF0000);
+	afficher_arrière_plan(); // Affiche le plateau de jeu et le plateau des oeufs et tt
 
-	//======================= Code du jeu ========================================
-    afficher_texte("Bienvenue sur Colère de la Montagne de Feu !\n Veuillez choisir le nombre de joueur", 10, 10, 0xFF0040, 0x000000);
-    //scanf("%d", &nbjoueur);
+	//======================= Code du jeu ====================
+    
 	while (partie && !fin_jeu) {
+		
+		Sleep(10); // Petite pause pour éviter de lire trop de touches à la fois)
         if (etapejeu == 0) {
             afficherclavier(&curseur_x, &curseur_y, &partie); // c'est la fonction qui permet de faire bouger le curseur et/ou de quitter la partie 
-            /*for (int p = 3; p > 0; p--) {
-                scanf("%d", &lancerde); // demande au joueur si il veut lancer le de ou non 
-                printf("Lancer de de : %d\n", lancerde);
+
+            for (int p = 3; p > 0; p--) {
+                afficher_texte_pixel("Voulez vous lancer les de ? ", 0, 0, 0xFF0040);
+                afficher_de(joueur);
+				if (lancerde == 0) { // j'ai mis un if car dans la fonction il faut que des éléments boucle pour l'affichage 
+                    scanf("%d", &lancerde); // demande au joueur si il veut lancer le de ou non 
+                }
+                
+
                 if (lancerde == 1) {
                     logiquede(joueur);
+                    afficher_texte_pixel("Vous gardez quels des ? B pour bloquer, Entrer pour finir", 0, 0, 0xFF0040);
+
+                    if (!selectiondes(&choixdes)) { // demande au joueur de choisir les des qu'il veut garder
+                        lancerde = 0; // si le joueur a choisi les des qu'il veut garder, il peut relancer les des restants, sinon il passe au prochain lancer ou phase de jeu
+                    }
+
                 }
-				printf("Veuillez choisir les des que vous voulez garder\n");
-				scanf("%d", &choixdes); // demande au joueur de choisir les des qu'il veut garder
-            }*/
+                
+				
+            }
+			etapejeu = 1; // Passe à l'étape suivante du tour de jeu
             
         }
+        else if (etapejeu == 1) {
+            etapejeu = 2;
+        }
+        else if (etapejeu == 2) {
+            etapejeu = 3;
+        }
+        else if (etapejeu == 3) {
+            //etapejeu = 1;
+		}
 
         
         
         
         
         
+		printf("FIN BOUCLE DE JEU\n");
     }
     //============================================================================
 
 
     
     bouger_curseur(0, 200);// Déplace le curseur tout en bas pour ne pas casser l'affichage
-	
     printf("\nRendu termine! Appuyez sur Entree pour quitter...");
-    getchar(); // jsp ( a voir ce que sa fait plus tard)
 
     return 0;
 }
@@ -109,5 +125,15 @@ int main() {
 * 
 * 
 * 
+* 
+* for (int i = 0; i < 7; i++) {
+			   printf("De %d : bloque = %d, action = %d\n", i, Listede[i].bloque, Listede[i].action); // pour vérifier la valeur des dés après le lancer
+		}
+* 
+* 
+* 
+* 
+* 
+* printf("touche appuyé : %d\n", lire_touche()); // pour vérifier la valeur de la touche appuyé dans la fonction lire_touche() et ainsi vérifier que les touches sont bien lues
 * 
 */

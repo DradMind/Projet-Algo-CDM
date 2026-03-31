@@ -7,6 +7,9 @@
 void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour configuration du plateau de base bool = true/false, avec false la config aléatoire
 int lire_touche();
 void logiquede(int joueur);
+int possedetitanosaure(int joueur);
+bool selectiondes(int* choixdes);
+
 
 typedef struct {
 	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8
@@ -26,6 +29,7 @@ typedef struct {
 typedef struct {
 	bool bloque;
 	int action;
+	bool selectionne;
 } De;
 
 typedef struct {
