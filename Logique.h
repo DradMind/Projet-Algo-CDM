@@ -14,7 +14,7 @@ bool selectiondes();
 typedef struct {
 	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8
 	char CheminImage[100];
-	int nboeuf;
+	bool nboeuf;//position sur les dino
 	int couleur;
 
 } Pion;
@@ -30,17 +30,19 @@ typedef struct {
 	bool bloque;
 	int action;
 	bool selectionne;
-} De;
+} Des;
 
 typedef struct {
 	int numerojoueur;
 	int dino;
+	int reserve;
+	int points;
 } Joueur;
 
 
-extern Pion pions[4][4][10];
+extern Pion PlateauPion[4][4][10];
 extern Pion plateaupion[4][4]; 
 extern Case plateau[4][4];
 extern Joueur joueurs[4][6];
-extern De Listede[7];
+extern Des Listede[7];
 extern int InventaireCase[16];

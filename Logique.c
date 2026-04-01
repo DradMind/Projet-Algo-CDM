@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-Pion pions[4][4][10];
+Pion PlateauPion[4][4][10];
 Case plateau[4][4];
-De Listede[7];
+Des Listede[7];
 Pion plateaupion[4][4];
 Joueur Joueurs[4][6];
 int InventaireCase[16];
