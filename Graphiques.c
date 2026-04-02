@@ -136,7 +136,7 @@ void afficherclavier(int* curseur_x, int* curseur_y, bool* partie) {
 
     // On met a jour le curseur et le plateau seulement si une touche a été pressé 
     if (k != -1) {
-        // Optionnel: Effacer l'ancien curseur avant de bouger
+        // Efface l'ancien curseur avant de bouger (A VOIR SA MARCHE PAS ENCORE)
         dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
 
         switch (k) {
