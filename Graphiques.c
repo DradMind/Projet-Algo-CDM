@@ -129,31 +129,28 @@ void afficherplateau(int posx, int posy) {
     }
 }
 
-void afficherclavier (int* curseur_x, int* curseur_y, bool* partie) {
-	int k = lire_touche();
-	if (k != -1) {
-		switch (k) {
-		case 72: (*curseur_y)--; 
-			afficherplateau(1, 1);
-			break; // Haut
-		case 80: (*curseur_y)++;
-            afficherplateau(1, 1);
-			break; // Bas
-		case 75: (*curseur_x)--;
-            afficherplateau(1, 1);
-			break; // Gauche
-		case 77: (*curseur_x)++;
-            afficherplateau(1, 1);
-			break; // Droite
-		case 27: 
-			dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
-			Sleep(10); // Petit délai pour ne pas saturer le processeur
-			*partie = false;
-            break;// Quitter
+// Graphiques.c
+
+void afficherclavier(int* curseur_x, int* curseur_y, bool* partie) {
+    int k = lire_touche();
+
+    // On met a jour le curseur et le plateau seulement si une touche a été pressé 
+    if (k != -1) {
+        // Optionnel: Effacer l'ancien curseur avant de bouger
+        dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
+
+        switch (k) {
+        case 72: (*curseur_y)--; break; // Haut
+        case 80: (*curseur_y)++; break; // Bas
+        case 75: (*curseur_x)--; break; // Gauche
+        case 77: (*curseur_x)++; break; // Droite
+        case 27: *partie = false; return; // Echap pour quitter
         }
-	}
-	dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
-	Sleep(10); // Petit délai pour ne pas saturer le processeur
+        afficherplateau(1, 1);
+    }
+
+    dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
+    Sleep(30);
 }
 
 void afficher_texte_pixel(const char* texte, int x, int y, int hex_couleur) {
