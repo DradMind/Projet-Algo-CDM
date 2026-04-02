@@ -25,7 +25,7 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 		break;
 	}
 	if (PlateauBase) {
-		plateau[0][0].TypeCase = 1; // Volcan
+		plateau[0][0].TypeCase = 1; 
 		plateau[0][1].TypeCase = 1;
 		plateau[0][2].TypeCase = 3;
 		plateau[0][3].TypeCase = 4;
@@ -35,7 +35,7 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 		plateau[1][3].TypeCase = 2;
 		plateau[2][0].TypeCase = 1;
 		plateau[2][1].TypeCase = 3;
-		plateau[2][2].TypeCase = 0;
+		plateau[2][2].TypeCase = 0;// Volcan
 		plateau[2][3].TypeCase = 3;
 		plateau[3][0].TypeCase = 3;
 		plateau[3][1].TypeCase = 5;
@@ -110,5 +110,19 @@ bool selectiondes() { // cette fonction permet de demander au joueur quels dés 
 			break;
 	}
 	return false;
+
+}
+
+int cheq_seisme() {
+	for (int i = 0;i < 4;i++){
+		for (int j = 0;i < 4;j++) {
+			if (Case plateau[i][j] == 0) {
+				int ligne = i;
+				int colonne = j;
+			}
+		}
+	}
+
+
 
 }
