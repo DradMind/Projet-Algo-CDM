@@ -90,18 +90,20 @@ int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nom
 }
 
 bool selectiondes() { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
-	int valeurtableau = 0;
-	switch(lire_touche()) {
-		case '38 ': // flèche du haut
+	static int valeurtableau = 0;
+	int touche = lire_touche();
+	switch(touche) {
+		case 72: // flèche du haut
 			valeurtableau--;
+			if (valeurtableau < 0) valeurtableau = 0;
 			break;
-		case '40':// flèche du bas
+		case 80: // flèche du bas
 			valeurtableau++;
+			if (valeurtableau > 6) valeurtableau = 6;
 			break;
-		case '13':// Touche entrer
+		case 13: // Touche entrer
 			return true;
-			break;
-		case '66':// Touche B pour bloquer un dé
+		case 'b':
 			if (Listede[valeurtableau].bloque) { // inverse la valeur de bloque du dé sélectionné, si il est bloqué il devient débloqué et inversement
 				Listede[valeurtableau].bloque = false;
 			} else {
@@ -109,20 +111,39 @@ bool selectiondes() { // cette fonction permet de demander au joueur quels dés 
 			}
 			break;
 	}
+
+	for (int i = 0; i < 7; i++) {
+		Listede[i].selectionne = (i == valeurtableau);
+	}
+
 	return false;
 
 }
 
-int cheq_seisme() {
+void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
+	int k = lire_touche();
+
+	// On met a jour le curseur et le plateau seulement si une touche a été pressé 
+	if (k != -1) {
+		switch (k) {
+		case 72: (*curseur_y)--; break; // Haut
+		case 80: (*curseur_y)++; break; // Bas
+		case 75: (*curseur_x)--; break; // Gauche
+		case 77: (*curseur_x)++; break; // Droite
+		case 27: *partie = false; return; // Echap pour quitter
+		}
+	}
+}
+
+int check_seisme() {
+	int ligne = 0;
+	int colonne = 0;
 	for (int i = 0;i < 4;i++){
 		for (int j = 0;i < 4;j++) {
-			if (Case plateau[i][j] == 0) {
-				int ligne = i;
-				int colonne = j;
+			if (plateau[i][j].TypeCase == 0) {
+				ligne = i;
+				colonne = j;
 			}
 		}
 	}
-
-
-
 }

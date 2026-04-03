@@ -4,9 +4,11 @@
 #include "Graphiques.h"
 #include "Logique.h"
 #include <stdbool.h>
+#include <time.h>
 
 int main() {
-	
+    srand((unsigned int)time(NULL));
+
     // =========================================================================
     // PARAMÈTRE D'AFFICHAGE :
     // Si l'affichage déborde de l'écran ou semble mal cadré, modifie le zoom 
@@ -28,6 +30,8 @@ int main() {
     int curseur_x = 0;
     int curseur_y = 0;
 	int lancerde = 0;
+	int nblancer = 3; // nombre de lancer de dé que le joueur a pour son tour
+    bool achoisides = true;
 	int choixdes;
 	//scanf("%d", &nbjoueur);
 	initialiser_plateau(false, nbjoueur);// Initialise le plateau de base pour 4 joueurs
@@ -42,27 +46,32 @@ int main() {
 		
 		Sleep(10); // Petite pause pour éviter de lire trop de touches à la fois)
         if (etapejeu == 0) {
-            afficherclavier(&curseur_x, &curseur_y, &partie); // c'est la fonction qui permet de faire bouger le curseur et/ou de quitter la partie 
-            selectiondes(&choixdes);
-			
-            for (int p = 3; p > 0; p--) {
+            if(nblancer > 0) {
                 afficher_texte_pixel("Voulez vous lancer les de ? ", 0, 0, 0xFF0040);
                 afficher_de(joueur);// demande au joueur de choisir les des qu'il veut garder
 
-				if (lancerde == 0) { // j'ai mis un if car dans la fonction il faut que des éléments boucle pour l'affichage 
-                    lancerde = lire_touche(); // demande au joueur si il veut lancer le de ou non 
-                }
-                
-                if (lancerde == 1) {
-                    logiquede(joueur);
-                    afficher_texte_pixel("Vous gardez quels des ? B pour bloquer, Entrer pour finir", 0, 0, 0xFF0040);
-					lancerde = 0; // réinitialise le lancer de dé pour le prochain tour
-                    afficher_de(joueur); // Affiche les dés à l'écran pour le joueur actuel
-                }
-				
+				if (achoisides) { 
+					lancerde = lire_touche(); // demande au joueur si il veut lancer le de ou non 
+				}
+
+				if ((lancerde == '1') && achoisides) {
+					logiquede(joueur);
+					achoisides = false;
+					nblancer--;
+					lancerde = 0;
+				}
+
+				if (!achoisides) {
+					afficher_de(joueur); // Affiche les dés à l'écran pour le joueur actuel
+					afficher_texte_pixel("Vous gardez quels des ? B pour bloquer/debloquer, Entrer pour finir", 0, 0, 0xFF0040);
+					achoisides = selectiondes(); // demande au joueur quels dés il veut garder après le lancer de dés  
+				}
+				// printf("nombre de lancer : %d\n", nblancer);
             }
-			etapejeu = 1; // Passe à l'étape suivante du tour de jeu
-			lancerde = 0; // réinitialise le lancer de dé pour le prochain tour
+            else {
+                etapejeu = 1; // Passe à l'étape suivante du tour de jeu
+                lancerde = 0; // réinitialise le lancer de dé pour le prochain tour
+            }
         }
         else if (etapejeu == 1) {
             etapejeu = 2;

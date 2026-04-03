@@ -18,6 +18,5 @@ void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y);
 
 //affichage
 void afficherplateau(int posx, int posy);
-void afficherclavier(int* curseur_x, int* curseur_y, bool* partie);
 void afficher_arrière_plan(void);
 void afficher_de(int joueur);

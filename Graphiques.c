@@ -131,27 +131,7 @@ void afficherplateau(int posx, int posy) {
 
 // Graphiques.c
 
-void afficherclavier(int* curseur_x, int* curseur_y, bool* partie) {
-    int k = lire_touche();
 
-    // On met a jour le curseur et le plateau seulement si une touche a été pressé 
-    if (k != -1) {
-        // Efface l'ancien curseur avant de bouger (A VOIR SA MARCHE PAS ENCORE)
-        dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
-
-        switch (k) {
-        case 72: (*curseur_y)--; break; // Haut
-        case 80: (*curseur_y)++; break; // Bas
-        case 75: (*curseur_x)--; break; // Gauche
-        case 77: (*curseur_x)++; break; // Droite
-        case 27: *partie = false; return; // Echap pour quitter
-        }
-        afficherplateau(1, 1);
-    }
-
-    dessiner_rectangle(*curseur_x, *curseur_y, 1, 1, 0xFFFFFF);
-    Sleep(30);
-}
 
 void afficher_texte_pixel(const char* texte, int x, int y, int hex_couleur) {
     int cur_x = x;
@@ -215,10 +195,17 @@ void afficher_de(int joueur) {
             default: couleur_de = 0x000000; break;
         }
 		if (Listede[i].selectionne) {
-			dessiner_rectangle(139, 9 + i * 12, 12, 12, 0x00FFF7); // Fond vert pour les dés sélectionnés
+			dessiner_rectangle(139, 9 + i * 12, 12, 12, 0x00FFF7); // Fond cyan pour les dés sélectionnés
+		}
+        else {
+            dessiner_rectangle(139, 9 + i * 12, 12, 12, 0xFFFFFF);
         }
-        dessiner_rectangle(140, 10 + i * 12, 10, 10, couleur_de);
+		if (Listede[i].bloque) {
+			dessiner_rectangle(152, 10 + i * 12, 4, 10, 0x000000); // Petit marqueur noir à coté pour bloqué
+		} else {
+			dessiner_rectangle(152, 10 + i * 12, 4, 10, 0xFFFFFF); // Efface le marqueur si pas bloqué
+		}
+		dessiner_rectangle(140, 10 + i * 12, 10, 10, couleur_de);
 	}
-	printf("fdzadza\n"); // Reset couleur
 }
         

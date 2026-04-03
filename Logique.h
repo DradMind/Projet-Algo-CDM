@@ -9,7 +9,7 @@ int lire_touche();
 void logiquede(int joueur);
 int possedetitanosaure(int joueur);
 bool selectiondes();
-
+void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie);
 
 typedef struct {
 	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8
