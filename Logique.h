@@ -10,6 +10,12 @@ void logiquede(int joueur);
 int possedetitanosaure(int joueur);
 bool selectiondes();
 void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie);
+int seisme(Joueurs);
+int comptage_piont_case(Joueurs, ligne, colonne);
+void deplacement_pion();
+void deploiment_pion();
+void oeuf(int joueur);
+
 
 typedef struct {
 	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8

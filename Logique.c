@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "Logique.h"
 #include <stdbool.h>
 #include <string.h>
@@ -135,10 +136,10 @@ void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
 	}
 }
 
-int seisme(Joueur) {
+int seisme(Joueurs) {
 	int ligne = 0;
 	int colonne = 0;
-	int séisme = 0;
+	int seisme = 0;
 	for (int i = 0;i < 4;i++) {						// cette boucle permet de trouver la position du volcan sur le plateau
 		for (int j = 0;i < 4;j++) {
 			if (plateau[i][j].TypeCase == 0) {
@@ -147,14 +148,16 @@ int seisme(Joueur) {
 			}
 		}
 	}
-	int pions_j = comptage_piont_case(Joueur, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
+	int pions_j = comptage_piont_case(Joueurs, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
 	
 	int moitie = (plateau[ligne][colonne].nbpion) / 2; 
-	if ( moitie <= pions_j ){ séisme= 1; } 
+	if ( moitie <= pions_j ){ 
+		seisme= 1; 
+	} 
 
 	// rajouter une vérification pour le stégosaure qui peut activer le séisme même si il n'a pas la moitié des pions sur le volcan
 
-	if (séisme=1) {
+	if (seisme=1) {
 		int choix_direction;
 		//selection de la direction
 		printf("choisissez la ligne (1) ou la colonne (2)  ");
@@ -178,32 +181,31 @@ int seisme(Joueur) {
 					if (choix_sens == 1) { // haut
 						// déplacer la ligne vers le haut
 						// déplacer les pions en conséquence
-					} else { // bas
+					}
+					else { // bas
 						// déplacer la ligne vers le bas
 						// déplacer les pions en conséquence
 					}
-				} else { // colonne
+				}
+				else { // colonne
 					if (choix_sens == 1) { // gauche
 						// déplacer la colonne vers la gauche
 						// déplacer les pions en conséquence
-					} else { // droite
+					}
+					else { // droite
 						// déplacer la colonne vers la droite
 						// déplacer les pions en conséquence
 					}
 				}
 			}
-		
-		
-
+		}
 	}
-	
 }
 
-int comptage_piont_case(Joueurs,ligne,colonne){
+int comptage_piont_case(Joueurs, ligne, colonne){
 	int pions_j = 0;
 	for (int i = 0; i < 10; i++) {
-		if (PlateauPion[ligne][colonne][i].joueur == 0) { break; }
-		if (PlateauPion[ligne][colonne][i].joueur == Joueur) {
+		if (PlateauPion[ligne][colonne][i].joueur == Joueurs) {
 			pions_j++;
 		}
 	}
@@ -222,7 +224,7 @@ void deplacement_pion() {
 	// deplacement du pion
 }
 
-void deploiment_pion(type case) {
+void deploiment_pion() {
 	//vérification de la position du déploiement (si c'est une hutte ou une caverne)
 	//vérification de la présence d'un pions dans la réserve du joueur
 		// si oui, verification de la présence d'un dino du joueur dans la réserve du joueur
