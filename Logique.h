@@ -16,6 +16,7 @@ typedef struct {
 	char CheminImage[100];
 	bool nboeuf;//position sur les dino
 	int couleur;
+	int joueur;
 
 } Pion;
 
@@ -23,6 +24,7 @@ typedef struct {
 	int TypeCase;
 	char CheminImage[100];
 	int nbPlacePion;
+	int nbpion;
 } Case;
 // Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.	
 
@@ -40,8 +42,7 @@ typedef struct {
 } Joueur;
 
 
-extern Pion PlateauPion[4][4][10];
-extern Pion plateaupion[4][4]; 
+extern Pion PlateauPion[4][4][10]; //position ligne collonne + nombre de pions
 extern Case plateau[4][4];
 extern Joueur joueurs[4][6];
 extern Des Listede[7];

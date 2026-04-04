@@ -135,10 +135,11 @@ void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
 	}
 }
 
-int check_seisme() {
+int seisme(Joueur) {
 	int ligne = 0;
 	int colonne = 0;
-	for (int i = 0;i < 4;i++){
+	int séisme = 0;
+	for (int i = 0;i < 4;i++) {						// cette boucle permet de trouver la position du volcan sur le plateau
 		for (int j = 0;i < 4;j++) {
 			if (plateau[i][j].TypeCase == 0) {
 				ligne = i;
@@ -146,4 +147,32 @@ int check_seisme() {
 			}
 		}
 	}
+	int pions_j = comptage_piont_case(Joueur, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
+	
+	int moitie = (plateau[ligne][colonne].nbpion) / 2; 
+	if ( moitie <= pions_j ){ séisme= 1; } 
+
+	// rajouter une vérification pour le stégosaure qui peut activer le séisme même si il n'a pas la moitié des pions sur le volcan
+
+	if (séisme=1) {
+		int choix_direction;
+		printf("choisissez la ligne (1) ou la colonne (2)  ");
+		scanf("%d", &choix_direction);
+		//selection de la direction
+		selection du sens
+		// faire les actions du séisme : faire tomber les pions du volcan, faire gagner des points au joueur, etc.
+
+	}
+	
+}
+
+int comptage_piont_case(Joueurs,ligne,colonne){
+	int pions_j = 0;
+	for (int i = 0; i < 10; i++) {
+		if (PlateauPion[ligne][colonne][i].joueur == 0) { break; }
+		if (PlateauPion[ligne][colonne][i].joueur == Joueur) {
+			pions_j++;
+		}
+	}
+	return pions_j;
 }
