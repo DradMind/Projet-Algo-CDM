@@ -156,11 +156,44 @@ int seisme(Joueur) {
 
 	if (séisme=1) {
 		int choix_direction;
+		//selection de la direction
 		printf("choisissez la ligne (1) ou la colonne (2)  ");
 		scanf("%d", &choix_direction);
-		//selection de la direction
-		selection du sens
-		// faire les actions du séisme : faire tomber les pions du volcan, faire gagner des points au joueur, etc.
+		// selection du sens
+		int choix_sens;
+		if (choix_direction == 2) {
+			printf("choisissez le sens : haut (1) ou bas (2)  ");
+			scanf("%d", &choix_sens);
+		}
+		else {
+			printf("choisissez le sens : gauche (1) ou droite (2)  ");
+			scanf("%d", &choix_sens);
+		}
+		
+
+		//deplacement des cases et des pions
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (choix_direction == 1) { // ligne
+					if (choix_sens == 1) { // haut
+						// déplacer la ligne vers le haut
+						// déplacer les pions en conséquence
+					} else { // bas
+						// déplacer la ligne vers le bas
+						// déplacer les pions en conséquence
+					}
+				} else { // colonne
+					if (choix_sens == 1) { // gauche
+						// déplacer la colonne vers la gauche
+						// déplacer les pions en conséquence
+					} else { // droite
+						// déplacer la colonne vers la droite
+						// déplacer les pions en conséquence
+					}
+				}
+			}
+		
+		
 
 	}
 	
@@ -176,3 +209,41 @@ int comptage_piont_case(Joueurs,ligne,colonne){
 	}
 	return pions_j;
 }
+
+void deplacement_pion() {
+	//selection case d'origine avec le deplacement par les touches directionnelles
+	//selection pion a deplacer (si il y a un dinosaure du joueur)
+	//surbrillance des cases de destination possible
+	//cheque si il y a de l'eau à proximité
+		//cheque si le joueur a un autre déplacement possible
+			//si oui, surbriance spéciale pour l'eau 
+			// si selection du déplacement, rendre obligatoire le déplacement de ce même pion
+	// selection de la case de destination
+	// deplacement du pion
+}
+
+void deploiment_pion(type case) {
+	//vérification de la position du déploiement (si c'est une hutte ou une caverne)
+	//vérification de la présence d'un pions dans la réserve du joueur
+		// si oui, verification de la présence d'un dino du joueur dans la réserve du joueur
+			// si oui, selection du pion à déployer (hutte ou dino)
+			// si non, résolution automatique
+		// si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer
+			// si oui, verifier si il a un pion sur le plateau
+				// si non, fin de l'action du joueur
+				// si oui, selection case
+				// selection pion
+				//résolution
+}
+
+void oeuf(joueur) {
+//verification de la présence d'un cromagnon dans la réserve du joueur
+	// si oui, couveuse (nom que je donne à là où sont envoyé les cromagnons avant de choisir le dino)
+	//si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer
+		// si oui, verifier si il a un cromagnon sur le plateau
+			// si non, fin de l'action du joueur
+			// si oui, selection case
+			// selection pion
+			//résolution
+}
+
