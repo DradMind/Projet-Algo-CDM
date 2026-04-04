@@ -18,7 +18,7 @@ void oeuf(int joueur);
 
 
 typedef struct {
-	int TypePion; // cromagnon : 0, titanosaure : 1, brontosaure : 2, stégosaure : 3, ankylosaure : 4,	ptéranodon : 5, plésiosaure : 6, tricératops : 7, tyrannosaure 8
+	int TypePion; // cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
 	char CheminImage[100];
 	bool nboeuf;//position sur les dino
 	int couleur;
