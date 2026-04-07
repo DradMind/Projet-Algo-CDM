@@ -3,6 +3,12 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define FACE_VOLCAN 0
+#define FACE_CAVERNE 1
+#define FACE_HUTTE 2
+#define FACE_EMPREINTE 3
+#define FACE_OEUF 4
+
 Pion PlateauPion[4][4][10];
 Pion stockpion[4][10];
 Case plateau[4][4];
@@ -216,36 +222,115 @@ int seisme(Joueurs) {
 	}
 }
 
-int actions_des(int joueur) {
-	bool pionplaceable = false;
-	for (int i = 0; i < 5 + possedetitanosaure(joueur); i++) {
-		if (Listede[i].selectionne) {
-			switch (Listede[i].action) {
-				case 0:
-					Listede[i].selectionne = false;
-					Listede[i].bloque = false;
-					break;
-				case 1:
-					for (int x = 0; x < 4; x++) {
-						for(int y = 0; y < 4; y++) {
-							if (plateaupion[x][y].TypePion == joueur && !plateaupion[x][y].survolcan) {
-								
-							}
-						}
-					}
-					break;
-				case 2:
-					break;
-				case 3: 
-					break;
-				case 4: 
-					break;
-				case 5: 
-					break;
-				case 6: 
-					break;
+
+// FACE 5 = Joker ou double empreinte selon vos futures règles
+
+void action_des(int joueur) {
+	int nb_actions[6] = { 0 };
+	int total_des = 5 + possedetitanosaure(joueur);
+
+	// 1. Comptabiliser toutes les faces obtenues à la fin des lancers
+	for (int i = 0; i < total_des; i++) {
+		nb_actions[Listede[i].action]++;
+	}
+
+	// 2. Action Volcan OBLIGATOIRE
+	while (nb_actions[FACE_VOLCAN] > 0) {
+		bouger_curseur(0, 50); // Ajustez la position Y pour ne pas casser votre plateau
+		printf("\x1b[31mAction Volcan OBLIGATOIRE ! Appuyez sur Entree pour placer un pion.\x1b[0m\n");
+
+		// Attente de l'action du joueur (à lier avec une future fonction de placement)
+		int touche = -1;
+		while (touche != 13) { touche = lire_touche(); Sleep(10); }
+
+		// Exemple d'appel futur : placement_volcan(joueur);
+		nb_actions[FACE_VOLCAN]--;
+	}
+
+	// 3. Actions FACULTATIVES avec Menu Interactif
+	int selection = 0;
+	bool fin_tour = false;
+
+	// On efface la zone avant de commencer
+	bouger_curseur(0, 50);
+	printf("\x1b[2K"); // Efface la ligne
+
+	while (!fin_tour) {
+		// --- LOGIQUE DES TOUCHES ---
+		int touche = lire_touche();
+		if (touche != -1) {
+			switch (touche) {
+			case 72: // Flèche du HAUT
+				selection--;
+				if (selection < 0) selection = 4; // Fait une boucle
+				break;
+			case 80: // Flèche du BAS
+				selection++;
+				if (selection > 4) selection = 0; // Fait une boucle
+				break;
+			case 13: // Touche ENTRÉE
+				if (selection == 0 && nb_actions[FACE_CAVERNE] > 0) {
+					deploiment_pion(); // Appel à votre fonction existante
+					nb_actions[FACE_CAVERNE]--;
+				}
+				else if (selection == 1 && nb_actions[FACE_HUTTE] > 0) {
+					deploiment_pion(); // Appel à votre fonction existante
+					nb_actions[FACE_HUTTE]--;
+				}
+				else if (selection == 2 && nb_actions[FACE_EMPREINTE] > 0) {
+					deplacement_pion(); // Appel à votre fonction existante
+					nb_actions[FACE_EMPREINTE]--;
+				}
+				else if (selection == 3 && nb_actions[FACE_OEUF] > 0) {
+					oeuf(joueur); // Appel à votre fonction existante
+					nb_actions[FACE_OEUF]--;
+				}
+				else if (selection == 4) {
+					fin_tour = true; // Le joueur décide de s'arrêter
+				}
+				break;
 			}
 		}
+
+		// --- VÉRIFICATION AUTOMATIQUE ---
+		// S'il n'y a plus aucune action possible, on force la fin du tour
+		if (nb_actions[FACE_CAVERNE] == 0 && nb_actions[FACE_HUTTE] == 0 &&
+			nb_actions[FACE_EMPREINTE] == 0 && nb_actions[FACE_OEUF] == 0) {
+			fin_tour = true;
+		}
+
+		// --- AFFICHAGE DU MENU ---
+		// Se place en dessous de votre plateau (Ajustez le Y=52 selon votre écran)
+		bouger_curseur(0, 52);
+		printf("--- CHOISISSEZ UNE ACTION (Fleches, Entree pour valider) ---\n");
+
+		// Ligne Caverne
+		if (selection == 0) printf("\x1b[46m\x1b[30m"); // Fond Cyan, texte Noir si sélectionné
+		printf(" %c Caverne   (Restant : %d) \x1b[0m\x1b[K\n", (selection == 0) ? '>' : ' ', nb_actions[FACE_CAVERNE]);
+
+		// Ligne Hutte
+		if (selection == 1) printf("\x1b[46m\x1b[30m");
+		printf(" %c Hutte     (Restant : %d) \x1b[0m\x1b[K\n", (selection == 1) ? '>' : ' ', nb_actions[FACE_HUTTE]);
+
+		// Ligne Empreinte
+		if (selection == 2) printf("\x1b[46m\x1b[30m");
+		printf(" %c Empreinte (Restant : %d) \x1b[0m\x1b[K\n", (selection == 2) ? '>' : ' ', nb_actions[FACE_EMPREINTE]);
+
+		// Ligne Oeuf
+		if (selection == 3) printf("\x1b[46m\x1b[30m");
+		printf(" %c Oeuf      (Restant : %d) \x1b[0m\x1b[K\n", (selection == 3) ? '>' : ' ', nb_actions[FACE_OEUF]);
+
+		// Ligne Fin
+		if (selection == 4) printf("\x1b[46m\x1b[30m");
+		printf(" %c Terminer les actions     \x1b[0m\x1b[K\n", (selection == 4) ? '>' : ' ');
+
+		Sleep(30); // Évite de surcharger le processeur
+	}
+
+	// Effacement propre du menu une fois l'étape terminée
+	for (int i = 52; i < 59; i++) {
+		bouger_curseur(0, i);
+		printf("\x1b[2K"); // Nettoie la zone de texte pour la suite du jeu
 	}
 }
 
