@@ -223,9 +223,7 @@ int seisme(Joueurs) {
 }
 
 
-// FACE 5 = Joker ou double empreinte selon vos futures règles
-
-void action_des(int joueur) {
+void action_des(int joueur) { // je vais exploser g niquer toute la fonction
 	int nb_actions[6] = { 0 };
 	int total_des = 5 + possedetitanosaure(joueur);
 
@@ -371,7 +369,7 @@ void deploiment_pion() {
 				//résolution
 }
 
-void oeuf(joueur) {
+void oeuf(int joueur) {
 //verification de la présence d'un cromagnon dans la réserve du joueur
 	// si oui, couveuse (nom que je donne à là où sont envoyé les cromagnons avant de choisir le dino)
 	//si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer

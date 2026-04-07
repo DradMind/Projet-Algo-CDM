@@ -12,9 +12,12 @@ bool selectiondes();
 void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie);
 int seisme(Joueurs);
 int comptage_piont_case(Joueurs, ligne, colonne);
-void deplacement_pion();
-void deploiment_pion();
-int actions_des(int joueur);
+void deplacement_pion(void);
+void deploiment_pion(void);
+void action_des(int joueur);
+void oeuf(int joueur);
+
+
 
 typedef struct {
 	int TypePion; // case vide : 0, cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9

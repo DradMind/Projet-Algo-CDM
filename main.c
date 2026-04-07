@@ -75,7 +75,7 @@ int main() {
         }
         else if (etapejeu == 1) {
 			printf("Déplacement des figurines en cours...\n");
-			actions_des(); // Permet de faire les actions des dés gardés par le joueur
+			action_des(joueur); // Permet de faire les actions des dés gardés par le joueur
             etapejeu = 2;
         }
         else if (etapejeu == 2) {
