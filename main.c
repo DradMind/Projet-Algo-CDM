@@ -74,12 +74,16 @@ int main() {
             }
         }
         else if (etapejeu == 1) {
+			printf("Déplacement des figurines en cours...\n");
+			actions_des(); // Permet de faire les actions des dés gardés par le joueur
             etapejeu = 2;
         }
         else if (etapejeu == 2) {
+			printf("Vérification des séismes en cours...\n");
             etapejeu = 3;
         }
         else if (etapejeu == 3) {
+            printf("Déplacement du pion et vérification des éruptions en cours...\n");
             //etapejeu = 1;
 		}
 

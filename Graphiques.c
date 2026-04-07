@@ -201,7 +201,7 @@ void afficher_de(int joueur) {
             dessiner_rectangle(139, 9 + i * 12, 12, 12, 0xFFFFFF);
         }
 		if (Listede[i].bloque) {
-			dessiner_rectangle(152, 10 + i * 12, 4, 10, 0x000000); // Petit marqueur noir à coté pour bloqué
+			dessiner_rectangle(152, 10 + i * 12, 4, 10, 0x000000); // Petite bare noir à coté pour bloquer
 		} else {
 			dessiner_rectangle(152, 10 + i * 12, 4, 10, 0xFFFFFF); // Efface le marqueur si pas bloqué
 		}

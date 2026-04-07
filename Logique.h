@@ -14,16 +14,15 @@ int seisme(Joueurs);
 int comptage_piont_case(Joueurs, ligne, colonne);
 void deplacement_pion();
 void deploiment_pion();
-void oeuf(int joueur);
-
+int actions_des(int joueur);
 
 typedef struct {
-	int TypePion; // cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
+	int TypePion; // case vide : 0, cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
 	char CheminImage[100];
 	bool nboeuf;//position sur les dino
 	int couleur;
 	int joueur;
-
+	bool survolcan;
 } Pion;
 
 typedef struct {
@@ -36,7 +35,7 @@ typedef struct {
 
 typedef struct {
 	bool bloque;
-	int action;
+	int action; // 0 : rien, 1 : déplacement, 2 : oeuf, 3 : volcan, 4 : hutte, 5 : cave, 6 : déplacement
 	bool selectionne;
 } Des;
 
@@ -49,6 +48,7 @@ typedef struct {
 
 
 extern Pion PlateauPion[4][4][10]; //position ligne collonne + nombre de pions
+extern Pion stockpion[4][10];
 extern Case plateau[4][4];
 extern Joueur joueurs[4][6];
 extern Des Listede[7];

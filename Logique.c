@@ -4,6 +4,7 @@
 #include <string.h>
 
 Pion PlateauPion[4][4][10];
+Pion stockpion[4][10];
 Case plateau[4][4];
 Des Listede[7];
 Pion plateaupion[4][4];
@@ -56,6 +57,17 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 			for (int y = 0; y < 4; y++) {
 				plateau[x][y].TypeCase = temp[index_pool++];
 			}
+		}
+	}
+	for (int i = 0; i < 4; i++) { // cette boucle permet d'initialiser les pions de chaque joueur dans leur réserve et aussi le plateau de jeu de pions
+		for (int j = 0; j < 4; j++) {
+			plateaupion[i][j].TypePion = 0;
+		}
+		for (int j = 0; j < 6; j++) {
+			Joueurs[i][j].numerojoueur = i;
+			Joueurs[i][j].dino = 0;
+			Joueurs[i][j].reserve = 0;
+			Joueurs[i][j].points = 0;
 		}
 	}
 }
@@ -136,6 +148,8 @@ void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
 	}
 }
 
+
+
 int seisme(Joueurs) {
 	int ligne = 0;
 	int colonne = 0;
@@ -201,6 +215,40 @@ int seisme(Joueurs) {
 		}
 	}
 }
+
+int actions_des(int joueur) {
+	bool pionplaceable = false;
+	for (int i = 0; i < 5 + possedetitanosaure(joueur); i++) {
+		if (Listede[i].selectionne) {
+			switch (Listede[i].action) {
+				case 0:
+					Listede[i].selectionne = false;
+					Listede[i].bloque = false;
+					break;
+				case 1:
+					for (int x = 0; x < 4; x++) {
+						for(int y = 0; y < 4; y++) {
+							if (plateaupion[x][y].TypePion == joueur && !plateaupion[x][y].survolcan) {
+								
+							}
+						}
+					}
+					break;
+				case 2:
+					break;
+				case 3: 
+					break;
+				case 4: 
+					break;
+				case 5: 
+					break;
+				case 6: 
+					break;
+			}
+		}
+	}
+}
+
 
 int comptage_piont_case(Joueurs, ligne, colonne){
 	int pions_j = 0;
