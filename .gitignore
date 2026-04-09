@@ -5,6 +5,8 @@
 # specific to CodeBlocks IDE
 *.layout
 *.depend
+*.cbp
+
 # generated directories
 bin/
 obj/
@@ -21,6 +23,10 @@ obj/
 *.user
 *.userosscache
 *.sln.docstates
+*.sln
+*.slnx
+*.vcxproj
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -411,3 +417,4 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,codeblocks
+*.filters
