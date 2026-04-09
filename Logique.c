@@ -2,6 +2,10 @@
 #include "Logique.h"
 #include <stdbool.h>
 #include <string.h>
+#include <conio.h>
+#include <windows.h>
+#include <Graphiques.h>
+
 
 #define FACE_VOLCAN 0
 #define FACE_CAVERNE 1
