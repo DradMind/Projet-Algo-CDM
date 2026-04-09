@@ -26,7 +26,7 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 		break;
 	}
 	if (PlateauBase) {
-		plateau[0][0].TypeCase = 1; 
+		plateau[0][0].TypeCase = 1;
 		plateau[0][1].TypeCase = 1;
 		plateau[0][2].TypeCase = 3;
 		plateau[0][3].TypeCase = 4;
@@ -42,10 +42,10 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 		plateau[3][1].TypeCase = 5;
 		plateau[3][2].TypeCase = 2;
 		plateau[3][3].TypeCase = 2;
-		
+
 	}
 	else {
-		for (int i = 15; i > 0; i--) { //mélange aléatoirement le tableeau invetnaire case et apres le fou dans le tableau temp 
+		for (int i = 15; i > 0; i--) { //mélange aléatoirement le tableeau invetnaire case et apres le fou dans le tableau temp
 			int r = rand() % (i + 1);
 			int valeurtemp = temp[i];
 			temp[i] = temp[r];
@@ -80,7 +80,7 @@ void logiquede(int joueur) { // cette fonction permet de lancer les dés en fonc
 	}
 }
 
-int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nombre de titanosaure que possède le joueur 
+int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nombre de titanosaure que possède le joueur
 	int nbtitanosaurus = 0;
 	for (int i = 0; i < 6; i++) {
 		if (Joueurs[joueur][i].dino == 1) {
@@ -124,7 +124,7 @@ bool selectiondes() { // cette fonction permet de demander au joueur quels dés 
 void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
 	int k = lire_touche();
 
-	// On met a jour le curseur et le plateau seulement si une touche a été pressé 
+	// On met a jour le curseur et le plateau seulement si une touche a été pressé
 	if (k != -1) {
 		switch (k) {
 		case 72: (*curseur_y)--; break; // Haut
@@ -136,7 +136,7 @@ void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
 	}
 }
 
-int seisme(Joueurs) {
+int seisme(int Joueurs) {
 	int ligne = 0;
 	int colonne = 0;
 	int seisme = 0;
@@ -149,11 +149,11 @@ int seisme(Joueurs) {
 		}
 	}
 	int pions_j = comptage_piont_case(Joueurs, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
-	
-	int moitie = (plateau[ligne][colonne].nbpion) / 2; 
-	if ( moitie <= pions_j ){ 
-		seisme= 1; 
-	} 
+
+	int moitie = (plateau[ligne][colonne].nbpion) / 2;
+	if ( moitie <= pions_j ){
+		seisme= 1;
+	}
 
 	// rajouter une vérification pour le stégosaure qui peut activer le séisme même si il n'a pas la moitié des pions sur le volcan
 
@@ -172,7 +172,7 @@ int seisme(Joueurs) {
 			printf("choisissez le sens : gauche (1) ou droite (2)  ");
 			scanf("%d", &choix_sens);
 		}
-		
+
 
 		//deplacement des cases et des pions
 		for (int i = 0; i < 4; i++) {
@@ -202,7 +202,7 @@ int seisme(Joueurs) {
 	}
 }
 
-int comptage_piont_case(Joueurs, ligne, colonne){
+int comptage_piont_case(int Joueurs,int ligne,int colonne){
 	int pions_j = 0;
 	for (int i = 0; i < 10; i++) {
 		if (PlateauPion[ligne][colonne][i].joueur == Joueurs) {
@@ -218,7 +218,7 @@ void deplacement_pion() {
 	//surbrillance des cases de destination possible
 	//cheque si il y a de l'eau à proximité
 		//cheque si le joueur a un autre déplacement possible
-			//si oui, surbriance spéciale pour l'eau 
+			//si oui, surbriance spéciale pour l'eau
 			// si selection du déplacement, rendre obligatoire le déplacement de ce même pion
 	// selection de la case de destination
 	// deplacement du pion
@@ -238,7 +238,7 @@ void deploiment_pion() {
 				//résolution
 }
 
-void oeuf(joueur) {
+void oeuf(int joueur) {
 //verification de la présence d'un cromagnon dans la réserve du joueur
 	// si oui, couveuse (nom que je donne à là où sont envoyé les cromagnons avant de choisir le dino)
 	//si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer

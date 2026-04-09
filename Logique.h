@@ -10,8 +10,8 @@ void logiquede(int joueur);
 int possedetitanosaure(int joueur);
 bool selectiondes();
 void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie);
-int seisme(Joueurs);
-int comptage_piont_case(Joueurs, ligne, colonne);
+int seisme(int Joueurs);
+int comptage_piont_case(int Joueurs,int ligne,int colonne);
 void deplacement_pion();
 void deploiment_pion();
 void oeuf(int joueur);
@@ -32,7 +32,7 @@ typedef struct {
 	int nbPlacePion;
 	int nbpion;
 } Case;
-// Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.	
+// Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.
 
 typedef struct {
 	bool bloque;
