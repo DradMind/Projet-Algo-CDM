@@ -297,6 +297,7 @@ void action_des(int joueur) { // je vais exploser g niquer toute la fonction
 
 		// --- VÉRIFICATION AUTOMATIQUE ---
 		// S'il n'y a plus aucune action possible, on force la fin du tour
+		//NON !!!!!! le joueur peut toujours faire éclore un œuf même s'il n'a plus d'action de ce type !!!!!
 		if (nb_actions[FACE_CAVERNE] == 0 && nb_actions[FACE_HUTTE] == 0 &&
 			nb_actions[FACE_EMPREINTE] == 0 && nb_actions[FACE_OEUF] == 0) {
 			fin_tour = true;
@@ -391,4 +392,28 @@ void selection(Joeur, type rechercher) {
 	//si type Cromagnon, selection uniquement de cromagnon
 	//si type dino, laisser le choix
 	//
+}
+
+
+void selection_case(*ligneR, *colonneR, joueur, plateaucase) {
+	int ligne, colonne;
+	int ligne max = 3;
+	int colonne max = 3;
+	do {
+		//selection case avec les touches directionnelles
+		int touche = lire_touche();
+		switch (touche) {
+		case 72: ligne--; break; // Haut
+		case 80: ligne++; break; // Bas
+		case 75: colonne--; break; // Gauche
+		case 77: colonne++; break; // Droite
+		}
+		if (ligne < 0) ligne = 0;
+		if (ligne > ligne_max) ligne = ligne_max;
+		if (colonne < 0) colonne = 0;
+		if (colonne > colonne_max) colonne = colonne_max;
+	} while (!verifier_presence(joueur, plateaucase, ligne, colonne)); // Vérifie la présence du type recherché sur la case sélectionnée
+
+
+
 }
