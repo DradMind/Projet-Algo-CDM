@@ -385,3 +385,10 @@ void oeuf(int joueur) {
 			//résolution
 }
 
+void selection(Joeur, type rechercher) {
+	//selection case avec les touches directionnelles
+	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
+	//si type Cromagnon, selection uniquement de cromagnon
+	//si type dino, laisser le choix
+	//
+}
