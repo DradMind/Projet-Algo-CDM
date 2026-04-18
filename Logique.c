@@ -395,7 +395,7 @@ void selection(Joeur, type rechercher) {
 }
 
 
-void selection_case(*ligneR, *colonneR, joueur, plateaucase) {
+void selection_case(*ligneR, *colonneR) {
 	int ligne, colonne;
 	int ligne max = 3;
 	int colonne max = 3;
@@ -424,9 +424,21 @@ void selection_case(*ligneR, *colonneR, joueur, plateaucase) {
 
 }
 
-void vérification_pion(joueur, ligne, colonne, type_recherche) {
+int vérification_pion(joueur, ligne, colonne, type_recherche) {
+	int place = 0;
+	int présence = 0;
+	while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
+		if (PlateauPion[ligne][colonne][place].joueur == joueur && PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
+			présence++;
 
+		}
+		place++;
+		
+	}
 	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
 	//si type Cromagnon, selection uniquement de cromagnon
 	//si type dino, laisser le choix
+	return présence;// pour préparer la taille du tableau de sélection des pions
 }
+
+int 

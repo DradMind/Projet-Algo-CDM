@@ -16,13 +16,15 @@ void deplacement_pion(void);
 void deploiment_pion(void);
 void action_des(int joueur);
 void oeuf(int joueur);
+int vérification_pion(int joueur, int ligne, int colonne, int type_recherche);
+void selection_case(int *ligneR, int *colonneR);
 
 
 
 typedef struct {
 	int TypePion; // case vide : 0, cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
 	char CheminImage[100];
-	bool nboeuf;//position sur les dino
+	int nboeuf;//position sur les dino : 0 rien, 2 couveuse, 3 dino
 	int couleur;
 	int joueur;
 	bool survolcan;
