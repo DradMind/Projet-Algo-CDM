@@ -399,8 +399,11 @@ void selection_case(*ligneR, *colonneR, joueur, plateaucase) {
 	int ligne, colonne;
 	int ligne max = 3;
 	int colonne max = 3;
+	//afficher contour case (0;0)
 	do {
+		
 		//selection case avec les touches directionnelles
+
 		int touche = lire_touche();
 		switch (touche) {
 		case 72: ligne--; break; // Haut
@@ -408,12 +411,22 @@ void selection_case(*ligneR, *colonneR, joueur, plateaucase) {
 		case 75: colonne--; break; // Gauche
 		case 77: colonne++; break; // Droite
 		}
-		if (ligne < 0) ligne = 0;
-		if (ligne > ligne_max) ligne = ligne_max;
-		if (colonne < 0) colonne = 0;
-		if (colonne > colonne_max) colonne = colonne_max;
-	} while (!verifier_presence(joueur, plateaucase, ligne, colonne)); // Vérifie la présence du type recherché sur la case sélectionnée
+		if (touche != "entrer") {}//effacer le contour de la case précédente
+		if (ligne < 0) ligne = ligne_max;
+		if (ligne > ligne_max) ligne = 0;
+		if (colonne < 0) colonne = colonne_max;
+		if (colonne > colonne_max) colonne = 0;
+		//afficher le contour de la case qui vient d'être sélectionné
+		
+	} while (touche != "entrer"); // Vérifie la fin de la sélection avec la touche Entrée
+	*ligneR = ligne;
+	*colonneR = colonne;
 
+}
 
+void vérification_pion(joueur, ligne, colonne, type_recherche) {
 
+	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
+	//si type Cromagnon, selection uniquement de cromagnon
+	//si type dino, laisser le choix
 }
