@@ -24,7 +24,7 @@ void selection_case(int *ligneR, int *colonneR);
 typedef struct {
 	int TypePion; // case vide : 0, cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
 	char CheminImage[100];
-	int nboeuf;//position sur les dino : 0 rien, 2 couveuse, 3 dino
+	int nboeuf;//position sur les dino : 0 rien, 1 couveuse, 2 dino
 	int couleur;
 	int joueur;
 	bool survolcan;

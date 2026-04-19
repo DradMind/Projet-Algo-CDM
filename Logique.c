@@ -376,6 +376,18 @@ void deploiment_pion() {
 }
 
 void oeuf(int joueur) {
+	if (Joueurs[joueur][0].reserve > 0) {
+		Joueurs[joueur][0].reserve--; Joueurs[joueur][0].dino++;
+	}
+	else {
+		int choix;
+		printf("votre réserve est vide vous allez pouvoir choisir si vous prenez un cromagnon du plateau (1) ou de ne pas faire l'action (0)")
+			scanf("%d", &choix);
+		if (choix == 1) {
+			int ligne, colonne;
+			do {
+				selection_case(&ligne, &colonne);
+			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un dino sur la case sélectionnée
 //verification de la présence d'un cromagnon dans la réserve du joueur
 	// si oui, couveuse (nom que je donne à là où sont envoyé les cromagnons avant de choisir le dino)
 	//si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer
@@ -386,13 +398,7 @@ void oeuf(int joueur) {
 			//résolution
 }
 
-void selection(Joeur, type rechercher) {
-	//selection case avec les touches directionnelles
-	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
-	//si type Cromagnon, selection uniquement de cromagnon
-	//si type dino, laisser le choix
-	//
-}
+
 
 
 void selection_case(*ligneR, *colonneR) {
@@ -411,7 +417,8 @@ void selection_case(*ligneR, *colonneR) {
 		case 75: colonne--; break; // Gauche
 		case 77: colonne++; break; // Droite
 		}
-		if (touche != "entrer") {}//effacer le contour de la case précédente
+		if (touche != "entrer") {//effacer le contour de la case précédente
+		}
 		if (ligne < 0) ligne = ligne_max;
 		if (ligne > ligne_max) ligne = 0;
 		if (colonne < 0) colonne = colonne_max;
@@ -441,4 +448,11 @@ int vérification_pion(joueur, ligne, colonne, type_recherche) {
 	return présence;// pour préparer la taille du tableau de sélection des pions
 }
 
-int 
+void enlever_pion(int ligne, int colonne, int joueur, int place) {
+	while (PlateauPion[ligne][colonne][place].TypePion != 0)
+		{
+		PlateauPion[ligne][colonne][place] = PlateauPion[ligne][colonne][place + 1]; // Décale tous les pions à partir de la position "place" vers la gauche
+		place++;
+	}while(PlateauPion[ligne][colonne][place])
+
+}
