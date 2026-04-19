@@ -350,7 +350,10 @@ int comptage_piont_case(int Joueurs,int ligne,int colonne){
 }
 
 void deplacement_pion() {
-	//selection case d'origine avec le deplacement par les touches directionnelles
+	int ligne, colonne;
+	selection_case(&ligne, &colonne);	//selection case d'origine avec le deplacement par les touches directionnelles
+
+	
 	//selection pion a deplacer (si il y a un dinosaure du joueur)
 	//surbrillance des cases de destination possible
 	//cheque si il y a de l'eau à proximité
@@ -361,7 +364,23 @@ void deplacement_pion() {
 	// deplacement du pion
 }
 
-void deploiment_pion() {
+void deploiment_pion(int joueur, int zone) {
+	if (Joueurs[joueur][0].reserve > 0) { // vérification de la présence d'un pion dans la réserve du joueur
+		Joueurs[joueur][0].reserve--; // si oui, on enlève un pion de la réserve
+		PlateauPion
+		
+	}
+	else {
+		int choix;
+		printf("votre réserve est vide vous allez pouvoir choisir si vous re-déployé un cromagnon du plateau (1) ou de ne pas faire l'action (0)");
+			scanf("%d", &choix);
+		if (choix == 1) {
+			int ligne, colonne;
+			do {
+				selection_case(&ligne, &colonne);
+			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
+		}
+	}
 	//vérification de la position du déploiement (si c'est une hutte ou une caverne)
 	//vérification de la présence d'un pions dans la réserve du joueur
 		// si oui, verification de la présence d'un dino du joueur dans la réserve du joueur
@@ -387,15 +406,10 @@ void oeuf(int joueur) {
 			int ligne, colonne;
 			do {
 				selection_case(&ligne, &colonne);
-			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un dino sur la case sélectionnée
-//verification de la présence d'un cromagnon dans la réserve du joueur
-	// si oui, couveuse (nom que je donne à là où sont envoyé les cromagnons avant de choisir le dino)
-	//si non, informer le joueur que sa réserve est vide et lui demander si il veux continuer
-		// si oui, verifier si il a un cromagnon sur le plateau
-			// si non, fin de l'action du joueur
-			// si oui, selection case
-			// selection pion
-			//résolution
+			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
+
+		}
+	}
 }
 
 
@@ -460,3 +474,4 @@ void rajouter_pion(int ligne, int colonne, int joueur, int type_pion) {
 	PlateauPion[ligne][colonne][place].TypePion = type_pion; // Place le pion (1 pour cromagnon, 2 pour dino)
 	PlateauPion[ligne][colonne][place].joueur = joueur; // Associe le pion au joueur
 }
+
