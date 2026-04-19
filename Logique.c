@@ -352,6 +352,7 @@ int comptage_piont_case(int Joueurs,int ligne,int colonne){
 void deplacement_pion() {
 	int ligne, colonne;
 	selection_case(&ligne, &colonne);	//selection case d'origine avec le deplacement par les touches directionnelles
+	afficher_distance(ligne, colonne); //affiche les cases de destination possible en fonction de la position du pion sélectionné
 
 	
 	//selection pion a deplacer (si il y a un dinosaure du joueur)
@@ -367,7 +368,13 @@ void deplacement_pion() {
 void deploiment_pion(int joueur, int zone) {
 	if (Joueurs[joueur][0].reserve > 0) { // vérification de la présence d'un pion dans la réserve du joueur
 		Joueurs[joueur][0].reserve--; // si oui, on enlève un pion de la réserve
-		PlateauPion
+		for (int l = 0;l < 4;l++) {
+			for (int c = 0;c < 4;c++) {
+				if (plateau[l][c].TypeCase == zone) { // vérification de la position du déploiement (si c'est une hutte ou une caverne)
+					rajouter_pion(l, c, joueur, 1); // si oui, on ajoute un pion sur le plateau à l'emplacement correspondant
+				}
+			}
+		}
 		
 	}
 	else {
@@ -415,13 +422,14 @@ void oeuf(int joueur) {
 
 
 
-void selection_case(int *ligneR, int *colonneR) {
-	int ligne=0, colonne=0;
+void selection_case(int* ligneR, int* colonneR, int joueur, int p_rechercher, int cd_rechercher) {
+	int ligne = 0, colonne = 0;
 	int ligne max = 3;
 	int colonne max = 3;
 	//afficher contour case (0;0)
 	do {
-		
+	do {
+
 		//selection case avec les touches directionnelles
 
 		int touche = lire_touche();
@@ -438,23 +446,31 @@ void selection_case(int *ligneR, int *colonneR) {
 		if (colonne < 0) colonne = colonne_max;
 		if (colonne > colonne_max) colonne = 0;
 		//afficher le contour de la case qui vient d'être sélectionné
-		
-	} while (touche != "entrer"); // Vérifie la fin de la sélection avec la touche Entrée
+
+	} while (touche != "entrer"); // Vérifie la fin de la sélection avec la touche Entrée}
+}while (vérification_case(joueur, ligne, colonne, p_rechercher, c_rechercher) == 0); // Vérifie que la case sélectionnée contient bien le type de pion recherché pour le joueur
+	
 	*ligneR = ligne;
 	*colonneR = colonne;
 
 }
 
-int vérification_pion(joueur, ligne, colonne, type_recherche) {
+int vérification_case(int	joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
 	int place = 0;
 	int présence = 0;
-	while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
-		if (PlateauPion[ligne][colonne][place].joueur == joueur && PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
-			présence++;
+	if (cd_recherche == 0) {
+		while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
+			if (PlateauPion[ligne][colonne][place].joueur == joueur && PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
+				présence++;
+
+			}
+			place++;
 
 		}
-		place++;
-		
+	}
+	else if (c_rechercher >= 1) {
+		if (Case[ligne][colonne].distance >= cd_rechercher) {
+			présence++;
 	}
 	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
 	//si type Cromagnon, selection uniquement de cromagnon

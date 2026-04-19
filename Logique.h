@@ -16,7 +16,7 @@ void deplacement_pion(void);
 void deploiment_pion(void);
 void action_des(int joueur);
 void oeuf(int joueur);
-int vérification_pion(int joueur, int ligne, int colonne, int type_recherche);
+int vérification_case(int joueur, int ligne, int colonne, int type_recherche);
 void selection_case(int *ligneR, int *colonneR);
 void enlever_pion(int ligne, int colonne);
 
@@ -36,6 +36,7 @@ typedef struct {
 	char CheminImage[100];
 	int nbPlacePion;
 	int nbpion;
+	int distance;
 } Case;
 // Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.
 
