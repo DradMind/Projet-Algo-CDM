@@ -18,6 +18,7 @@ void action_des(int joueur);
 void oeuf(int joueur);
 int vérification_pion(int joueur, int ligne, int colonne, int type_recherche);
 void selection_case(int *ligneR, int *colonneR);
+void enlever_pion(int ligne, int colonne);
 
 
 

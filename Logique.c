@@ -451,3 +451,12 @@ int vérification_pion(joueur, ligne, colonne, type_recherche) {
 void enlever_pion(int ligne, int colonne, int joueur, int place) {
 		PlateauPion[ligne][colonne][place].TypePion = 0; 
 }
+
+void rajouter_pion(int ligne, int colonne, int joueur, int type_pion) {
+	int place = 0;
+	while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Trouve la première place libre sur la case
+		place++;
+	}
+	PlateauPion[ligne][colonne][place].TypePion = type_pion; // Place le pion (1 pour cromagnon, 2 pour dino)
+	PlateauPion[ligne][colonne][place].joueur = joueur; // Associe le pion au joueur
+}
