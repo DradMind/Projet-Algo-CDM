@@ -401,8 +401,8 @@ void oeuf(int joueur) {
 
 
 
-void selection_case(*ligneR, *colonneR) {
-	int ligne, colonne;
+void selection_case(int *ligneR, int *colonneR) {
+	int ligne=0, colonne=0;
 	int ligne max = 3;
 	int colonne max = 3;
 	//afficher contour case (0;0)
@@ -449,10 +449,5 @@ int vérification_pion(joueur, ligne, colonne, type_recherche) {
 }
 
 void enlever_pion(int ligne, int colonne, int joueur, int place) {
-	while (PlateauPion[ligne][colonne][place].TypePion != 0)
-		{
-		PlateauPion[ligne][colonne][place] = PlateauPion[ligne][colonne][place + 1]; // Décale tous les pions à partir de la position "place" vers la gauche
-		place++;
-	}while(PlateauPion[ligne][colonne][place])
-
+		PlateauPion[ligne][colonne][place].TypePion = 0; 
 }
