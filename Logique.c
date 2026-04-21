@@ -471,11 +471,24 @@ int vérification_case(int	joueur, int ligne, int colonne, int type_recherche, i
 	else if (c_rechercher >= 1) {
 		if (Case[ligne][colonne].distance >= cd_rechercher) {
 			présence++;
+		}
+		//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
+		//si type Cromagnon, selection uniquement de cromagnon
+		//si type dino, laisser le choix
+		return présence;// pour préparer la taille du tableau de sélection des pions
 	}
-	//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
-	//si type Cromagnon, selection uniquement de cromagnon
-	//si type dino, laisser le choix
-	return présence;// pour préparer la taille du tableau de sélection des pions
+}
+
+int vérife_dis(int ligne, int colonne, int d_max) {
+
+	if (Case[ligne][colonne].distance >= cd_rechercher) {
+		présence++;
+	}
+	return présence;
+}
+
+
+
 }
 
 void enlever_pion(int ligne, int colonne, int joueur, int place) {
