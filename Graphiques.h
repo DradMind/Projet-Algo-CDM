@@ -1,22 +1,56 @@
 #pragma once
+#include "raylib.h"
 #include <stdbool.h>
 
-//188x116 <--- c'est la résolution de la console en mode plein écran avec un dézoom de 8 (ajustable dans main.c)
+// =============================================================
+//  Résolution et layout
+// =============================================================
+#define WINDOW_W    640
+#define WINDOW_H    480
+#define TARGET_FPS   60
 
-// Initialisation
-void initialiser_console(int dezoom_count);
+#define BOARD_X      20        // coin haut-gauche du plateau
+#define BOARD_Y      20
+#define CELL_PX      100       // taille d'une case en pixels
 
-// Fonctions de dessin
-void bouger_curseur(int x, int y);
-void dessine_pixel_hex(int x, int y, int hex_couleur);
-void dessiner_rectangle(int x, int y, int longueur, int hauteur, int hex_couleur);
-void afficher_texte(const char* texte, int x, int y, int hex_texte, int hex_fond);
-void afficher_texte_pixel(const char* texte, int x, int y, int hex_couleur);
+#define PANEL_X      440       // panneau latéral (dés)
+#define PANEL_Y      0
+#define PANEL_W      200
+#define DIE_H        52
 
-// Image
-void dessiner_image_ppm(const char* nom_fichier, int start_x, int start_y);
+// =============================================================
+//  Couleurs des types de cases
+// =============================================================
+static const Color COULEUR_CASE[] = {
+    { 255,  69,   0, 255 }, // 0 Volcan
+    {  30, 144, 255, 255 }, // 1 Eau
+    {  34, 139,  34, 255 }, // 2 Jungle
+    { 124, 252,   0, 255 }, // 3 Prairie
+    { 139,  69,  19, 255 }, // 4 Hutte
+    { 169, 169, 169, 255 }, // 5 Caverne
+};
 
-//affichage
-void afficherplateau(int posx, int posy);
-void afficher_arrière_plan(void);
-void afficher_de(int joueur);
+// Couleurs des faces de dé (0=Volcan 1=Caverne 2=Hutte 3=Empreinte 4=Oeuf 5=Déplacement)
+static const Color COULEUR_DE[] = {
+    { 255,  69,   0, 255 }, // Volcan
+    { 169, 169, 169, 255 }, // Caverne
+    { 139,  69,  19, 255 }, // Hutte
+    { 255, 255,   0, 255 }, // Empreinte
+    { 255, 105, 180, 255 }, // Oeuf
+    {  30, 144, 255, 255 }, // Déplacement
+};
+
+static const char* NOM_FACE[] = {
+    "Volcan", "Caverne", "Hutte", "Empreinte", "Oeuf", "Deplacement"
+};
+
+// =============================================================
+//  Fonctions
+// =============================================================
+void initialiser_fenetre(void);
+
+void afficher_arriere_plan(void);   // fond + plateau + panneau vide
+void afficherplateau(void);         // cases 4x4 colorées
+void afficher_de(int joueur);       // dés dans le panneau latéral
+
+void afficher_message(const char* texte, int y, Color couleur); // ligne de texte HUD

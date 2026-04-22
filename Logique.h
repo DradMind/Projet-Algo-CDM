@@ -9,17 +9,15 @@ int lire_touche();
 void logiquede(int joueur);
 int possedetitanosaure(int joueur);
 bool selectiondes();
-void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie);
 int seisme(int Joueurs);
-int comptage_piont_case(int Joueurs,int ligne,int colonne);
+int comptage_piont_case(int Joueurs, int ligne, int colonne);
 void deplacement_pion(void);
-void deploiment_pion(void);
+void deploiment_pion(int joueur);
 void action_des(int joueur);
 void oeuf(int joueur);
-int vérification_case(int joueur, int ligne, int colonne, int type_recherche);
-void selection_case(int *ligneR, int *colonneR);
-void enlever_pion(int ligne, int colonne);
-
+int verification_case(int joueur, int ligne, int colonne, int type_recherche);
+void selection_case(int* ligneR, int* colonneR);
+void enlever_pion(int ligne, int colonne, int joueur, int place);
 
 
 typedef struct {
