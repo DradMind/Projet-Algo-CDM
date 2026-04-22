@@ -25,13 +25,28 @@ void initialiser_fenetre(void) {
 // -------------------------------------------------------------
 //  Plateau 4×4
 // -------------------------------------------------------------
-void afficherplateau(void) {
-	DrawRectangle(PE(5, GetScreenWidth()), PE(5, GetScreenHeight()), PE(40, GetScreenWidth()), PE(40, GetScreenHeight()), (Color) { 60, 50, 35, 255 });
+void afficherplateau(Jeu* jeu) {
+    // Le fond marron du plateau (un peu plus grand que les cases)
+    int bordure = PE(1, GetScreenWidth()); // 1% d'épaisseur
+    DrawRectangle(BOARD_X - bordure, BOARD_Y - bordure,
+        (4 * CELL_PX) + (2 * bordure), (4 * CELL_PX) + (2 * bordure),
+        (Color) {
+        60, 50, 35, 255
+    });
+
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
-            int type = plateau[y][x].TypeCase;
-			Color couleur = (type >= 0 && type <= 5) ? COULEUR_CASE[type] : BLACK; // Si le type de case est valide, on prend la couleur correspondante, sinon on utilise le noir par défaut
-            Rectangle Case = { PE(5, GetScreenWidth()) * x,PE(5, GetScreenWidth()) * y,PE(5, GetScreenWidth()),PE(5, GetScreenWidth()) }; // c'est le modèle de la case
+            int type = jeu->plateau[y][x].TypeCase;
+            Color couleur = (type >= 0 && type <= 5) ? COULEUR_CASE[type] : BLACK;
+
+            // Calcul propre de la position de chaque case
+            Rectangle Case = {
+                BOARD_X + (x * CELL_PX),
+                BOARD_Y + (y * CELL_PX),
+                CELL_PX,
+                CELL_PX
+            };
+
             DrawRectangleRec(Case, couleur);
             DrawRectangleLinesEx(Case, 2, (Color) { 0, 0, 0, 120 });
         }
@@ -41,39 +56,41 @@ void afficherplateau(void) {
 // -------------------------------------------------------------
 //  Dés dans le panneau latéral
 // -------------------------------------------------------------
-void afficher_de(int joueur) {
-    
-}
-
-// -------------------------------------------------------------
-//  Fond général
-// -------------------------------------------------------------
-
-
-void afficher_arriere_plan(void) {
-    ClearBackground((Color) { 35, 28, 20, 255 });
-
-    // Zone plateau
-    DrawRectangle(BOARD_X - 4, BOARD_Y - 4, 4 * CELL_PX + 8, 4 * CELL_PX + 8,(Color) {60, 50, 35, 255});
-
-    afficherplateau();
-
-    // Panneau latéral
-    DrawRectangle(PANEL_X, PANEL_Y, PANEL_W, GetScreenHeight(), (Color) { 22, 18, 14, 255 });
-    DrawLine(PANEL_X, 0, PANEL_X, GetScreenHeight(), (Color) { 80, 60, 40, 255 });
-    DrawText("DES", PANEL_X + 10, GetScreenHeight() - 30, 18, (Color) { 200, 160, 60, 255 });
-}
-
-bool selectiondes(int joueur, Vector2 pos_souris) { //on fait passer en pointeur pour pouvoir modifier la valeur directe (pas une copie) de choixdes 
-    for (int i = 0; i < 5 + possedetitanosaure(joueur); i++) {
+void afficher_de(Jeu* jeu, int joueur) {
+    for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
         int x = PANEL_X + 10;
         int y = PANEL_Y + 10 + i * (DIE_H + 6);
-        Rectangle rect = { x, y, DIE_H, DIE_H }; 
-        if (CheckCollisionPointRec(pos_souris, rect)) {
-            Listede[i].selectionne = !Listede[i].selectionne; // Toggle sélection
+        Rectangle rect = { x, y, DIE_H, DIE_H };
+
+        if (jeu->Listede[i].bloque) {
+            DrawRectangleRec(rect, (Color) { 100, 100, 100, 255 }); // Gris pour les dés bloqués
+            DrawRectangleLinesEx(rect, 2, BLACK);
+            continue; // Ne pas afficher la valeur des dés bloqués
+		}
+
+        // Change la couleur si le dé est sélectionné
+        Color dieColor = jeu->Listede[i].selectionne ? GREEN : LIGHTGRAY;
+        DrawRectangleRec(rect, dieColor);
+        DrawRectangleLinesEx(rect, 2, BLACK);
+
+        // Affiche la valeur de l'action si le dé a été lancé
+        DrawText(TextFormat("%d", jeu->Listede[i].action), x + 20, y + 15, 20, BLACK);
+    }
+}
+
+bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris) {
+    for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
+        int x = PANEL_X + 10;
+        int y = PANEL_Y + 10 + i * (DIE_H + 6);
+        Rectangle rect = { (float)x, (float)y, (float)DIE_H, (float)DIE_H };
+
+        // Si la souris est sur le dé ET que l'utilisateur vient de faire un clic gauche
+        if (CheckCollisionPointRec(pos_souris, rect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            jeu->Listede[i].selectionne = !jeu->Listede[i].selectionne; // Toggle sélection
             return true;
         }
-	}
+    }
+    return false; // TRÈS IMPORTANT : renvoyer false si rien n'est cliqué !
 }
 
 int PE(float pourcentage, float valeur) { //sa sert surtout pour des pourcentages de l'écran, pour des écrans de taille différents

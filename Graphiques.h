@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include <stdbool.h>
+#include "Logique.h"
 
 #define BOARD_X      20        // coin haut-gauche du plateau
 #define BOARD_Y      20
@@ -40,10 +41,7 @@ static const char* NOM_FACE[] = {
 // =============================================================
 //  Fonctions
 // =============================================================
-void initialiser_fenetre(void);
-
-void afficher_arriere_plan(void);   // fond + plateau + panneau vide
-void afficherplateau(void);         // cases 4x4 colorées
-void afficher_de(int joueur);       // dés dans le panneau latéral
-bool selectiondes(int joueur, Vector2 pos_souris);
+void afficherplateau(Jeu* jeu);
+void afficher_de(Jeu* jeu, int joueur);
+bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris);
 int PE(float pourcentage, float valeur);

@@ -4,24 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour configuration du plateau de base bool = true/false, avec false la config aléatoire
-void logiquede(int joueur);
-int possedetitanosaure(int joueur);
-int seisme(int Joueurs);
-int comptage_piont_case(int Joueurs, int ligne, int colonne);
-void deplacement_pion(void);
-void deploiment_pion(int joueur);
-void action_des(int joueur);
-void oeuf(int joueur);
-int verification_case(int joueur, int ligne, int colonne, int type_recherche);
-void selection_case(int* ligneR, int* colonneR);
-void enlever_pion(int ligne, int colonne, int joueur, int place);
-
-
+// Déclarations de structures (Pion, Case, Des, Joueur) conservées à l'identique...
 typedef struct {
-	int TypePion; // case vide : 0, cromagnon : 1, titanosaure : 2, brontosaure : 3, stégosaure : 4, ankylosaure : 5,	ptéranodon : 6, plésiosaure : 7, tricératops : 8, tyrannosaure : 9
+	int TypePion;
 	char CheminImage[100];
-	int nboeuf;//position sur les dino : 0 rien, 1 couveuse, 2 dino
+	int nboeuf;
 	int couleur;
 	int joueur;
 	bool survolcan;
@@ -34,11 +21,10 @@ typedef struct {
 	int nbpion;
 	int distance;
 } Case;
-// Chaque type de case avec le volcan : 0, l'eau : 1, la jungle : 2, la prairie : 3, la hutte : 4, la caverne : 5.
 
 typedef struct {
 	bool bloque;
-	int action; // 0 : rien, 1 : déplacement, 2 : oeuf, 3 : volcan, 4 : hutte, 5 : cave, 6 : déplacement
+	int action;
 	bool selectionne;
 } Des;
 
@@ -49,10 +35,21 @@ typedef struct {
 	int points;
 } Joueur;
 
+typedef struct {
+	Case plateau[4][4];
+	Pion PlateauPion[4][4][10];
+	Des Listede[7];
+	Joueur Joueurs[4][6];
+} Jeu;
 
-extern Pion PlateauPion[4][4][10]; //position ligne collonne + nombre de pions
-extern Pion stockpion[4][10];
-extern Case plateau[4][4];
-extern Joueur joueurs[4][6];
-extern Des Listede[7];
-extern int InventaireCase[16];
+// Fonctions
+void initialiser_plateau(Jeu* jeu, bool PlateauBase, int nbJoueurs);
+void logiquede(Jeu* jeu, int joueur);
+int possedetitanosaure(Jeu* jeu, int joueur);
+int seisme(Jeu* jeu, int joueur_actif); // Correction de variable
+int comptage_piont_case(Jeu* jeu, int joueur, int ligne, int colonne);
+void deplacement_pion(Jeu* jeu);
+void deploiment_pion(Jeu* jeu, int joueur);
+void oeuf(Jeu* jeu, int joueur);
+int verification_case(Jeu* jeu, int joueur, int ligne, int colonne, int type_recherche, int cd_recherche);
+void enlever_pion(Jeu* jeu, int ligne, int colonne, int joueur, int place);

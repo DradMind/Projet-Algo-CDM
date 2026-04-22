@@ -2,112 +2,88 @@
 #include "Logique.h"
 #include <stdbool.h>
 #include <string.h>
-#include <conio.h>
 #include "Graphiques.h"
 
-Pion PlateauPion[4][4][10];
-Pion stockpion[4][10];
-Case plateau[4][4];
-Des Listede[7];
-Pion plateaupion[4][4];
-Joueur Joueurs[4][6];
-int InventaireCase[16];
-
-void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction permet d'initialiser le plateau de jeu, soit avec une configuration de base, soit de manière aléatoire
+void initialiser_plateau(Jeu* jeu, bool PlateauBase, int nbJoueurs) {
 	srand((unsigned int)time(NULL));
-	memcpy(InventaireCase, (int[]) { 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 5 }, sizeof(InventaireCase)); //permet d'initialiser l'inventaire des cases avec les bonnes quantités de chaque type de case
-	int temp[16]; // le tableau temporaire pour le mélange aléatoire des cases
-	for (int i = 0; i < 16; i++) {
-		temp[i] = InventaireCase[i]; //initialisation du tableau TEMP
-	}
-	switch (nbJoueurs) { //pour le volcan avec 2,3,4 joueurs (a faire plus tard)
-	case 2:
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	}
-	if (PlateauBase) {
-		plateau[0][0].TypeCase = 1;
-		plateau[0][1].TypeCase = 1;
-		plateau[0][2].TypeCase = 3;
-		plateau[0][3].TypeCase = 4;
-		plateau[1][0].TypeCase = 3;
-		plateau[1][1].TypeCase = 2;
-		plateau[1][2].TypeCase = 2;
-		plateau[1][3].TypeCase = 2;
-		plateau[2][0].TypeCase = 1;
-		plateau[2][1].TypeCase = 3;
-		plateau[2][2].TypeCase = 0;// Volcan
-		plateau[2][3].TypeCase = 3;
-		plateau[3][0].TypeCase = 3;
-		plateau[3][1].TypeCase = 5;
-		plateau[3][2].TypeCase = 2;
-		plateau[3][3].TypeCase = 2;
 
+	// InventaireCase devient une variable locale !
+	int InventaireCase[16] = { 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 5 };
+
+	if (PlateauBase) {
+		jeu->plateau[0][0].TypeCase = 1; jeu->plateau[0][1].TypeCase = 1; jeu->plateau[0][2].TypeCase = 3; jeu->plateau[0][3].TypeCase = 4;
+		jeu->plateau[1][0].TypeCase = 3; jeu->plateau[1][1].TypeCase = 2; jeu->plateau[1][2].TypeCase = 2; jeu->plateau[1][3].TypeCase = 2;
+		jeu->plateau[2][0].TypeCase = 1; jeu->plateau[2][1].TypeCase = 3; jeu->plateau[2][2].TypeCase = 0; jeu->plateau[2][3].TypeCase = 3;
+		jeu->plateau[3][0].TypeCase = 3; jeu->plateau[3][1].TypeCase = 5; jeu->plateau[3][2].TypeCase = 2; jeu->plateau[3][3].TypeCase = 2;
 	}
 	else {
-		for (int i = 15; i > 0; i--) { //mélange aléatoirement le tableeau invetnaire case et apres le fou dans le tableau temp
+		for (int i = 15; i > 0; i--) {
 			int r = rand() % (i + 1);
-			int valeurtemp = temp[i];
-			temp[i] = temp[r];
-			temp[r] = valeurtemp;
+			int valeurtemp = InventaireCase[i];
+			InventaireCase[i] = InventaireCase[r];
+			InventaireCase[r] = valeurtemp;
 		}
-		int index_pool = 0; // prend le teableau temp et le met dans le tableau 2D plateau
+		int index_pool = 0;
 		for (int x = 0; x < 4; x++) {
 			for (int y = 0; y < 4; y++) {
-				plateau[x][y].TypeCase = temp[index_pool++];
+				jeu->plateau[x][y].TypeCase = InventaireCase[index_pool++];
 			}
 		}
 	}
-	for (int i = 0; i < 4; i++) { // cette boucle permet d'initialiser les pions de chaque joueur dans leur réserve et aussi le plateau de jeu de pions
-		for (int j = 0; j < 4; j++) {
-			plateaupion[i][j].TypePion = 0;
-		}
+
+	// Initialisation propre
+	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 6; j++) {
-			Joueurs[i][j].numerojoueur = i;
-			Joueurs[i][j].dino = 0;
-			Joueurs[i][j].reserve = 0;
-			Joueurs[i][j].points = 0;
+			jeu->Joueurs[i][j].numerojoueur = i;
+			jeu->Joueurs[i][j].dino = 0;
+			jeu->Joueurs[i][j].reserve = 0;
+			jeu->Joueurs[i][j].points = 0;
+		}
+	}
+
+	// Initialiser les pions à 0 pour éviter des bugs
+	for (int l = 0; l < 4; l++) {
+		for (int c = 0; c < 4; c++) {
+			for (int p = 0; p < 10; p++) {
+				jeu->PlateauPion[l][c][p].TypePion = 0;
+			}
 		}
 	}
 }
 
-
-void logiquede(int joueur) { // cette fonction permet de lancer les dés en fonction du nombre de titanosaures que le joueur possède
-	for (int j = 0; j < 5 + possedetitanosaure(joueur); j++) {
-		if (!Listede[j].bloque) {
-			Listede[j].action = rand() % 6; // Génère une action aléatoire entre 0 et 5
+void logiquede(Jeu* jeu, int joueur) {
+	for (int j = 0; j < 5 + possedetitanosaure(jeu, joueur); j++) {
+		if (!jeu->Listede[j].bloque) {
+			jeu->Listede[j].action = rand() % 6;
 		}
 	}
 }
 
-int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nombre de titanosaure que possède le joueur
+int possedetitanosaure(Jeu* jeu, int joueur) {
 	int nbtitanosaurus = 0;
 	for (int i = 0; i < 6; i++) {
-		if (Joueurs[joueur][i].dino == 1) {
+		if (jeu->Joueurs[joueur][i].dino == 1) {
 			nbtitanosaurus++;
 		}
 	}
 	return nbtitanosaurus;
 }
 
-int seisme(int Joueurs) {
+int seisme(Jeu* jeu, int Joueurs) {
 	int ligne = 0;
 	int colonne = 0;
 	int seisme = 0;
 	for (int i = 0; i < 4; i++) {						// cette boucle permet de trouver la position du volcan sur le plateau
-		for (int j = 0; i < 4; j++) {
-			if (plateau[i][j].TypeCase == 0) {
+		for (int j = 0; j < 4; j++) {
+			if (jeu->plateau[i][j].TypeCase == 0) {
 				ligne = i;
 				colonne = j;
 			}
 		}
 	}
-	int pions_j = comptage_piont_case(Joueurs, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
+	int pions_j = comptage_piont_case(jeu, Joueurs, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
 
-	int moitie = (plateau[ligne][colonne].nbpion) / 2;
+	int moitie = (jeu->plateau[ligne][colonne].nbpion) / 2;
 	if (moitie <= pions_j) {
 		seisme = 1;
 	}
@@ -157,17 +133,17 @@ int seisme(int Joueurs) {
 }
 
 
-int comptage_piont_case(int Joueurs, int ligne, int colonne) {
+int comptage_piont_case(Jeu* jeu, int Joueurs, int ligne, int colonne) {
 	int pions_j = 0;
 	for (int i = 0; i < 10; i++) {
-		if (PlateauPion[ligne][colonne][i].joueur == Joueurs) {
+		if (jeu->PlateauPion[ligne][colonne][i].joueur == Joueurs) {
 			pions_j++;
 		}
 	}
 	return pions_j;
 }
 
-void deplacement_pion() {
+void deplacement_pion(Jeu* jeu) {
 	int ligne, colonne;	//selection case d'origine avec le deplacement par les touches directionnelles
 
 
@@ -181,12 +157,12 @@ void deplacement_pion() {
 	// deplacement du pion
 }
 
-void deploiment_pion(int joueur) {
-	if (Joueurs[joueur][0].reserve > 0) { // vérification de la présence d'un pion dans la réserve du joueur
-		Joueurs[joueur][0].reserve--; // si oui, on enlève un pion de la réserve
+void deploiment_pion(Jeu* jeu, int joueur) {
+	if (jeu->Joueurs[joueur][0].reserve > 0) { // vérification de la présence d'un pion dans la réserve du joueur
+		jeu->Joueurs[joueur][0].reserve--; // si oui, on enlève un pion de la réserve
 		for (int l = 0; l < 4; l++) {
 			for (int c = 0; c < 4; c++) {
-				if (plateau[l][c].TypeCase == 0) { // vérification de la position du déploiement (si c'est une hutte ou une caverne)
+				if (jeu->plateau[l][c].TypeCase == 0) { // vérification de la position du déploiement (si c'est une hutte ou une caverne)
 				}
 			}
 		}
@@ -215,9 +191,9 @@ void deploiment_pion(int joueur) {
 				//résolution
 }
 
-void oeuf(int joueur) {
-	if (Joueurs[joueur][0].reserve > 0) {
-		Joueurs[joueur][0].reserve--; Joueurs[joueur][0].dino++;
+void oeuf(Jeu* jeu, int joueur) {
+	if (jeu->Joueurs[joueur][0].reserve > 0) {
+		jeu->Joueurs[joueur][0].reserve--; jeu->Joueurs[joueur][0].dino++;
 	}
 	else {
 		int choix;
@@ -232,12 +208,12 @@ void oeuf(int joueur) {
 	}
 }
 
-int verification_case(int	joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
+int verification_case(Jeu* jeu, int joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
 	int place = 0;
 	int presence = 0;
 	if (cd_recherche == 0) {
-		while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
-			if (PlateauPion[ligne][colonne][place].joueur == joueur && PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
+		while (jeu->PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
+			if (jeu->PlateauPion[ligne][colonne][place].joueur == joueur && jeu->PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
 				presence++;
 
 			}
@@ -246,7 +222,7 @@ int verification_case(int	joueur, int ligne, int colonne, int type_recherche, in
 		}
 	}
 	else if (cd_recherche >= 1) {
-		if (plateau[ligne][colonne].distance >= cd_recherche) {
+		if (jeu->plateau[ligne][colonne].distance >= cd_recherche) {
 			presence++;
 		}
 		//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
@@ -256,8 +232,8 @@ int verification_case(int	joueur, int ligne, int colonne, int type_recherche, in
 	}
 }
 
-void enlever_pion(int ligne, int colonne, int joueur, int place) {
-	PlateauPion[ligne][colonne][place].TypePion = 0;
+void enlever_pion(Jeu* jeu, int ligne, int colonne, int joueur, int place) {
+	jeu->PlateauPion[ligne][colonne][place].TypePion = 0;
 }
 
 
