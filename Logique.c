@@ -448,14 +448,14 @@ void selection_case(int* ligneR, int* colonneR, int joueur, int p_rechercher, in
 		//afficher le contour de la case qui vient d'être sélectionné
 
 	} while (touche != "entrer"); // Vérifie la fin de la sélection avec la touche Entrée}
-}while (vérification_case(joueur, ligne, colonne, p_rechercher, c_rechercher) == 0); // Vérifie que la case sélectionnée contient bien le type de pion recherché pour le joueur
+}while (verification_case(joueur, ligne, colonne, p_rechercher, c_rechercher) == 0); // Vérifie que la case sélectionnée contient bien le type de pion recherché pour le joueur
 	
 	*ligneR = ligne;
 	*colonneR = colonne;
 
 }
 
-int vérification_case(int	joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
+int verification_case(int	joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
 	int place = 0;
 	int présence = 0;
 	if (cd_recherche == 0) {
@@ -479,7 +479,7 @@ int vérification_case(int	joueur, int ligne, int colonne, int type_recherche, i
 	}
 }
 
-int vérife_dis(int ligne, int colonne, int d_max) {
+int verife_dis(int ligne, int colonne, int d_max) {
 
 	if (Case[ligne][colonne].distance >= cd_rechercher) {
 		présence++;
