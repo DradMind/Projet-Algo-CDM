@@ -1,12 +1,8 @@
 #pragma once
 #include "raylib.h"
 #include <stdbool.h>
-
-// =============================================================
-//  Résolution et layout
-// =============================================================
-#define WINDOW_W    640
-#define WINDOW_H    480
+#define WINDOW_W    1920
+#define WINDOW_H    1080
 #define TARGET_FPS   60
 
 #define BOARD_X      20        // coin haut-gauche du plateau

@@ -3,15 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <conio.h>
-#include <windows.h>
-#include <Graphiques.h>
-
-
-#define FACE_VOLCAN 0
-#define FACE_CAVERNE 1
-#define FACE_HUTTE 2
-#define FACE_EMPREINTE 3
-#define FACE_OEUF 4
+#include "Graphiques.h"
 
 Pion PlateauPion[4][4][10];
 Pion stockpion[4][10];
@@ -83,21 +75,10 @@ void initialiser_plateau(bool PlateauBase, int nbJoueurs) { // cette fonction pe
 }
 
 
-int lire_touche() { // cette fonction permet de lire la valeur code d'une touche de clavier genre 'z', 'q', 's', 'd' pour les déplacements et les flèches pour la sélection des dés
-	if (_kbhit()) {
-		int c = _getch();
-		if (c == 0 || c == 224) { // Touche spéciale (Flèches)
-			return _getch(); // Retourne le code spécifique (72=Haut, 80=Bas, 75=Gauche, 77=Droite)
-		}
-		return c; // Retourne le caractère (ex: 'z', 'q', etc.)
-	}
-	return -1; //pas d'action
-}
-
 void logiquede(int joueur) { // cette fonction permet de lancer les dés en fonction du nombre de titanosaures que le joueur possède
 	for (int j = 0; j < 5 + possedetitanosaure(joueur); j++) {
 		if (!Listede[j].bloque) {
-			Listede[j].action = rand() % 6 ; // Génère une action aléatoire entre 0 et 5
+			Listede[j].action = rand() % 6; // Génère une action aléatoire entre 0 et 5
 		}
 	}
 }
@@ -114,25 +95,26 @@ int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nom
 
 bool selectiondes() { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
 	static int valeurtableau = 0;
-	int touche = lire_touche();
-	switch(touche) {
-		case 72: // flèche du haut
-			valeurtableau--;
-			if (valeurtableau < 0) valeurtableau = 0;
-			break;
-		case 80: // flèche du bas
-			valeurtableau++;
-			if (valeurtableau > 6) valeurtableau = 6;
-			break;
-		case 13: // Touche entrer
-			return true;
-		case 'b':
-			if (Listede[valeurtableau].bloque) { // inverse la valeur de bloque du dé sélectionné, si il est bloqué il devient débloqué et inversement
-				Listede[valeurtableau].bloque = false;
-			} else {
-				Listede[valeurtableau].bloque = true;
-			}
-			break;
+	int touche = 0;
+	switch (touche) {
+	case 72: // flèche du haut
+		valeurtableau--;
+		if (valeurtableau < 0) valeurtableau = 0;
+		break;
+	case 80: // flèche du bas
+		valeurtableau++;
+		if (valeurtableau > 6) valeurtableau = 6;
+		break;
+	case 13: // Touche entrer
+		return true;
+	case 'b':
+		if (Listede[valeurtableau].bloque) { // inverse la valeur de bloque du dé sélectionné, si il est bloqué il devient débloqué et inversement
+			Listede[valeurtableau].bloque = false;
+		}
+		else {
+			Listede[valeurtableau].bloque = true;
+		}
+		break;
 	}
 
 	for (int i = 0; i < 7; i++) {
@@ -143,28 +125,13 @@ bool selectiondes() { // cette fonction permet de demander au joueur quels dés 
 
 }
 
-void LogiqueCurseur(int* curseur_x, int* curseur_y, bool* partie) {
-	int k = lire_touche();
-
-	// On met a jour le curseur et le plateau seulement si une touche a été pressé
-	if (k != -1) {
-		switch (k) {
-		case 72: (*curseur_y)--; break; // Haut
-		case 80: (*curseur_y)++; break; // Bas
-		case 75: (*curseur_x)--; break; // Gauche
-		case 77: (*curseur_x)++; break; // Droite
-		case 27: *partie = false; return; // Echap pour quitter
-		}
-	}
-}
-
 
 int seisme(int Joueurs) {
 	int ligne = 0;
 	int colonne = 0;
 	int seisme = 0;
-	for (int i = 0;i < 4;i++) {						// cette boucle permet de trouver la position du volcan sur le plateau
-		for (int j = 0;i < 4;j++) {
+	for (int i = 0; i < 4; i++) {						// cette boucle permet de trouver la position du volcan sur le plateau
+		for (int j = 0; i < 4; j++) {
 			if (plateau[i][j].TypeCase == 0) {
 				ligne = i;
 				colonne = j;
@@ -174,26 +141,23 @@ int seisme(int Joueurs) {
 	int pions_j = comptage_piont_case(Joueurs, ligne, colonne); // cette fonction permet de compter le nombre de pion que le joueur a sur la case du volcan
 
 	int moitie = (plateau[ligne][colonne].nbpion) / 2;
-	if ( moitie <= pions_j ){
-		seisme= 1;
+	if (moitie <= pions_j) {
+		seisme = 1;
 	}
 
 	// rajouter une vérification pour le stégosaure qui peut activer le séisme même si il n'a pas la moitié des pions sur le volcan
 
-	if (seisme=1) {
-		int choix_direction;
+	if (seisme = 1) {
+		int choix_direction = 0;
 		//selection de la direction
 		printf("choisissez la ligne (1) ou la colonne (2)  ");
-		scanf("%d", &choix_direction);
 		// selection du sens
-		int choix_sens;
+		int choix_sens = 0;
 		if (choix_direction == 2) {
 			printf("choisissez le sens : haut (1) ou bas (2)  ");
-			scanf("%d", &choix_sens);
 		}
 		else {
 			printf("choisissez le sens : gauche (1) ou droite (2)  ");
-			scanf("%d", &choix_sens);
 		}
 
 
@@ -226,120 +190,7 @@ int seisme(int Joueurs) {
 }
 
 
-void action_des(int joueur) { // je vais exploser g niquer toute la fonction
-	int nb_actions[6] = { 0 };
-	int total_des = 5 + possedetitanosaure(joueur);
-
-	// 1. Comptabiliser toutes les faces obtenues à la fin des lancers
-	for (int i = 0; i < total_des; i++) {
-		nb_actions[Listede[i].action]++;
-	}
-
-	// 2. Action Volcan OBLIGATOIRE
-	while (nb_actions[FACE_VOLCAN] > 0) {
-		bouger_curseur(0, 50); // Ajustez la position Y pour ne pas casser votre plateau
-		printf("\x1b[31mAction Volcan OBLIGATOIRE ! Appuyez sur Entree pour placer un pion.\x1b[0m\n");
-
-		// Attente de l'action du joueur (à lier avec une future fonction de placement)
-		int touche = -1;
-		while (touche != 13) {
-            touche = lire_touche();
-            Sleep(10); }
-
-		// Exemple d'appel futur : placement_volcan(joueur);
-		nb_actions[FACE_VOLCAN]--;
-	}
-
-	// 3. Actions FACULTATIVES avec Menu Interactif
-	int selection = 0;
-	bool fin_tour = false;
-
-	// On efface la zone avant de commencer
-	bouger_curseur(0, 50);
-	printf("\x1b[2K"); // Efface la ligne
-
-	while (!fin_tour) {
-		// --- LOGIQUE DES TOUCHES ---
-		int touche = lire_touche();
-		if (touche != -1) {
-			switch (touche) {
-			case 72: // Flèche du HAUT
-				selection--;
-				if (selection < 0) selection = 4; // Fait une boucle
-				break;
-			case 80: // Flèche du BAS
-				selection++;
-				if (selection > 4) selection = 0; // Fait une boucle
-				break;
-			case 13: // Touche ENTRÉE
-				if (selection == 0 && nb_actions[FACE_CAVERNE] > 0) {
-					deploiment_pion(); // Appel à votre fonction existante
-					nb_actions[FACE_CAVERNE]--;
-				}
-				else if (selection == 1 && nb_actions[FACE_HUTTE] > 0) {
-					deploiment_pion(); // Appel à votre fonction existante
-					nb_actions[FACE_HUTTE]--;
-				}
-				else if (selection == 2 && nb_actions[FACE_EMPREINTE] > 0) {
-					deplacement_pion(); // Appel à votre fonction existante
-					nb_actions[FACE_EMPREINTE]--;
-				}
-				else if (selection == 3 && nb_actions[FACE_OEUF] > 0) {
-					oeuf(joueur); // Appel à votre fonction existante
-					nb_actions[FACE_OEUF]--;
-				}
-				else if (selection == 4) {
-					fin_tour = true; // Le joueur décide de s'arrêter
-				}
-				break;
-			}
-		}
-
-		// --- VÉRIFICATION AUTOMATIQUE ---
-		// S'il n'y a plus aucune action possible, on force la fin du tour
-		//NON !!!!!! le joueur peut toujours faire éclore un œuf même s'il n'a plus d'action de ce type !!!!!
-		if (nb_actions[FACE_CAVERNE] == 0 && nb_actions[FACE_HUTTE] == 0 &&
-			nb_actions[FACE_EMPREINTE] == 0 && nb_actions[FACE_OEUF] == 0) {
-			fin_tour = true;
-		}
-
-		// --- AFFICHAGE DU MENU ---
-		// Se place en dessous de votre plateau (Ajustez le Y=52 selon votre écran)
-		bouger_curseur(0, 52);
-		printf("--- CHOISISSEZ UNE ACTION (Fleches, Entree pour valider) ---\n");
-
-		// Ligne Caverne
-		if (selection == 0) printf("\x1b[46m\x1b[30m"); // Fond Cyan, texte Noir si sélectionné
-		printf(" %c Caverne   (Restant : %d) \x1b[0m\x1b[K\n", (selection == 0) ? '>' : ' ', nb_actions[FACE_CAVERNE]);
-
-		// Ligne Hutte
-		if (selection == 1) printf("\x1b[46m\x1b[30m");
-		printf(" %c Hutte     (Restant : %d) \x1b[0m\x1b[K\n", (selection == 1) ? '>' : ' ', nb_actions[FACE_HUTTE]);
-
-		// Ligne Empreinte
-		if (selection == 2) printf("\x1b[46m\x1b[30m");
-		printf(" %c Empreinte (Restant : %d) \x1b[0m\x1b[K\n", (selection == 2) ? '>' : ' ', nb_actions[FACE_EMPREINTE]);
-
-		// Ligne Oeuf
-		if (selection == 3) printf("\x1b[46m\x1b[30m");
-		printf(" %c Oeuf      (Restant : %d) \x1b[0m\x1b[K\n", (selection == 3) ? '>' : ' ', nb_actions[FACE_OEUF]);
-
-		// Ligne Fin
-		if (selection == 4) printf("\x1b[46m\x1b[30m");
-		printf(" %c Terminer les actions     \x1b[0m\x1b[K\n", (selection == 4) ? '>' : ' ');
-
-		Sleep(30); // Évite de surcharger le processeur
-	}
-
-	// Effacement propre du menu une fois l'étape terminée
-	for (int i = 52; i < 59; i++) {
-		bouger_curseur(0, i);
-		printf("\x1b[2K"); // Nettoie la zone de texte pour la suite du jeu
-	}
-}
-
-
-int comptage_piont_case(int Joueurs,int ligne,int colonne){
+int comptage_piont_case(int Joueurs, int ligne, int colonne) {
 	int pions_j = 0;
 	for (int i = 0; i < 10; i++) {
 		if (PlateauPion[ligne][colonne][i].joueur == Joueurs) {
@@ -350,11 +201,9 @@ int comptage_piont_case(int Joueurs,int ligne,int colonne){
 }
 
 void deplacement_pion() {
-	int ligne, colonne;
-	selection_case(&ligne, &colonne);	//selection case d'origine avec le deplacement par les touches directionnelles
-	afficher_distance(ligne, colonne); //affiche les cases de destination possible en fonction de la position du pion sélectionné
+	int ligne, colonne;	//selection case d'origine avec le deplacement par les touches directionnelles
 
-	
+
 	//selection pion a deplacer (si il y a un dinosaure du joueur)
 	//surbrillance des cases de destination possible
 	//cheque si il y a de l'eau à proximité
@@ -365,27 +214,25 @@ void deplacement_pion() {
 	// deplacement du pion
 }
 
-void deploiment_pion(int joueur, int zone) {
+void deploiment_pion(int joueur) {
 	if (Joueurs[joueur][0].reserve > 0) { // vérification de la présence d'un pion dans la réserve du joueur
 		Joueurs[joueur][0].reserve--; // si oui, on enlève un pion de la réserve
-		for (int l = 0;l < 4;l++) {
-			for (int c = 0;c < 4;c++) {
-				if (plateau[l][c].TypeCase == zone) { // vérification de la position du déploiement (si c'est une hutte ou une caverne)
-					rajouter_pion(l, c, joueur, 1); // si oui, on ajoute un pion sur le plateau à l'emplacement correspondant
+		for (int l = 0; l < 4; l++) {
+			for (int c = 0; c < 4; c++) {
+				if (plateau[l][c].TypeCase == 0) { // vérification de la position du déploiement (si c'est une hutte ou une caverne)
 				}
 			}
 		}
-		
+
 	}
 	else {
 		int choix;
 		printf("votre réserve est vide vous allez pouvoir choisir si vous re-déployé un cromagnon du plateau (1) ou de ne pas faire l'action (0)");
-			scanf("%d", &choix);
-		if (choix == 1) {
+		if (1 == 1) {
 			int ligne, colonne;
 			do {
-				selection_case(&ligne, &colonne);
-			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
+				//selection_case(&ligne, &colonne);
+			} while (0 == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
 		}
 	}
 	//vérification de la position du déploiement (si c'est une hutte ou une caverne)
@@ -407,100 +254,43 @@ void oeuf(int joueur) {
 	}
 	else {
 		int choix;
-		printf("votre réserve est vide vous allez pouvoir choisir si vous prenez un cromagnon du plateau (1) ou de ne pas faire l'action (0)")
-			scanf("%d", &choix);
-		if (choix == 1) {
+		printf("votre réserve est vide vous allez pouvoir choisir si vous prenez un cromagnon du plateau (1) ou de ne pas faire l'action (0)");
+		if (1 == 1) {
 			int ligne, colonne;
 			do {
-				selection_case(&ligne, &colonne);
-			} while (vérification_pion(joueur, ligne, colonne, 0) == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
+				//selection_case(&ligne, &colonne);
+			} while (0 == 0); // Vérifie que le joueur a bien un cromagnon sur la case sélectionnée
 
 		}
 	}
 }
 
-
-
-
-void selection_case(int* ligneR, int* colonneR, int joueur, int p_rechercher, int cd_rechercher) {
-	int ligne = 0, colonne = 0;
-	int ligne max = 3;
-	int colonne max = 3;
-	//afficher contour case (0;0)
-	do {
-	do {
-
-		//selection case avec les touches directionnelles
-
-		int touche = lire_touche();
-		switch (touche) {
-		case 72: ligne--; break; // Haut
-		case 80: ligne++; break; // Bas
-		case 75: colonne--; break; // Gauche
-		case 77: colonne++; break; // Droite
-		}
-		if (touche != "entrer") {//effacer le contour de la case précédente
-		}
-		if (ligne < 0) ligne = ligne_max;
-		if (ligne > ligne_max) ligne = 0;
-		if (colonne < 0) colonne = colonne_max;
-		if (colonne > colonne_max) colonne = 0;
-		//afficher le contour de la case qui vient d'être sélectionné
-
-	} while (touche != "entrer"); // Vérifie la fin de la sélection avec la touche Entrée}
-}while (verification_case(joueur, ligne, colonne, p_rechercher, c_rechercher) == 0); // Vérifie que la case sélectionnée contient bien le type de pion recherché pour le joueur
-	
-	*ligneR = ligne;
-	*colonneR = colonne;
-
-}
-
 int verification_case(int	joueur, int ligne, int colonne, int type_recherche, int cd_recherche) {
 	int place = 0;
-	int présence = 0;
+	int presence = 0;
 	if (cd_recherche == 0) {
 		while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Tant qu'il y a des pions sur la case
 			if (PlateauPion[ligne][colonne][place].joueur == joueur && PlateauPion[ligne][colonne][place].TypePion == type_recherche) {// Vérifie si le pion appartient au joueur et correspond au type recherché (dino ou cromagnon)
-				présence++;
+				presence++;
 
 			}
 			place++;
 
 		}
 	}
-	else if (c_rechercher >= 1) {
-		if (Case[ligne][colonne].distance >= cd_rechercher) {
-			présence++;
+	else if (cd_recherche >= 1) {
+		if (plateau[ligne][colonne].distance >= cd_recherche) {
+			presence++;
 		}
 		//vérification de la présence recherché (dino ou cromagnon) sur la case sélectionné
 		//si type Cromagnon, selection uniquement de cromagnon
 		//si type dino, laisser le choix
-		return présence;// pour préparer la taille du tableau de sélection des pions
+		return presence;// pour préparer la taille du tableau de sélection des pions
 	}
-}
-
-int verife_dis(int ligne, int colonne, int d_max) {
-
-	if (Case[ligne][colonne].distance >= cd_rechercher) {
-		présence++;
-	}
-	return présence;
-}
-
-
-
 }
 
 void enlever_pion(int ligne, int colonne, int joueur, int place) {
-		PlateauPion[ligne][colonne][place].TypePion = 0; 
+	PlateauPion[ligne][colonne][place].TypePion = 0;
 }
 
-void rajouter_pion(int ligne, int colonne, int joueur, int type_pion) {
-	int place = 0;
-	while (PlateauPion[ligne][colonne][place].TypePion != 0) {  // Trouve la première place libre sur la case
-		place++;
-	}
-	PlateauPion[ligne][colonne][place].TypePion = type_pion; // Place le pion (1 pour cromagnon, 2 pour dino)
-	PlateauPion[ligne][colonne][place].joueur = joueur; // Associe le pion au joueur
-}
 
