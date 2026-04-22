@@ -43,5 +43,5 @@ static const char* NOM_FACE[] = {
 // =============================================================
 void afficherplateau(Jeu* jeu);
 void afficher_de(Jeu* jeu, int joueur);
-bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris);
+bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
 int PE(float pourcentage, float valeur);

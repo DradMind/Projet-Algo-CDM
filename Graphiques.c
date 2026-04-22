@@ -62,23 +62,19 @@ void afficher_de(Jeu* jeu, int joueur) {
         int y = PANEL_Y + 10 + i * (DIE_H + 6);
         Rectangle rect = { x, y, DIE_H, DIE_H };
 
-        if (jeu->Listede[i].bloque) {
-            DrawRectangleRec(rect, (Color) { 100, 100, 100, 255 }); // Gris pour les dés bloqués
-            DrawRectangleLinesEx(rect, 2, BLACK);
-            continue; // Ne pas afficher la valeur des dés bloqués
-		}
-
         // Change la couleur si le dé est sélectionné
-        Color dieColor = jeu->Listede[i].selectionne ? GREEN : LIGHTGRAY;
+        Color dieColor = jeu->Listede[i].selectionne ? GREEN : COULEUR_DE[jeu->Listede[i].action];
         DrawRectangleRec(rect, dieColor);
         DrawRectangleLinesEx(rect, 2, BLACK);
 
-        // Affiche la valeur de l'action si le dé a été lancé
-        DrawText(TextFormat("%d", jeu->Listede[i].action), x + 20, y + 15, 20, BLACK);
+        if (jeu->Listede[i].bloque) {
+            DrawRectangleRec(rect, (Color) { 255, 0, 0, 255 }); // Gris pour les dés bloqués
+            DrawRectangleLinesEx(rect, 2, BLACK);
+        }
     }
 }
 
-bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris) {
+bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
         int x = PANEL_X + 10;
         int y = PANEL_Y + 10 + i * (DIE_H + 6);
@@ -86,8 +82,14 @@ bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris) {
 
         // Si la souris est sur le dé ET que l'utilisateur vient de faire un clic gauche
         if (CheckCollisionPointRec(pos_souris, rect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            jeu->Listede[i].selectionne = !jeu->Listede[i].selectionne; // Toggle sélection
-            return true;
+            if (blocage) {
+                jeu->Listede[i].bloque = !jeu->Listede[i].bloque;
+                return true;
+            }
+            else {
+                jeu->Listede[i].selectionne = !jeu->Listede[i].selectionne; // Toggle sélection
+                return true;
+            }
         }
     }
     return false; // TRÈS IMPORTANT : renvoyer false si rien n'est cliqué !

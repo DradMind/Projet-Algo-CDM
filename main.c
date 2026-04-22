@@ -33,7 +33,7 @@ int main(void) {
 
                 // Sélection des dés à garder
                 if (!achoisides) {
-                    selectiondes(&Jeu, joueur, pos_souris); // Met en surbrillance les dés cliqués
+                    selectiondes(&Jeu, joueur, pos_souris, true); // Met en surbrillance les dés cliqués
 
                     // Si le joueur appuie sur ENTREE, on valide sa sélection pour relancer
                     if (IsKeyPressed(KEY_ENTER)) {
