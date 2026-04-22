@@ -16,8 +16,15 @@ int main(void) {
     int  etapejeu = 0;
     int  nblancer = 3;
     bool achoisides = true;
+    Vector2 pos_souris = { 0 };
+
+
+
+
 
     while (!WindowShouldClose() && partie && !fin_jeu) {
+		pos_souris = GetMousePosition();
+
 
         // ============ LOGIQUE ============
 
@@ -33,10 +40,7 @@ int main(void) {
 
                 // Sélection des dés à garder
                 if (!achoisides) {
-                    if (IsKeyPressed(KEY_UP)) { /* selectiondes() gérera ça */ }
-                    if (IsKeyPressed(KEY_DOWN)) {}
-                    if (IsKeyPressed(KEY_B)) {}
-                    if (IsKeyPressed(KEY_ENTER)) {
+                    if (selectiondes(joueur, pos_souris)) {
                         achoisides = true;          // prêt pour le prochain lancer
                         if (nblancer == 0) etapejeu = 1;
                     }
@@ -51,7 +55,6 @@ int main(void) {
 
         }
         else if (etapejeu == 1) {
-            // action_des() est encore bloquante – à convertir en state machine
             // action_des(joueur);
             etapejeu = 2;
 
@@ -76,20 +79,16 @@ int main(void) {
         afficher_de(joueur);
 
         // Messages HUD selon l'étape
-        if (etapejeu == 0) {
+        if (etapejeu == 0) { 
             if (achoisides)
-                afficher_message("ESPACE pour lancer les des", WINDOW_H - 50, YELLOW);
+                DrawText("Appuyez sur ESPACE pour lancer les dés", PANEL_X + 10, GetScreenHeight() - 50, 16, YELLOW);
             else
-                afficher_message("Fleches+B pour bloquer  ENTREE pour valider", WINDOW_H - 50, SKYBLUE);
-
-            afficher_message(TextFormat("Lancers restants : %d", nblancer), WINDOW_H - 28, LIGHTGRAY);
+                DrawText("Fleches+B pour bloquer  ENTREE pour valider", PANEL_X + 10, GetScreenHeight() - 50, 16, SKYBLUE);
+			DrawText(TextFormat("Lancers restants : %d", nblancer), PANEL_X + 10, GetScreenHeight() - 28, 16, LIGHTGRAY);
         }
 
         // Joueur actuel
-        DrawText(TextFormat("Joueur %d", joueur + 1), PANEL_X + 10, WINDOW_H - 55, 18,
-            (Color) {
-            255, 200, 60, 255
-        });
+        DrawText(TextFormat("Joueur %d", joueur + 1), PANEL_X + 10, GetScreenHeight() - 55, 18,(Color) {255, 200, 60, 255});
 
         EndDrawing();
     }

@@ -93,39 +93,6 @@ int possedetitanosaure(int joueur) { //Cette fonction permet de vérifier le nom
 	return nbtitanosaurus;
 }
 
-bool selectiondes() { // cette fonction permet de demander au joueur quels dés il veut garder après le lancer de dés
-	static int valeurtableau = 0;
-	int touche = 0;
-	switch (touche) {
-	case 72: // flèche du haut
-		valeurtableau--;
-		if (valeurtableau < 0) valeurtableau = 0;
-		break;
-	case 80: // flèche du bas
-		valeurtableau++;
-		if (valeurtableau > 6) valeurtableau = 6;
-		break;
-	case 13: // Touche entrer
-		return true;
-	case 'b':
-		if (Listede[valeurtableau].bloque) { // inverse la valeur de bloque du dé sélectionné, si il est bloqué il devient débloqué et inversement
-			Listede[valeurtableau].bloque = false;
-		}
-		else {
-			Listede[valeurtableau].bloque = true;
-		}
-		break;
-	}
-
-	for (int i = 0; i < 7; i++) {
-		Listede[i].selectionne = (i == valeurtableau);
-	}
-
-	return false;
-
-}
-
-
 int seisme(int Joueurs) {
 	int ligne = 0;
 	int colonne = 0;

@@ -1,9 +1,6 @@
 #pragma once
 #include "raylib.h"
 #include <stdbool.h>
-#define WINDOW_W    1920
-#define WINDOW_H    1080
-#define TARGET_FPS   60
 
 #define BOARD_X      20        // coin haut-gauche du plateau
 #define BOARD_Y      20
@@ -48,5 +45,5 @@ void initialiser_fenetre(void);
 void afficher_arriere_plan(void);   // fond + plateau + panneau vide
 void afficherplateau(void);         // cases 4x4 colorées
 void afficher_de(int joueur);       // dés dans le panneau latéral
-
-void afficher_message(const char* texte, int y, Color couleur); // ligne de texte HUD
+bool selectiondes(int joueur, Vector2 pos_souris);
+int PE(float pourcentage, float valeur);

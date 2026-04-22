@@ -5,10 +5,8 @@
 #include <stdlib.h>
 
 void initialiser_plateau(bool PlateauBase, int nbJoueurs); // PlateauBase pour configuration du plateau de base bool = true/false, avec false la config aléatoire
-int lire_touche();
 void logiquede(int joueur);
 int possedetitanosaure(int joueur);
-bool selectiondes();
 int seisme(int Joueurs);
 int comptage_piont_case(int Joueurs, int ligne, int colonne);
 void deplacement_pion(void);
