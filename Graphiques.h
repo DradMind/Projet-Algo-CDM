@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include "Logique.h"
 
-#define BOARD_X      20        // coin haut-gauche du plateau
-#define BOARD_Y      20
-#define CELL_PX      100       // taille d'une case en pixels
+#define PLATEAU_X      PE(9, GetScreenWidth())       // coin haut-gauche du plateau
+#define PLATEAU_Y      PE(6, GetScreenHeight())
+#define CASE      PE(10, GetScreenWidth())       // taille d'une case en pixels
 
 #define PANEL_X      440       // panneau latéral (dés)
 #define PANEL_Y      0

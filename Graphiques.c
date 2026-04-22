@@ -28,8 +28,8 @@ void initialiser_fenetre(void) {
 void afficherplateau(Jeu* jeu) {
     // Le fond marron du plateau (un peu plus grand que les cases)
     int bordure = PE(1, GetScreenWidth()); // 1% d'épaisseur
-    DrawRectangle(BOARD_X - bordure, BOARD_Y - bordure,
-        (4 * CELL_PX) + (2 * bordure), (4 * CELL_PX) + (2 * bordure),
+    DrawRectangle(PLATEAU_X - bordure, PLATEAU_Y - bordure,
+        (4 * CASE) + (2 * bordure), (4 * CASE) + (2 * bordure),
         (Color) {
         60, 50, 35, 255
     });
@@ -41,10 +41,10 @@ void afficherplateau(Jeu* jeu) {
 
             // Calcul propre de la position de chaque case
             Rectangle Case = {
-                BOARD_X + (x * CELL_PX),
-                BOARD_Y + (y * CELL_PX),
-                CELL_PX,
-                CELL_PX
+                PLATEAU_X + (x * CASE),
+                PLATEAU_Y + (y * CASE),
+                CASE,
+                CASE
             };
 
             DrawRectangleRec(Case, couleur);
