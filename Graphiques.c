@@ -68,7 +68,7 @@ bool selectiondes(int joueur, Vector2 pos_souris) { //on fait passer en pointeur
     for (int i = 0; i < 5 + possedetitanosaure(joueur); i++) {
         int x = PANEL_X + 10;
         int y = PANEL_Y + 10 + i * (DIE_H + 6);
-        Rectangle rect = { x, y, DIE_H, DIE_H };
+        Rectangle rect = { x, y, DIE_H, DIE_H }; 
         if (CheckCollisionPointRec(pos_souris, rect)) {
             Listede[i].selectionne = !Listede[i].selectionne; // Toggle sélection
             return true;
