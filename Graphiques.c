@@ -8,8 +8,8 @@ void initialiser_fenetre(void) {
     int Largeur_ecran = GetMonitorWidth(ecran);
     int Hauteur_ecran = GetMonitorHeight(ecran);
 
-    int Largeur_voulu = 1920;
-    int Hauteur_voulu = 1080;
+    int Largeur_voulu = 1280;
+    int Hauteur_voulu = 720;
 
     if (Largeur_ecran > 1920 || Hauteur_ecran > 1080) { // pour calibrer la bonne résolution entre moi et toi (et le prof)
         Largeur_voulu = 2560;

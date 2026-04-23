@@ -7,7 +7,7 @@
 #define PLATEAU_Y      PE(6, GetScreenHeight())
 #define CASE      PE(10, GetScreenWidth())       // taille d'une case en pixels
 
-#define PANEL_X      440       // panneau latéral (dés)
+#define PANEL_X      PE(100, GetScreenHeight())       // panneau latéral (dés)
 #define PANEL_Y      0
 #define PANEL_W      200
 #define DIE_H        52
