@@ -28,24 +28,15 @@ void initialiser_fenetre(void) {
 void afficherplateau(Jeu* jeu) {
     // Le fond marron du plateau (un peu plus grand que les cases)
     int bordure = PE(1, GetScreenWidth()); // 1% d'épaisseur
-    DrawRectangle(PLATEAU_X - bordure, PLATEAU_Y - bordure,
-        (4 * CASE) + (2 * bordure), (4 * CASE) + (2 * bordure),
-        (Color) {
-        60, 50, 35, 255
-    });
+    DrawRectangle(PLATEAU_X - bordure, PLATEAU_Y - bordure,(4 * CASE) + (2 * bordure), (4 * CASE) + (2 * bordure),(Color) {60, 50, 35, 255});
 
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             int type = jeu->plateau[y][x].TypeCase;
             Color couleur = (type >= 0 && type <= 5) ? COULEUR_CASE[type] : BLACK;
 
-            // Calcul propre de la position de chaque case
-            Rectangle Case = {
-                PLATEAU_X + (x * CASE),
-                PLATEAU_Y + (y * CASE),
-                CASE,
-                CASE
-            };
+            // Calcul la position de chaque case
+            Rectangle Case = {PLATEAU_X + (x * CASE), PLATEAU_Y + (y * CASE), CASE, CASE};
 
             DrawRectangleRec(Case, couleur);
             DrawRectangleLinesEx(Case, 2, (Color) { 0, 0, 0, 120 });
@@ -58,9 +49,9 @@ void afficherplateau(Jeu* jeu) {
 // -------------------------------------------------------------
 void afficher_de(Jeu* jeu, int joueur) {
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
-        int x = PANEL_X + 10;
-        int y = PANEL_Y + 10 + i * (DIE_H + 6);
-        Rectangle rect = { x, y, DIE_H, DIE_H };
+        int x = TABLEAU_X + 10;
+        int y = TABLEAU_Y + 10 + i * (DIE_H + 6);
+		Rectangle rect = { x, y, DIE_H, DIE_H }; //on créer un rectangle pour chaque dé
 
         // Change la couleur si le dé est sélectionné
         Color dieColor = jeu->Listede[i].selectionne ? GREEN : COULEUR_DE[jeu->Listede[i].action];
@@ -68,7 +59,7 @@ void afficher_de(Jeu* jeu, int joueur) {
         DrawRectangleLinesEx(rect, 2, BLACK);
 
         if (jeu->Listede[i].bloque) {
-            DrawRectangleRec(rect, (Color) { 255, 0, 0, 255 }); // Gris pour les dés bloqués
+            DrawRectangleRec(rect, (Color) { 255, 0, 0, 255 }); // Rouge pour les dés bloqués
             DrawRectangleLinesEx(rect, 2, BLACK);
         }
     }
@@ -76,8 +67,8 @@ void afficher_de(Jeu* jeu, int joueur) {
 
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
-        int x = PANEL_X + 10;
-        int y = PANEL_Y + 10 + i * (DIE_H + 6);
+        int x = TABLEAU_X + 10;
+        int y = TABLEAU_Y + 10 + i * (DIE_H + 6);
         Rectangle rect = { (float)x, (float)y, (float)DIE_H, (float)DIE_H };
 
         // Si la souris est sur le dé ET que l'utilisateur vient de faire un clic gauche

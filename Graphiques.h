@@ -7,10 +7,9 @@
 #define PLATEAU_Y      PE(6, GetScreenHeight())
 #define CASE      PE(10, GetScreenWidth())       // taille d'une case en pixels
 
-#define PANEL_X      PE(100, GetScreenHeight())       // panneau latéral (dés)
-#define PANEL_Y      0
-#define PANEL_W      200
-#define DIE_H        52
+#define TABLEAU_X      PE(50, GetScreenWidth())       // panneau latéral (dés)
+#define TABLEAU_Y      PE(6, GetScreenHeight()) 
+#define DIE_H        PE(10, GetScreenHeight())
 
 // =============================================================
 //  Couleurs des types de cases
@@ -45,3 +44,4 @@ void afficherplateau(Jeu* jeu);
 void afficher_de(Jeu* jeu, int joueur);
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
 int PE(float pourcentage, float valeur);
+void initialiser_fenetre(void);
