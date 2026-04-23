@@ -73,7 +73,7 @@ int main(void) {
             if (achoisides)
                 DrawText("Appuyez sur ESPACE pour lancer les des", PANEL_X + 10, GetScreenHeight() - 50, 16, YELLOW);
             else
-                DrawText("Cliquez les des a garder puis ENTREE", PANEL_X + 10, GetScreenHeight() - 50, 16, SKYBLUE);
+                DrawText("Cliquez les des a garder puis ENTRER", PANEL_X + 10, GetScreenHeight() - 50, 16, SKYBLUE);
 
             DrawText(TextFormat("Lancers restants : %d", nblancer), PANEL_X + 10, GetScreenHeight() - 28, 16, LIGHTGRAY);
         }
