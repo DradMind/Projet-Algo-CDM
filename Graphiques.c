@@ -3,140 +3,119 @@
 #include <stdio.h>
 
 // =============================================================
-//  Graphiques.c  –  Rendu complet style mockup
+//  PE
 // =============================================================
-
-// -------------------------------------------------------------
-//  PE  –  helper pourcentage (défini ici, déclaré dans .h)
-// -------------------------------------------------------------
 int PE(float pourcentage, float valeur) {
     return (int)(valeur / 100.0f * pourcentage);
 }
 
-// -------------------------------------------------------------
+// =============================================================
 //  Utilitaires internes
-// -------------------------------------------------------------
-
-// Dessine un rectangle arrondi avec fond + bordure
+// =============================================================
 static void carte(int x, int y, int w, int h, Color fond, Color bordure) {
     DrawRectangleRounded((Rectangle) { x, y, w, h }, 0.08f, 6, fond);
     DrawRectangleRoundedLines((Rectangle) { x, y, w, h }, 0.08f, 6, bordure);
 }
 
-// Texte centré horizontalement dans une zone
 static void texte_centre(const char* txt, int x, int y, int w, int taille, Color col) {
     int tw = MeasureText(txt, taille);
     DrawText(txt, x + (w - tw) / 2, y, taille, col);
 }
 
-// Pion (cercle avec contour)
 static void pion(int cx, int cy, int r, Color couleur) {
     DrawCircle(cx, cy, (float)r, couleur);
-    DrawCircleLines((float)cx, (float)cy, (float)(r + 1), (Color) { 0, 0, 0, 160 });
+    DrawCircleLines((float)cx, (float)cy, (float)(r + 1), (Color) { 0, 0, 0, 180 });
 }
 
-// Icône géométrique d'une case (pas d'emoji, formes raylib)
 static void icone_case(int type, int cx, int cy, int sz) {
     switch (type) {
-    case 0: // Volcan : triangle + point chaud
-        DrawTriangle(
-            (Vector2) {
-            cx, cy - sz / 2
-        },
-            (Vector2) {
-            cx - sz / 2, cy + sz / 2
-        },
+    case 0:
+        DrawTriangle((Vector2) { cx, cy - sz / 2 }, (Vector2) { cx - sz / 2, cy + sz / 2 },
             (Vector2) {
             cx + sz / 2, cy + sz / 2
-        },
-            (Color) {
-            180, 40, 0, 180
-        }
-        );
+        }, (Color) { 180, 40, 0, 180 });
         DrawCircle(cx, cy - sz / 2 + sz / 5, (float)(sz / 6), (Color) { 255, 160, 0, 220 });
         break;
-    case 1: // Eau : deux vagues
+    case 1:
         DrawRectangle(cx - sz / 2, cy - sz / 6, sz, sz / 4, (Color) { 30, 144, 255, 160 });
         DrawRectangle(cx - sz / 3, cy + sz / 6, sz * 2 / 3, sz / 5, (Color) { 30, 144, 255, 100 });
         break;
-    case 2: // Jungle : arbre (triangle + tronc)
-        DrawTriangle(
-            (Vector2) {
-            cx, cy - sz / 2
-        },
-            (Vector2) {
-            cx - sz / 2, cy + sz / 4
-        },
+    case 2:
+        DrawTriangle((Vector2) { cx, cy - sz / 2 }, (Vector2) { cx - sz / 2, cy + sz / 4 },
             (Vector2) {
             cx + sz / 2, cy + sz / 4
-        },
-            (Color) {
-            34, 139, 34, 180
-        }
-        );
+        }, (Color) { 34, 139, 34, 180 });
         DrawRectangle(cx - sz / 8, cy + sz / 4, sz / 4, sz / 4, (Color) { 100, 60, 20, 180 });
         break;
-    case 3: // Prairie : touffes d'herbe
-        for (int i = -1; i <= 1; i++)
-            DrawRectangle(cx + i * (sz / 3) - sz / 10, cy - sz / 4, sz / 5, sz / 2,
-                (Color) {
-            100, 200, 30, 180
-        });
+    case 3:
+        for (int i = -1;i <= 1;i++)
+            DrawRectangle(cx + i * (sz / 3) - sz / 10, cy - sz / 4, sz / 5, sz / 2, (Color) { 100, 200, 30, 180 });
         break;
-    case 4: // Hutte : murs + toit
+    case 4:
         DrawRectangle(cx - sz / 3, cy, sz * 2 / 3, sz / 3, (Color) { 160, 90, 30, 180 });
-        DrawTriangle(
-            (Vector2) {
-            cx, cy - sz / 6
-        },
-            (Vector2) {
-            cx - sz / 2 + 4, cy + sz / 8
-        },
+        DrawTriangle((Vector2) { cx, cy - sz / 6 }, (Vector2) { cx - sz / 2 + 4, cy + sz / 8 },
             (Vector2) {
             cx + sz / 2 - 4, cy + sz / 8
-        },
-            (Color) {
-            120, 60, 20, 180
-        }
-        );
+        }, (Color) { 120, 60, 20, 180 });
         break;
-    case 5: // Caverne : arche sombre
+    case 5:
         DrawCircle(cx, cy + sz / 4, (float)(sz / 3), (Color) { 15, 15, 15, 200 });
         DrawRectangle(cx - sz / 3, cy + sz / 4, sz * 2 / 3, sz / 4, (Color) { 35, 35, 35, 160 });
         break;
     }
 }
 
-// -------------------------------------------------------------
+// =============================================================
+//  clic_sur_plateau
+// =============================================================
+bool clic_sur_plateau(Vector2 souris, int* ligne, int* col) {
+    int bx = PLATEAU_X;
+    int by = PLATEAU_Y;
+    int cs = CASE;
+    int gap = CASE_GAP;
+
+    for (int r = 0; r < 4; r++) {
+        for (int c = 0; c < 4; c++) {
+            Rectangle rect = {
+                (float)(bx + c * (cs + gap)),
+                (float)(by + r * (cs + gap)),
+                (float)cs, (float)cs
+            };
+            if (CheckCollisionPointRec(souris, rect)) {
+                *ligne = r;
+                *col = c;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// =============================================================
 //  TOPBAR
-// -------------------------------------------------------------
+// =============================================================
 void dessiner_topbar(Jeu* jeu, int joueur) {
     int w = GetScreenWidth();
     int h = TOPBAR_H;
-
     DrawRectangle(0, 0, w, h, COL_BG_DARK);
     DrawLine(0, h, w, h, COL_BORDER_LIT);
 
-    // Titre
-    int ftaille = PE(3, GetScreenHeight());
-    DrawText("COLERE DE LA MONTAGNE DE FEU",
-        PE(2, w), (h - ftaille) / 2, ftaille, COL_ACCENT);
+    int ft = PE(3, GetScreenHeight());
+    DrawText("COLERE DE LA MONTAGNE DE FEU", PE(2, w), (h - ft) / 2, ft, COL_ACCENT);
 
-    // Chips joueurs (droite)
     int r = PE(2, GetScreenHeight());
     int chip_x = PE(80, w);
-    int chip_cy = h / 2;
+    int chip_y = h / 2;
     for (int i = 0; i < 4; i++) {
         Color c = COULEUR_JOUEUR[i];
         if (i != joueur) c.a = 70;
         int cx = chip_x + i * (r * 2 + PE(1, w));
-        DrawCircle(cx, chip_cy, (float)r, c);
+        DrawCircle(cx, chip_y, (float)r, c);
         if (i == joueur)
-            DrawCircleLines((float)cx, (float)chip_cy, (float)(r + 2), COL_TEXT_BRIGHT);
-        char lbl[3];
-        snprintf(lbl, sizeof(lbl), "J%d", i + 1);
+            DrawCircleLines((float)cx, (float)chip_y, (float)(r + 2), COL_TEXT_BRIGHT);
+        char lbl[3]; snprintf(lbl, sizeof(lbl), "J%d", i + 1);
         int lw = MeasureText(lbl, PE(2, GetScreenHeight()));
-        DrawText(lbl, cx - lw / 2, chip_cy - PE(1, GetScreenHeight()),
+        DrawText(lbl, cx - lw / 2, chip_y - PE(1, GetScreenHeight()),
             PE(2, GetScreenHeight()),
             (Color) {
             255, 255, 255, i == joueur ? 220 : 100
@@ -144,48 +123,77 @@ void dessiner_topbar(Jeu* jeu, int joueur) {
     }
 }
 
-// -------------------------------------------------------------
-//  PLATEAU 4×4
-// -------------------------------------------------------------
-void afficherplateau(Jeu* jeu) {
+// =============================================================
+//  PLATEAU  (avec surbrillance selon EtatAction)
+// =============================================================
+void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
     int bx = PLATEAU_X;
     int by = PLATEAU_Y;
     int cs = CASE;
     int gap = CASE_GAP;
+    int tot = 4 * cs + 3 * gap;
 
-    // Fond du plateau
-    int total = 4 * cs + 3 * gap;
-    DrawRectangleRounded((Rectangle) { bx - 8, by - 8, total + 16, total + 16 },
-        0.04f, 4, (Color) { 12, 8, 3, 255 });
-    DrawRectangleRoundedLines((Rectangle) { bx - 8, by - 8, total + 16, total + 16 },
-        0.04f, 4, COL_BORDER);
+    DrawRectangleRounded((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, (Color) { 12, 8, 3, 255 });
+    DrawRectangleRoundedLines((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, COL_BORDER);
 
-    for (int col = 0; col < 4; col++) {
-        for (int row = 0; row < 4; row++) {
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
             int type = jeu->plateau[row][col].TypeCase;
             int cx = bx + col * (cs + gap);
             int cy = by + row * (cs + gap);
 
             Color fond = (type >= 0 && type < 6) ? COULEUR_CASE[type] : COL_BG_MID;
             Color bordure = (type >= 0 && type < 6) ? COULEUR_CASE_BORDER[type] : COL_BORDER;
-            Color txtcol = (type >= 0 && type < 6) ? COULEUR_CASE_LABEL[type] : COL_TEXT_DIM;
+            Color lblcol = (type >= 0 && type < 6) ? COULEUR_CASE_LABEL[type] : COL_TEXT_DIM;
 
-            // Halo pour le volcan
+            // Halo volcan
             if (type == 0)
-                DrawRectangleRounded((Rectangle) { cx - 3, cy - 3, cs + 6, cs + 6 },
-                    0.1f, 4, (Color) { 255, 60, 0, 40 });
+                DrawRectangleRounded((Rectangle) { cx - 3, cy - 3, cs + 6, cs + 6 }, 0.1f, 4, (Color) { 255, 60, 0, 40 });
+
+            // ── Surbrillance selon l'état d'action ──
+            if (ea != NULL) {
+                bool hl_vert = false;
+                bool hl_orange = false;
+
+                if (ea->sous_etat == ACTION_DEPLOYER_CASE) {
+                    int type_cible = (ea->action_en_cours == 1) ? 5 : 4;
+                    if (type == type_cible && jeu->Joueurs[joueur].reserve > 0)
+                        hl_vert = true;
+                }
+                else if (ea->sous_etat == ACTION_DEPLACER_ORIGINE) {
+                    if (compter_pions_joueur(jeu, joueur, row, col) > 0 && type != 0)
+                        hl_vert = true;
+                }
+                else if (ea->sous_etat == ACTION_DEPLACER_DEST) {
+                    if (row == ea->orig_ligne && col == ea->orig_col)
+                        hl_orange = true; // case source sélectionnée
+                    else if (case_adjacente(ea->orig_ligne, ea->orig_col, row, col))
+                        hl_vert = true;
+                }
+
+                if (hl_vert)
+                    DrawRectangleRounded((Rectangle) { cx - 4, cy - 4, cs + 8, cs + 8 }, 0.1f, 4,
+                        (Color) {
+                    42, 180, 42, 60
+                });
+                if (hl_orange)
+                    DrawRectangleRounded((Rectangle) { cx - 4, cy - 4, cs + 8, cs + 8 }, 0.1f, 4,
+                        (Color) {
+                    240, 140, 0, 80
+                });
+                if (hl_vert)
+                    bordure = COL_VALID;
+                if (hl_orange)
+                    bordure = COL_ACCENT;
+            }
 
             DrawRectangleRounded((Rectangle) { cx, cy, cs, cs }, 0.1f, 8, fond);
             DrawRectangleRoundedLines((Rectangle) { cx, cy, cs, cs }, 0.1f, 8, bordure);
 
-            // Icône au centre
-            icone_case(type, cx + cs / 2, cy + cs / 2 - PE(1, GetScreenHeight()),
-                cs / 3);
+            icone_case(type, cx + cs / 2, cy + cs / 2 - PE(1, GetScreenHeight()), cs / 3);
 
-            // Nom de la case
-            int ftaille = PE(1, GetScreenHeight());
-            texte_centre(NOM_CASE[type], cx, cy + cs - ftaille - PE(1, GetScreenHeight()),
-                cs, ftaille, txtcol);
+            int ft = PE(1, GetScreenHeight());
+            texte_centre(NOM_CASE[type], cx, cy + cs - ft - PE(1, GetScreenHeight()), cs, ft, lblcol);
 
             // Pions
             int nb = 0;
@@ -195,15 +203,12 @@ void afficherplateau(Jeu* jeu) {
             int pr = cs / 9;
             int spacing = pr * 2 + 2;
             int startx = cx + (cs - nb * spacing + 2) / 2;
-
             int drawn = 0;
             for (int p = 0; p < 10 && drawn < nb; p++) {
                 if (jeu->PlateauPion[row][col][p].TypePion != 0) {
                     int pj = jeu->PlateauPion[row][col][p].joueur;
                     Color pc = (pj >= 0 && pj < 4) ? COULEUR_JOUEUR[pj] : COL_TEXT;
-                    pion(startx + drawn * spacing + pr,
-                        cy + cs - pr - PE(1, GetScreenHeight()),
-                        pr, pc);
+                    pion(startx + drawn * spacing + pr, cy + cs - pr - PE(1, GetScreenHeight()), pr, pc);
                     drawn++;
                 }
             }
@@ -211,80 +216,90 @@ void afficherplateau(Jeu* jeu) {
     }
 }
 
-// -------------------------------------------------------------
+// =============================================================
+//  MARQUEUR VOLCAN (barre de progression)
+// =============================================================
+void dessiner_marqueur_volcan(Jeu* jeu) {
+    int bx = PLATEAU_X;
+    int by = PLATEAU_Y + 4 * (CASE + CASE_GAP) + PE(1, GetScreenHeight());
+    int w = 4 * (CASE + CASE_GAP) - CASE_GAP;
+    int h = PE(2, GetScreenHeight());
+    int pip = (w - 5 * PE(1, GetScreenWidth())) / 6;
+
+    DrawText("VOLCAN", bx, by, PE(2, GetScreenHeight()), (Color) { 255, 80, 16, 255 });
+    int tx = bx + PE(7, GetScreenWidth());
+    for (int i = 0; i < 6; i++) {
+        Color c = (i < jeu->marqueur_volcan)
+            ? (Color) { 255, 60, 0, 255 }
+        : (Color) { 40, 15, 5, 255 };
+        Color bc = (i < jeu->marqueur_volcan)
+            ? (Color) { 255, 120, 40, 255 }
+        : COL_BORDER;
+        DrawRectangleRounded((Rectangle) { tx + i * (pip + PE(1, GetScreenWidth())), by, pip, h },
+            0.3f, 4, c);
+        DrawRectangleRoundedLines((Rectangle) { tx + i * (pip + PE(1, GetScreenWidth())), by, pip, h },
+            0.3f, 4, bc);
+    }
+    // Alerte si proche
+    if (jeu->marqueur_volcan >= 4) {
+        int ft = PE(2, GetScreenHeight());
+        DrawText("ERUPTION IMMINENTE !",
+            tx + 6 * (pip + PE(1, GetScreenWidth())) + PE(1, GetScreenWidth()),
+            by, ft, (Color) { 255, 80, 0, 255 });
+    }
+}
+
+// =============================================================
 //  PANNEAU DÉS
-// -------------------------------------------------------------
+// =============================================================
 void dessiner_panel_des(Jeu* jeu, int joueur) {
     int px = PANEL_X;
     int pw = PANEL_W;
     int sh = GetScreenHeight();
 
-    // Fond
     DrawRectangle(px, TOPBAR_H, pw, sh - TOPBAR_H, COL_BG_DARK);
     DrawLine(px, TOPBAR_H, px, sh, COL_BORDER_LIT);
 
     int y = TOPBAR_H + PE(2, sh);
-
-    // --- Titre ---
     int ftitle = PE(2, sh);
     DrawText("DES", px + PE(2, pw), y, ftitle, COL_ACCENT);
     y += ftitle + PE(1, sh);
     DrawLine(px + PE(2, pw), y, px + pw - PE(2, pw), y, COL_BORDER);
     y += PE(1, sh);
 
-    // --- Dés ---
     int nb_des = 5 + possedetitanosaure(jeu, joueur);
     int face_sz = PE(5, sh);
-    int row_h = DIE_H;
     int fsmall = PE(2, sh);
 
     for (int i = 0; i < nb_des; i++) {
-        int action = jeu->Listede[i].action;
+        int  action = jeu->Listede[i].action;
         bool lock = jeu->Listede[i].bloque;
         bool sel = jeu->Listede[i].selectionne;
 
         int rx = TABLEAU_X;
-        int ry = TABLEAU_Y + i * (row_h + PE(1, sh));
+        int ry = TABLEAU_Y + i * (DIE_H + PE(1, sh));
 
-        // Fond ligne sélectionnée
         if (sel)
-            carte(rx - 4, ry - 3, pw - PE(3, pw), row_h + 6,
-                (Color) {
-            13, 26, 13, 255
-        }, (Color) { 42, 106, 42, 255 });
+            carte(rx - 4, ry - 3, pw - PE(3, pw), DIE_H + 6, (Color) { 13, 26, 13, 255 }, (Color) { 42, 106, 42, 255 });
 
-        // Dé bloqué : fond rouge, sinon couleur de la face
-        Color fond_de = lock ? (Color) { 100, 20, 10, 255 }
-        : COULEUR_DE[action];
-        DrawRectangleRounded((Rectangle) { rx, ry, face_sz, face_sz },
-            0.15f, 6, fond_de);
-        DrawRectangleRoundedLines((Rectangle) { rx, ry, face_sz, face_sz },
-            0.15f, 6, lock ? RED : BLACK);
+        Color fond_de = lock ? (Color) { 100, 20, 10, 255 } : COULEUR_DE[action];
+        DrawRectangleRounded((Rectangle) { rx, ry, face_sz, face_sz }, 0.15f, 6, fond_de);
+        DrawRectangleRoundedLines((Rectangle) { rx, ry, face_sz, face_sz }, 0.15f, 6, lock ? RED : BLACK);
 
-        // Sigle court
         const char* sigles[] = { "VOL","CAV","HUT","EMP","OEU","DEP" };
         int sw = MeasureText(sigles[action], fsmall - 2);
-        DrawText(sigles[action],
-            rx + (face_sz - sw) / 2,
-            ry + (face_sz - (fsmall - 2)) / 2,
-            fsmall - 2,
-            (Color) {
-            255, 255, 255, 200
-        });
+        DrawText(sigles[action], rx + (face_sz - sw) / 2, ry + (face_sz - (fsmall - 2)) / 2,
+            fsmall - 2, (Color) { 255, 255, 255, 200 });
 
-        // Nom + état
-        int tx = rx + face_sz + PE(1, pw);
-        DrawText(NOM_FACE[action], tx, ry + PE(1, sh), fsmall, COL_TEXT);
-
+        int tx2 = rx + face_sz + PE(1, pw);
+        DrawText(NOM_FACE[action], tx2, ry + PE(1, sh), fsmall, COL_TEXT);
         if (lock)
-            DrawText("BLOQUE", tx, ry + PE(1, sh) + fsmall + 2,
-                fsmall - 2, (Color) { 220, 60, 30, 255 });
+            DrawText("BLOQUE", tx2, ry + PE(1, sh) + fsmall + 2, fsmall - 2, (Color) { 220, 60, 30, 255 });
         else if (sel)
-            DrawText("selectionne", tx, ry + PE(1, sh) + fsmall + 2,
-                fsmall - 2, (Color) { 42, 180, 42, 255 });
+            DrawText("selectionne", tx2, ry + PE(1, sh) + fsmall + 2, fsmall - 2, (Color) { 42, 180, 42, 255 });
     }
 
-    // --- Scores ---
+    // Scores
     int sy = TOPBAR_H + PE(58, sh);
     DrawLine(px + PE(2, pw), sy, px + pw - PE(2, pw), sy, COL_BORDER);
     sy += PE(1, sh);
@@ -293,42 +308,80 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
 
     for (int i = 0; i < 4; i++) {
         bool actif = (i == joueur);
-        int ry = sy + i * (PE(5, sh) + PE(1, sh));
-        Color fond_s = actif ? (Color) { 22, 15, 6, 255 } : COL_BG_MID;
-        Color bord_s = actif ? COL_BORDER_LIT : COL_BORDER;
-        carte(px + PE(2, pw), ry, pw - PE(4, pw), PE(5, sh), fond_s, bord_s);
-
-        pion(px + PE(4, pw) + PE(2, sh),
-            ry + PE(2, sh) + 2,
-            PE(2, sh), COULEUR_JOUEUR[i]);
-
-        char nom[12];
-        snprintf(nom, sizeof(nom), "Joueur %d", i + 1);
-        DrawText(nom,
-            px + PE(4, pw) + PE(5, sh),
-            ry + (PE(5, sh) - PE(2, sh)) / 2,
-            PE(2, sh),
-            actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
-
-        char pts[8];
-        snprintf(pts, sizeof(pts), "%d", jeu->Joueurs[i][0].points);
+        int ry2 = sy + i * (PE(5, sh) + PE(1, sh));
+        carte(px + PE(2, pw), ry2, pw - PE(4, pw), PE(5, sh),
+            actif ? (Color) { 22, 15, 6, 255 } : COL_BG_MID,
+            actif ? COL_BORDER_LIT : COL_BORDER);
+        pion(px + PE(4, pw) + PE(2, sh), ry2 + PE(2, sh) + 2, PE(2, sh), COULEUR_JOUEUR[i]);
+        char nom[12]; snprintf(nom, sizeof(nom), "Joueur %d", i + 1);
+        DrawText(nom, px + PE(4, pw) + PE(5, sh), ry2 + (PE(5, sh) - PE(2, sh)) / 2,
+            PE(2, sh), actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
+        char pts[8]; snprintf(pts, sizeof(pts), "%d", jeu->Joueurs[i].points);
         int ptw = MeasureText(pts, PE(3, sh));
-        DrawText(pts,
-            px + pw - PE(4, pw) - ptw,
-            ry + (PE(5, sh) - PE(3, sh)) / 2,
-            PE(3, sh),
-            actif ? COL_ACCENT : COL_TEXT_DIM);
+        DrawText(pts, px + pw - PE(4, pw) - ptw, ry2 + (PE(5, sh) - PE(3, sh)) / 2,
+            PE(3, sh), actif ? COL_ACCENT : COL_TEXT_DIM);
     }
 }
 
-// -------------------------------------------------------------
-//  INFO STRIP (bas gauche)
-// -------------------------------------------------------------
+// =============================================================
+//  MENU D'ACTIONS (affiché sous le plateau pendant étape 1)
+// =============================================================
+void dessiner_menu_actions(EtatAction* ea) {
+    if (ea->sous_etat != ACTION_MENU) return;
+
+    int bx = PLATEAU_X;
+    int by = INFO_Y;
+    int h = INFO_H;
+    int fw = PE(40, GetScreenWidth());
+    int fh = h / 5;
+    int ft = PE(2, GetScreenHeight());
+
+    carte(bx, by, fw, h, COL_BG_DARK, COL_BORDER_LIT);
+    DrawText("CHOISIR UNE ACTION", bx + PE(2, fw), by + fh / 2, ft - 2, COL_ACCENT_DIM);
+
+    const char* labels[] = { "Caverne", "Hutte", "Empreinte", "Terminer le tour" };
+    const int   faces[] = { 1, 2, 3, -1 };
+    const char* suffixes[] = { "", "", "", "" };
+    char buf[32];
+
+    for (int i = 0; i < 4; i++) {
+        int ry = by + fh + i * (fh + 2);
+        bool sel = (ea->selection_menu == i);
+        bool dispo = (faces[i] == -1) || (ea->nb_actions[faces[i]] > 0);
+
+        Color fond_l = sel ? (Color) { 30, 22, 10, 255 } : COL_BG_MID;
+        Color bord_l = sel ? COL_ACCENT : COL_BORDER;
+        Color txt_col = dispo ? (sel ? COL_TEXT_BRIGHT : COL_TEXT) : COL_TEXT_DIM;
+
+        carte(bx + PE(1, fw), ry, fw - PE(2, fw), fh, fond_l, bord_l);
+
+        if (sel) DrawText(">", bx + PE(2, fw), ry + (fh - ft) / 2, ft, COL_ACCENT);
+
+        if (faces[i] != -1) {
+            snprintf(buf, sizeof(buf), "%s  (%d restant%s)",
+                labels[i],
+                ea->nb_actions[faces[i]],
+                ea->nb_actions[faces[i]] > 1 ? "s" : "");
+        }
+        else {
+            snprintf(buf, sizeof(buf), "%s", labels[i]);
+        }
+        DrawText(buf, bx + PE(5, fw), ry + (fh - ft) / 2, ft, txt_col);
+    }
+
+    // Aide touches
+    int help_y = by + h - ft - 4;
+    DrawText("Haut/Bas : naviguer   Entree : valider   T : terminer",
+        bx + PE(2, fw), help_y, ft - 2, COL_TEXT_DIM);
+}
+
+// =============================================================
+//  INFO STRIP (étape 0 : lancer des dés)
+// =============================================================
 void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
     const char* phases[] = {
-        "Lancer des des", "Actions des des", "Seismes", "Fin de tour"
+        "Lancer des des","Actions des des","Seismes","Fin de tour"
     };
-
     int bx = PLATEAU_X;
     int y = INFO_Y;
     int h = INFO_H;
@@ -337,133 +390,130 @@ void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
     int flab = PE(2, GetScreenHeight());
     int fval = PE(4, GetScreenHeight());
 
-    // Carte 1 : Phase
     carte(bx, y, cw, h, COL_BG_DARK, COL_BORDER);
     DrawText("PHASE", bx + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
     DrawText(phases[etape], bx + PE(2, cw), y + PE(5, h) + flab + PE(2, h), flab, COL_TEXT_BRIGHT);
-    char tour[24];
-    snprintf(tour, sizeof(tour), "Tour du joueur %d", joueur + 1);
+    char tour[24]; snprintf(tour, sizeof(tour), "Tour du joueur %d", joueur + 1);
     DrawText(tour, bx + PE(2, cw), y + h - flab - PE(5, h), flab - 2, COL_TEXT_DIM);
 
-    // Carte 2 : Lancers restants
     int bx2 = bx + cw + gap;
     carte(bx2, y, cw, h, COL_BG_DARK, COL_BORDER);
     DrawText("LANCERS", bx2 + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
-    char lstr[4];
-    snprintf(lstr, sizeof(lstr), "%d", nblancer);
+    char lstr[4]; snprintf(lstr, sizeof(lstr), "%d", nblancer);
     int lw = MeasureText(lstr, fval);
     DrawText(lstr, bx2 + (cw - lw) / 2, y + h / 2 - fval / 2, fval, COL_ACCENT);
     DrawText("/ 3", bx2 + (cw + lw) / 2 + 4, y + h / 2 - flab / 2, flab, COL_TEXT_DIM);
 
-    // Carte 3 : Oeufs
     int bx3 = bx + 2 * (cw + gap);
-    int oeufs = jeu->Joueurs[joueur][0].dino;
     carte(bx3, y, cw, h, COL_BG_DARK, COL_BORDER);
-    DrawText("OEUFS", bx3 + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
-    char ostr[4];
-    snprintf(ostr, sizeof(ostr), "%d", oeufs);
-    int ow = MeasureText(ostr, fval);
-    DrawText(ostr, bx3 + (cw - ow) / 2, y + h / 2 - fval / 2, fval, COL_TEXT_BRIGHT);
-    // Petits cercles oeufs
-    for (int i = 0; i < oeufs && i < 5; i++)
-        DrawCircle(bx3 + PE(5, cw) + i * PE(5, cw),
-            y + h - PE(8, h),
-            PE(3, h),
-            (Color) {
-        200, 200, 255, 180
-    });
+    DrawText("RESERVE", bx3 + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
+    char rstr[4]; snprintf(rstr, sizeof(rstr), "%d", jeu->Joueurs[joueur].reserve);
+    int rw = MeasureText(rstr, fval);
+    DrawText(rstr, bx3 + (cw - rw) / 2, y + h / 2 - fval / 2, fval, COL_TEXT_BRIGHT);
 }
 
-// -------------------------------------------------------------
+// =============================================================
 //  STATUS BAR
-// -------------------------------------------------------------
+// =============================================================
 void dessiner_statusbar(int etape, bool achoisides) {
     int sy = STATUS_Y;
     int sw = GetScreenWidth();
     int sh = GetScreenHeight() - sy;
-
     DrawRectangle(0, sy, sw, sh, COL_BG_DARK);
     DrawLine(0, sy, sw, sy, COL_BORDER_LIT);
 
     int fy = sy + (sh - PE(2, GetScreenHeight())) / 2;
     int ftaille = PE(2, GetScreenHeight());
-
-    // Phase courante
-    const char* phases[] = {
-        "Lancer des des", "Actions", "Seismes", "Fin de tour"
-    };
+    const char* phases[] = { "Lancer des des","Actions","Seismes","Fin de tour" };
     DrawText(phases[etape], PE(2, sw), fy, ftaille, COL_ACCENT);
     DrawLine(PE(14, sw), sy + PE(15, sh), PE(14, sw), sy + PE(85, sh), COL_BORDER);
 
-    // Message contextuel
     const char* msg = "";
     if (etape == 0)
         msg = achoisides ? "ESPACE pour lancer les des"
-        : "Cliquer les des a garder (clic droit = bloquer)  |  ENTREE pour valider";
+        : "Clic pour bloquer/debloquer un de  |  ENTREE pour valider";
     else if (etape == 1)
-        msg = "Choisir une action dans le panneau  |  T pour terminer le tour";
-
+        msg = "Haut/Bas + ENTREE pour choisir une action  |  Clic sur le plateau pour placer/deplacer  |  T pour terminer";
     DrawText(msg, PE(15, sw), fy, ftaille, COL_TEXT_DIM);
-
-    // Raccourcis (droite)
-    const char* keys[] = { "ESPACE", "CLIC", "ENTREE" };
-    int kx = PE(78, sw);
-    for (int i = 0; i < 3; i++) {
-        int kw = MeasureText(keys[i], ftaille - 2) + PE(1, sw);
-        DrawRectangle(kx, fy - 2, kw, ftaille + 4, COL_BG_MID);
-        DrawRectangleLines(kx, fy - 2, kw, ftaille + 4, COL_BORDER);
-        DrawText(keys[i], kx + PE(1, sw) / 2, fy, ftaille - 2, COL_ACCENT_DIM);
-        kx += kw + PE(1, sw);
-    }
 }
 
-// -------------------------------------------------------------
-//  RENDU COMPLET  –  appel unique depuis main
-// -------------------------------------------------------------
-void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoisides) {
+// =============================================================
+//  ÉCRAN DE FIN
+// =============================================================
+void affichage_fin(Jeu* jeu, int gagnant) {
+    int sw = GetScreenWidth();
+    int sh = GetScreenHeight();
     ClearBackground(COL_BG);
 
+    // Overlay sombre
+    DrawRectangle(0, 0, sw, sh, (Color) { 0, 0, 0, 160 });
+
+    int bw = PE(50, sw);
+    int bh = PE(50, sh);
+    int bx = (sw - bw) / 2;
+    int by = (sh - bh) / 2;
+    carte(bx, by, bw, bh, COL_BG_DARK, COL_BORDER_LIT);
+
+    int ft_big = PE(5, sh);
+    int ft_med = PE(3, sh);
+    int ft_sml = PE(2, sh);
+
+    texte_centre("FIN DE PARTIE", bx, by + PE(5, bh), bw, ft_big, COL_ACCENT);
+
+    if (gagnant >= 0) {
+        char msg[32];
+        snprintf(msg, sizeof(msg), "Joueur %d remporte la partie !", gagnant + 1);
+        // Couleur du joueur gagnant
+        texte_centre(msg, bx, by + PE(28, bh), bw, ft_med, COULEUR_JOUEUR[gagnant]);
+    }
+
+    // Scores finaux
+    DrawText("Scores finaux :", bx + PE(10, bw), by + PE(45, bh), ft_sml, COL_TEXT_DIM);
+    for (int i = 0; i < 4; i++) {
+        char sc[24];
+        snprintf(sc, sizeof(sc), "Joueur %d : %d pts", i + 1, jeu->Joueurs[i].points);
+        DrawText(sc, bx + PE(10, bw), by + PE(52, bh) + i * (ft_sml + 4), ft_sml,
+            i == gagnant ? COL_ACCENT : COL_TEXT_DIM);
+    }
+
+    texte_centre("Appuyez sur ECHAP pour quitter", bx, by + PE(88, bh), bw, ft_sml - 2, COL_TEXT_DIM);
+}
+
+// =============================================================
+//  RENDU COMPLET – étape 0 (lancers)
+// =============================================================
+void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoisides) {
+    ClearBackground(COL_BG);
     dessiner_topbar(jeu, joueur);
-    afficherplateau(jeu);
+    afficherplateau(jeu, NULL, joueur);
+    dessiner_marqueur_volcan(jeu);
     dessiner_panel_des(jeu, joueur);
     dessiner_info_strip(jeu, joueur, etape, nblancer);
     dessiner_statusbar(etape, achoisides);
 }
 
-// -------------------------------------------------------------
-//  SELECTION DÉS À LA SOURIS
-// -------------------------------------------------------------
-bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
-    for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
-        int x = TABLEAU_X;
-        int y = TABLEAU_Y + i * (DIE_H + PE(1, GetScreenHeight()));
-        Rectangle rect = { (float)x, (float)y, (float)DIE_H, (float)DIE_H };
-
-        if (CheckCollisionPointRec(pos_souris, rect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            if (blocage)
-                jeu->Listede[i].bloque = !jeu->Listede[i].bloque;
-            else
-                jeu->Listede[i].selectionne = !jeu->Listede[i].selectionne;
-            return true;
-        }
-    }
-    return false;
+// =============================================================
+//  RENDU COMPLET – étape 1 (actions)
+// =============================================================
+void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
+    ClearBackground(COL_BG);
+    dessiner_topbar(jeu, joueur);
+    afficherplateau(jeu, ea, joueur);
+    dessiner_marqueur_volcan(jeu);
+    dessiner_panel_des(jeu, joueur);
+    dessiner_menu_actions(ea);
+    dessiner_statusbar(1, false);
 }
 
-// -------------------------------------------------------------
+// =============================================================
 //  FENETRE
-// -------------------------------------------------------------
+// =============================================================
 void initialiser_fenetre(void) {
     InitWindow(1, 1, "");
-
     int ecran = GetCurrentMonitor();
     int larg = GetMonitorWidth(ecran);
     int haut = GetMonitorHeight(ecran);
-
-    int larg_voulu = (larg > 1920) ? 2560 : 1280;
-    int haut_voulu = (haut > 1080) ? 1440 : 720;
-
-    SetWindowSize(larg_voulu, haut_voulu);
+    SetWindowSize(larg > 1920 ? 2560 : 1280, haut > 1080 ? 1440 : 720);
     SetWindowTitle("Colere de la Montagne de Feu");
     SetTargetFPS(60);
 }
