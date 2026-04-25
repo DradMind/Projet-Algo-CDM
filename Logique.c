@@ -166,7 +166,6 @@ void deploiment_pion(Jeu* jeu, int joueur) {
 				}
 			}
 		}
-
 	}
 	else {
 		int choix;

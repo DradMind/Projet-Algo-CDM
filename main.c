@@ -67,7 +67,7 @@ int main(void) {
 
         // ============ RENDU ============
         BeginDrawing();
-		DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), (Color) { 200, 200, 200, 255 }); // Fond gris clair
+		affichage_jeu(&Jeu, joueur);
 		afficherplateau(&Jeu);
         afficher_de(&Jeu, joueur);
 

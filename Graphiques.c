@@ -19,7 +19,25 @@ void initialiser_fenetre(void) {
     // 4. On redimensionne et on affiche la fenêtre
     SetWindowSize(Largeur_voulu, Hauteur_voulu);
     SetWindowTitle("Colere de la Montagne de Feu");
+	//SetWindowState(FLAG_WINDOW_UNDECORATED); // Enlève les bordures de la fenêtre (à voir)
     SetTargetFPS(60);
+}
+
+void affichage_jeu(Jeu* jeu, int joueur) {
+    ClearBackground((Color) { 8, 5, 2, 255 }); // Couleur du fond du jeu(
+
+	DrawRectangle(0, PE(5, GetScreenHeight()), PE(70, GetScreenWidth()), PE(70, GetScreenHeight()), (Color) { 17, 13, 7, 255 }); // Fond espace plateau
+	DrawRectangleLines(0, PE(5, GetScreenHeight()), PE(70, GetScreenWidth()), PE(70, GetScreenHeight()), (Color) { 240, 104, 5, 255 }); // Bordure espace plateau
+
+	DrawRectangleRounded((Rectangle) { TABLEAU_X - PE(1, GetScreenWidth()), TABLEAU_Y - PE(1, GetScreenWidth()), DIE_H + PE(5,GetScreenWidth()), DIE_H * (5 + possedetitanosaure(jeu, joueur)) + PE(5,GetScreenHeight()) }, 0.05f, 2, (Color) { 8, 5, 2, 255 }); // Fond et bordure espace latéral
+	DrawRectangleRoundedLines((Rectangle) { TABLEAU_X - PE(1, GetScreenWidth()), TABLEAU_Y - PE(1, GetScreenWidth()), DIE_H + PE(5, GetScreenWidth()), DIE_H* (5 + possedetitanosaure(jeu, joueur)) + PE(5, GetScreenHeight())}, 0.05f, 2, (Color) { 240, 104, 5, 255 });
+    
+	DrawRectangle(0, 0, GetScreenWidth(), PE(5, GetScreenHeight()), (Color) { 17, 13, 7, 255 }); // Fond espace Titre/Joueurs
+	DrawRectangleLines(0, 0, GetScreenWidth(), PE(5, GetScreenHeight()), (Color) { 240, 104, 5, 255 }); // Bordure espace Titre/Joueurs
+	DrawText("Colère de la Montagne de Feu", PE(1, GetScreenWidth()), PE(1, GetScreenHeight()), PE(3, GetScreenHeight()), (Color) { 240, 104, 5, 255 }); //Titre du jeu
+
+
+
 }
 
 // -------------------------------------------------------------
@@ -28,18 +46,18 @@ void initialiser_fenetre(void) {
 void afficherplateau(Jeu* jeu) {
     // Le fond marron du plateau (un peu plus grand que les cases)
     int bordure = PE(1, GetScreenWidth()); // 1% d'épaisseur
-    DrawRectangle(PLATEAU_X - bordure, PLATEAU_Y - bordure,(4 * CASE) + (2 * bordure), (4 * CASE) + (2 * bordure),(Color) {60, 50, 35, 255});
-
+	DrawRectangleRoundedLines((Rectangle) { PLATEAU_X - bordure, PLATEAU_Y - bordure, (4 * (CASE + PE(1, GetScreenHeight()))) + (2 * bordure), (4 * (CASE + PE(1, GetScreenHeight()))) + (2 * bordure) }, 0.05f, 2, (Color) { 60, 50, 35, 255 });
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             int type = jeu->plateau[y][x].TypeCase;
             Color couleur = (type >= 0 && type <= 5) ? COULEUR_CASE[type] : BLACK;
 
             // Calcul la position de chaque case
-            Rectangle Case = {PLATEAU_X + (x * CASE), PLATEAU_Y + (y * CASE), CASE, CASE};
+            Rectangle Case = {PLATEAU_X + (x * (CASE + PE(1,GetScreenHeight()))), PLATEAU_Y + (y * (CASE + PE(1,GetScreenHeight()))), CASE, CASE};
 
-            DrawRectangleRec(Case, couleur);
-            DrawRectangleLinesEx(Case, 2, (Color) { 0, 0, 0, 120 });
+            //DrawRectangleRec(Case, couleur);
+			DrawRectangleRounded(Case, 0.1f, 10, couleur); // Bordure noire
+			//DrawRectangleRoundedLines(Case, 0.1f, 10, (Color) { 0, 0, 0, 255 });
         }
     }
 }
@@ -55,8 +73,8 @@ void afficher_de(Jeu* jeu, int joueur) {
 
         // Change la couleur si le dé est sélectionné
         Color dieColor = jeu->Listede[i].selectionne ? GREEN : COULEUR_DE[jeu->Listede[i].action];
-        DrawRectangleRec(rect, dieColor);
-        DrawRectangleLinesEx(rect, 2, BLACK);
+		DrawRectangleRounded(rect, 0.1f, 10, dieColor); // Fond du dé
+		DrawRectangleRoundedLines(rect, 0.1f, 10, BLACK); // Bordure noire
 
         if (jeu->Listede[i].bloque) {
             DrawRectangleRec(rect, (Color) { 255, 0, 0, 255 }); // Rouge pour les dés bloqués

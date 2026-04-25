@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include "Logique.h"
 
-#define PLATEAU_X      PE(9, GetScreenWidth())       // coin haut-gauche du plateau
-#define PLATEAU_Y      PE(6, GetScreenHeight())
-#define CASE      PE(10, GetScreenWidth())       // taille d'une case en pixels
+#define PLATEAU_X      PE(5, GetScreenWidth())       // coin haut-gauche du plateau
+#define PLATEAU_Y      PE(5, GetScreenWidth())
+#define CASE      PE(8, GetScreenWidth())       // taille d'une case en pixels
 
 #define TABLEAU_X      PE(50, GetScreenWidth())       // panneau latéral (dés)
-#define TABLEAU_Y      PE(6, GetScreenHeight()) 
-#define DIE_H        PE(10, GetScreenHeight())
+#define TABLEAU_Y      PE(10, GetScreenHeight()) 
+#define DIE_H        PE(5, GetScreenHeight())
 
 // =============================================================
 //  Couleurs des types de cases
@@ -40,6 +40,7 @@ static const char* NOM_FACE[] = {
 // =============================================================
 //  Fonctions
 // =============================================================
+void affichage_jeu(Jeu* jeu, int joueur);
 void afficherplateau(Jeu* jeu);
 void afficher_de(Jeu* jeu, int joueur);
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
