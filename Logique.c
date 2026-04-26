@@ -13,9 +13,9 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
 
     jeu->nb_joueurs = nbJoueurs;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < nbJoueurs; i++) {
         jeu->Joueurs[i].numerojoueur = i;
-        jeu->Joueurs[i].reserve = 20;
+        jeu->Joueurs[i].reserve = 10;
         jeu->Joueurs[i].points = 0;
     }
 
@@ -33,10 +33,12 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
     }
     else {
         int pool[16] = { 0, 1,1,1, 2,2,2,2,2, 3,3,3,3,3, 4, 5 };
-        // Fisher-Yates shuffle
+        // mélange de Fisher-Yates
         for (int i = 15; i > 0; i--) {
             int r = rand() % (i + 1);
-            int tmp = pool[i]; pool[i] = pool[r]; pool[r] = tmp;
+            int tmp = pool[i];
+            pool[i] = pool[r];
+            pool[r] = tmp;
         }
         int idx = 0;
         for (int i = 0; i < 4; i++)
@@ -69,8 +71,7 @@ bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
         int y = TABLEAU_Y + i * (DE_H + PE(1, GetScreenHeight()));
         Rectangle rect = { (float)x, (float)y, (float)DE_H, (float)DE_H };
 
-        if (CheckCollisionPointRec(pos_souris, rect) &&
-            IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(pos_souris, rect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (blocage)
                 jeu->Listede[i].bloque = !jeu->Listede[i].bloque;
             else
@@ -107,8 +108,7 @@ void enlever_pion(Jeu* jeu, int ligne, int col, int place) { //tout a 0 comme si
 int compter_pions_joueur(Jeu* jeu, int joueur, int ligne, int col) {
     int nb = 0;
     for (int p = 0; p < 10; p++)
-        if (jeu->PlateauPion[ligne][col][p].TypePion == 1 &&
-            jeu->PlateauPion[ligne][col][p].joueur == joueur)
+        if (jeu->PlateauPion[ligne][col][p].TypePion == 1 && jeu->PlateauPion[ligne][col][p].joueur == joueur)
             nb++;
     return nb;
 }
@@ -128,14 +128,16 @@ bool case_adjacente(int ligne1, int colonne1, int ligne2, int colonne2) {
 int trouver_volcan_ligne(Jeu* jeu) {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
-            if (jeu->plateau[i][j].TypeCase == 0) return i;
+            if (jeu->plateau[i][j].TypeCase == 0) 
+                return i;
     return -1;
 }
 
 int trouver_volcan_col(Jeu* jeu) {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
-            if (jeu->plateau[i][j].TypeCase == 0) return j;
+            if (jeu->plateau[i][j].TypeCase == 0) 
+                return j;
     return -1;
 }
 
@@ -166,9 +168,12 @@ void calculer_points(Jeu* jeu) {
 }
 
 int joueur_gagnant(Jeu* jeu) {
-    if (!verifier_eruption(jeu)) return -1;
+    if (!verifier_eruption(jeu)){
+        return -1;
+    }
     calculer_points(jeu);
-    int best = -1, best_pts = -1;
+    int best = -1;
+    int best_pts = -1;
     for (int i = 0; i < jeu->nb_joueurs; i++) {
         if (jeu->Joueurs[i].points > best_pts) {
             best_pts = jeu->Joueurs[i].points;
@@ -207,11 +212,10 @@ void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur) {
 }
 
 // Retourne true quand le joueur a fini toutes ses actions
-bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
-    int clic_ligne, int clic_col, bool clic_valide) {
+bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur, int clic_ligne, int clic_col, bool clic_valide) {
     if (ea->sous_etat == ACTION_FINI) return true;
 
-    // ── MENU : choix avec flèches + ENTREE, ou T pour terminer ──
+    // MENU : choix avec flèches + ENTREE
     if (ea->sous_etat == ACTION_MENU) {
         int nb_options = 4; // Caverne, Hutte, Empreinte, Terminer
 
@@ -220,28 +224,22 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         if (IsKeyPressed(KEY_DOWN))
             ea->selection_menu = (ea->selection_menu + 1) % nb_options;
 
-        // T = terminer directement
-        if (IsKeyPressed(KEY_T)) {
-            ea->sous_etat = ACTION_FINI;
-            return true;
-        }
-
         if (IsKeyPressed(KEY_ENTER)) {
-            int sel = ea->selection_menu;
+            int selection = ea->selection_menu;
 
-            if (sel == 0 && ea->nb_actions[1] > 0) {   // Caverne
+            if (selection == 0 && ea->nb_actions[1] > 0) {   // Caverne
                 ea->action_en_cours = 1;
                 ea->sous_etat = ACTION_DEPLOYER_CASE;
             }
-            else if (sel == 1 && ea->nb_actions[2] > 0) { // Hutte
+            else if (selection == 1 && ea->nb_actions[2] > 0) { // Hutte
                 ea->action_en_cours = 2;
                 ea->sous_etat = ACTION_DEPLOYER_CASE;
             }
-            else if (sel == 2 && ea->nb_actions[3] > 0) { // Empreinte
+            else if (selection == 2 && ea->nb_actions[3] > 0) { // Empreinte
                 ea->action_en_cours = 3;
                 ea->sous_etat = ACTION_DEPLACER_ORIGINE;
             }
-            else if (sel == 3) {                          // Terminer
+            else if (selection == 3) {                          // Terminer
                 ea->sous_etat = ACTION_FINI;
                 return true;
             }
@@ -266,8 +264,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
 
     // ── DEPLACER ORIGINE : clic sur un de ses cromagnons ──
     if (ea->sous_etat == ACTION_DEPLACER_ORIGINE && clic_valide) {
-        if (compter_pions_joueur(jeu, joueur, clic_ligne, clic_col) > 0 &&
-            jeu->plateau[clic_ligne][clic_col].TypeCase != 0) { // pas le volcan
+        if (compter_pions_joueur(jeu, joueur, clic_ligne, clic_col) > 0 && jeu->plateau[clic_ligne][clic_col].TypeCase != 0) { // pas le volcan
             ea->orig_ligne = clic_ligne;
             ea->orig_col = clic_col;
             ea->sous_etat = ACTION_DEPLACER_DEST;

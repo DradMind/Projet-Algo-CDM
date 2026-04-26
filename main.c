@@ -69,13 +69,13 @@ int main(void) {
         else if (etape == 1) {
 
             // Clic sur le plateau → transmis à traiter_action
-            int  clic_l = -1, clic_c = -1;
+            int clic_l = -1;
+            int clic_c = -1;
             bool clic_valide = false;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                 clic_valide = clic_sur_plateau(souris, &clic_l, &clic_c);
 
-            bool fini = traiter_action(&jeu, &ea, joueur,
-                clic_l, clic_c, clic_valide);
+            bool fini = traiter_action(&jeu, &ea, joueur, clic_l, clic_c, clic_valide);
 
             if (fini) {
                 if (verifier_eruption(&jeu)) {
@@ -91,7 +91,7 @@ int main(void) {
 
         else if (etape == 2) {
             // Réinitialiser pour le joueur suivant
-            joueur = (joueur + 1) % jeu.nb_joueurs;
+            joueur++;
             nblancer = 3;
             achoisides = true;
 

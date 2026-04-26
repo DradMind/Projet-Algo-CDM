@@ -31,7 +31,7 @@ int PE(float pourcentage, float valeur);
 // Bande d'info
 #define INFO_Y          (PLATEAU_Y + 4 * (CASE + CASE_ESPACE) + PE(2, GetScreenHeight()))
 #define INFO_H          PE(10, GetScreenHeight())
-#define INFO_CARD_W     PE(20, GetScreenWidth())
+#define INFO_CARD_W     PE(10, GetScreenWidth())
 
 // Status bar
 #define STATUS_Y        PE(88, GetScreenHeight())
@@ -59,7 +59,7 @@ static const Color COULEUR_CASE[] = {
     {  90,  21,   0, 255},
     {   8,  32,  64, 255},
     {  14,  45,  14, 255},
-    {  26,  58,   8, 255},
+    {  168,  126,   0, 255},
     {  45,  26,   6, 255},
     {  28,  28,  28, 255},
 };
