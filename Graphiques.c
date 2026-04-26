@@ -69,18 +69,9 @@ static void icone_case(int type, int cx, int cy, int sz) {
 //  clic_sur_plateau
 // =============================================================
 bool clic_sur_plateau(Vector2 souris, int* ligne, int* col) {
-    int bx = PLATEAU_X;
-    int by = PLATEAU_Y;
-    int cs = CASE;
-    int gap = CASE_GAP;
-
     for (int r = 0; r < 4; r++) {
         for (int c = 0; c < 4; c++) {
-            Rectangle rect = {
-                (float)(bx + c * (cs + gap)),
-                (float)(by + r * (cs + gap)),
-                (float)cs, (float)cs
-            };
+            Rectangle rect = { (float)(PLATEAU_X + c * (CASE + CASE_ESPACE)), (float)(PLATEAU_Y + r * (CASE + CASE_ESPACE)), (float)CASE, (float)CASE };
             if (CheckCollisionPointRec(souris, rect)) {
                 *ligne = r;
                 *col = c;
@@ -130,7 +121,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
     int bx = PLATEAU_X;
     int by = PLATEAU_Y;
     int cs = CASE;
-    int gap = CASE_GAP;
+    int gap = CASE_ESPACE;
     int tot = 4 * cs + 3 * gap;
 
     DrawRectangleRounded((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, (Color) { 12, 8, 3, 255 });
@@ -219,20 +210,20 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
 // =============================================================
 //  MARQUEUR VOLCAN (barre de progression)
 // =============================================================
-void dessiner_marqueur_volcan(Jeu* jeu) {
+void dessiner_eruption_volcan(Jeu* jeu) {
     int bx = PLATEAU_X;
-    int by = PLATEAU_Y + 4 * (CASE + CASE_GAP) + PE(1, GetScreenHeight());
-    int w = 4 * (CASE + CASE_GAP) - CASE_GAP;
+    int by = PLATEAU_Y + 4 * (CASE + CASE_ESPACE) + PE(1, GetScreenHeight());
+    int w = 4 * (CASE + CASE_ESPACE) - CASE_ESPACE;
     int h = PE(2, GetScreenHeight());
     int pip = (w - 5 * PE(1, GetScreenWidth())) / 6;
 
     DrawText("VOLCAN", bx, by, PE(2, GetScreenHeight()), (Color) { 255, 80, 16, 255 });
     int tx = bx + PE(7, GetScreenWidth());
     for (int i = 0; i < 6; i++) {
-        Color c = (i < jeu->marqueur_volcan)
+        Color c = (i < jeu->eruption_volcan)
             ? (Color) { 255, 60, 0, 255 }
         : (Color) { 40, 15, 5, 255 };
-        Color bc = (i < jeu->marqueur_volcan)
+        Color bc = (i < jeu->eruption_volcan)
             ? (Color) { 255, 120, 40, 255 }
         : COL_BORDER;
         DrawRectangleRounded((Rectangle) { tx + i * (pip + PE(1, GetScreenWidth())), by, pip, h },
@@ -241,7 +232,7 @@ void dessiner_marqueur_volcan(Jeu* jeu) {
             0.3f, 4, bc);
     }
     // Alerte si proche
-    if (jeu->marqueur_volcan >= 4) {
+    if (jeu->eruption_volcan >= 4) {
         int ft = PE(2, GetScreenHeight());
         DrawText("ERUPTION IMMINENTE !",
             tx + 6 * (pip + PE(1, GetScreenWidth())) + PE(1, GetScreenWidth()),
@@ -253,8 +244,8 @@ void dessiner_marqueur_volcan(Jeu* jeu) {
 //  PANNEAU DÉS
 // =============================================================
 void dessiner_panel_des(Jeu* jeu, int joueur) {
-    int px = PANEL_X;
-    int pw = PANEL_W;
+    int px = PANNEAU_X;
+    int pw = PANNEAU_Y;
     int sh = GetScreenHeight();
 
     DrawRectangle(px, TOPBAR_H, pw, sh - TOPBAR_H, COL_BG_DARK);
@@ -277,10 +268,10 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
         bool sel = jeu->Listede[i].selectionne;
 
         int rx = TABLEAU_X;
-        int ry = TABLEAU_Y + i * (DIE_H + PE(1, sh));
+        int ry = TABLEAU_Y + i * (DE_H + PE(1, sh));
 
         if (sel)
-            carte(rx - 4, ry - 3, pw - PE(3, pw), DIE_H + 6, (Color) { 13, 26, 13, 255 }, (Color) { 42, 106, 42, 255 });
+            carte(rx - 4, ry - 3, pw - PE(3, pw), DE_H + 6, (Color) { 13, 26, 13, 255 }, (Color) { 42, 106, 42, 255 });
 
         Color fond_de = lock ? (Color) { 100, 20, 10, 255 } : COULEUR_DE[action];
         DrawRectangleRounded((Rectangle) { rx, ry, face_sz, face_sz }, 0.15f, 6, fond_de);
@@ -309,19 +300,17 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
     for (int i = 0; i < 4; i++) {
         bool actif = (i == joueur);
         int ry2 = sy + i * (PE(5, sh) + PE(1, sh));
-        carte(px + PE(2, pw), ry2, pw - PE(4, pw), PE(5, sh),
-            actif ? (Color) { 22, 15, 6, 255 } : COL_BG_MID,
-            actif ? COL_BORDER_LIT : COL_BORDER);
+        carte(px + PE(2, pw), ry2, pw - PE(4, pw), PE(5, sh),actif ? (Color) { 22, 15, 6, 255 } : COL_BG_MID,actif ? COL_BORDER_LIT : COL_BORDER);
         pion(px + PE(4, pw) + PE(2, sh), ry2 + PE(2, sh) + 2, PE(2, sh), COULEUR_JOUEUR[i]);
         char nom[12]; snprintf(nom, sizeof(nom), "Joueur %d", i + 1);
-        DrawText(nom, px + PE(4, pw) + PE(5, sh), ry2 + (PE(5, sh) - PE(2, sh)) / 2,
-            PE(2, sh), actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
+        DrawText(nom, px + PE(4, pw) + PE(5, sh), ry2 + (PE(5, sh) - PE(2, sh)) / 2, PE(2, sh), actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
         char pts[8]; snprintf(pts, sizeof(pts), "%d", jeu->Joueurs[i].points);
         int ptw = MeasureText(pts, PE(3, sh));
-        DrawText(pts, px + pw - PE(4, pw) - ptw, ry2 + (PE(5, sh) - PE(3, sh)) / 2,
-            PE(3, sh), actif ? COL_ACCENT : COL_TEXT_DIM);
+        DrawText(pts, px + pw - PE(4, pw) - ptw, ry2 + (PE(5, sh) - PE(3, sh)) / 2, PE(3, sh), actif ? COL_ACCENT : COL_TEXT_DIM);
     }
 }
+
+
 
 // =============================================================
 //  MENU D'ACTIONS (affiché sous le plateau pendant étape 1)
@@ -486,7 +475,7 @@ void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoiside
     ClearBackground(COL_BG);
     dessiner_topbar(jeu, joueur);
     afficherplateau(jeu, NULL, joueur);
-    dessiner_marqueur_volcan(jeu);
+    dessiner_eruption_volcan(jeu);
     dessiner_panel_des(jeu, joueur);
     dessiner_info_strip(jeu, joueur, etape, nblancer);
     dessiner_statusbar(etape, achoisides);
@@ -499,7 +488,7 @@ void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
     ClearBackground(COL_BG);
     dessiner_topbar(jeu, joueur);
     afficherplateau(jeu, ea, joueur);
-    dessiner_marqueur_volcan(jeu);
+    dessiner_eruption_volcan(jeu);
     dessiner_panel_des(jeu, joueur);
     dessiner_menu_actions(ea);
     dessiner_statusbar(1, false);

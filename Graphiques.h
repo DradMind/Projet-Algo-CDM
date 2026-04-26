@@ -4,7 +4,7 @@
 #include "Logique.h"
 
 // =============================================================
-//  PE  –  Pourcentage d'une valeur
+//  PE  –  Pourcentage d'une valeur (surtout pourcentage d'écran)
 // =============================================================
 int PE(float pourcentage, float valeur);
 
@@ -19,25 +19,27 @@ int PE(float pourcentage, float valeur);
 #define PLATEAU_X       PE(3,  GetScreenWidth())
 #define PLATEAU_Y       (TOPBAR_H + PE(3, GetScreenHeight()))
 #define CASE            PE(15, GetScreenHeight())
-#define CASE_GAP        PE(1,  GetScreenHeight())
+#define CASE_ESPACE        PE(1,  GetScreenHeight())
 
 // Panneau dés (droite)
-#define PANEL_X         PE(72, GetScreenWidth())
-#define PANEL_W         (GetScreenWidth() - PANEL_X)
-#define TABLEAU_X       (PANEL_X + PE(1, GetScreenWidth()))
+#define PANNEAU_X         PE(72, GetScreenWidth())
+#define PANNEAU_Y         (GetScreenWidth() - PANNEAU_X)
+#define TABLEAU_X       (PANNEAU_X + PE(1, GetScreenWidth()))
 #define TABLEAU_Y       (TOPBAR_H + PE(5, GetScreenHeight()))
-#define DIE_H           PE(7,  GetScreenHeight())
+#define DE_H           PE(7,  GetScreenHeight())
 
 // Bande d'info
-#define INFO_Y          (PLATEAU_Y + 4 * (CASE + CASE_GAP) + PE(2, GetScreenHeight()))
+#define INFO_Y          (PLATEAU_Y + 4 * (CASE + CASE_ESPACE) + PE(2, GetScreenHeight()))
 #define INFO_H          PE(10, GetScreenHeight())
 #define INFO_CARD_W     PE(20, GetScreenWidth())
 
 // Status bar
 #define STATUS_Y        PE(88, GetScreenHeight())
 
+
+
 // =============================================================
-//  Palette
+//  Palette de couleurs pour le jeu 
 // =============================================================
 #define COL_BG          (Color){  8,   5,   2, 255}
 #define COL_BG_DARK     (Color){ 17,  13,   7, 255}
@@ -119,7 +121,7 @@ void dessiner_panel_des(Jeu* jeu, int joueur);
 void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer);
 void dessiner_statusbar(int etape, bool achoisides);
 void dessiner_menu_actions(EtatAction* ea);
-void dessiner_marqueur_volcan(Jeu* jeu);
+void dessiner_eruption_volcan(Jeu* jeu);
 
 // Utilitaire : convertit un clic souris en ligne/col du plateau (-1 si hors plateau)
 bool clic_sur_plateau(Vector2 souris, int* ligne, int* col);

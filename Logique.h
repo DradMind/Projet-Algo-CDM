@@ -6,11 +6,11 @@
 #include <raylib.h>
 
 // =============================================================
-//  STRUCTS
+//  STRUCTURES
 // =============================================================
 
 typedef struct {
-    int  TypePion;      // 0=vide, 1=cromagnon
+    int  TypePion;      // 0=vide, 1=cromagnon, on fera les dinos plus tard
     int  joueur;        // 0-3
 } Pion;
 
@@ -37,9 +37,11 @@ typedef struct {
     Pion   PlateauPion[4][4][10];
     Des    Listede[7];
     Joueur Joueurs[4];
-    int    marqueur_volcan; // 0-6 : avance à chaque face Volcan, éruption à 6
+    int    eruption_volcan; // 0-6 : avance à chaque face Volcan, éruption à 6
     int    nb_joueurs;
 } Jeu;
+
+
 
 // =============================================================
 //  ÉTAT DU TOUR  –  machine à états pour les actions
@@ -73,10 +75,8 @@ int  possedetitanosaure(Jeu* jeu, int joueur); // retourne 0 pour l'instant
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
 
 // Actions
-void          init_etat_action(Jeu* jeu, EtatAction* ea, int joueur);
-bool          traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
-    int case_cliquee_ligne, int case_cliquee_col,
-    bool clic_valide);
+void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur);
+bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur, int case_cliquee_ligne, int case_cliquee_col, bool clic_valide);
 // Retourne true quand toutes les actions sont résolues
 
 // Pions
@@ -90,10 +90,7 @@ void avancer_volcan(Jeu* jeu);
 bool verifier_eruption(Jeu* jeu); // true si marqueur >= 6
 void calculer_points(Jeu* jeu);   // compte les pions sur chaque case → points
 
-// Divers
+// Le reste
 int  trouver_volcan_ligne(Jeu* jeu);
 int  trouver_volcan_col(Jeu* jeu);
 int  joueur_gagnant(Jeu* jeu);    // -1 si pas fini
-
-// Inclure Vector2 de raylib pour la signature de selectiondes
-#include "raylib.h"

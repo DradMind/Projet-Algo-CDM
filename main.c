@@ -6,27 +6,20 @@
 // =============================================================
 //  Étapes du tour
 // =============================================================
-typedef enum {
-    ETAPE_LANCER = 0,  // lancer / bloquer les dés
-    ETAPE_ACTIONS = 1,  // résoudre les actions des dés
-    ETAPE_FIN_TOUR = 2,  // passer au joueur suivant
-    ETAPE_FIN_JEU = 3,  // éruption : fin de partie
-} EtapeJeu;
-
 int main(void) {
     srand((unsigned int)time(NULL));
     initialiser_fenetre();
 
-    Jeu      jeu = { 0 };
+    Jeu jeu = { 0 };
     EtatAction ea = { 0 };
 
     initialiser_plateau(&jeu, false, 2);
 
-    int       joueur = 0;
-    EtapeJeu  etape = ETAPE_LANCER;
-    int       nblancer = 3;
-    bool      achoisides = true;  // true = joueur doit appuyer sur ESPACE
-    int       gagnant = -1;
+    int joueur = 0;
+    int etape = 0;
+    int nblancer = 3;
+    bool achoisides = true;  // true = joueur doit appuyer sur ESPACE
+    int gagnant = -1;
 
     while (!WindowShouldClose()) {
 
@@ -36,7 +29,7 @@ int main(void) {
         //  LOGIQUE
         // ============================================================
 
-        if (etape == ETAPE_LANCER) {
+        if (etape == 0) {
 
             // Lancer avec ESPACE
             if (achoisides && IsKeyPressed(KEY_SPACE)) {
@@ -62,18 +55,18 @@ int main(void) {
                     if (verifier_eruption(&jeu)) {
                         calculer_points(&jeu);
                         gagnant = joueur_gagnant(&jeu);
-                        etape = ETAPE_FIN_JEU;
+                        etape = 3;
                     }
                     else {
                         etape = (ea.sous_etat == ACTION_FINI)
-                            ? ETAPE_FIN_TOUR
-                            : ETAPE_ACTIONS;
+                            ? 2
+                            : 1;
                     }
                 }
             }
         }
 
-        else if (etape == ETAPE_ACTIONS) {
+        else if (etape == 1) {
 
             // Clic sur le plateau → transmis à traiter_action
             int  clic_l = -1, clic_c = -1;
@@ -88,15 +81,15 @@ int main(void) {
                 if (verifier_eruption(&jeu)) {
                     calculer_points(&jeu);
                     gagnant = joueur_gagnant(&jeu);
-                    etape = ETAPE_FIN_JEU;
+                    etape = 3;
                 }
                 else {
-                    etape = ETAPE_FIN_TOUR;
+                    etape = 2;
                 }
             }
         }
 
-        else if (etape == ETAPE_FIN_TOUR) {
+        else if (etape == 2) {
             // Réinitialiser pour le joueur suivant
             joueur = (joueur + 1) % jeu.nb_joueurs;
             nblancer = 3;
@@ -109,10 +102,10 @@ int main(void) {
                 jeu.Listede[i].action = 0;
             }
 
-            etape = ETAPE_LANCER;
+            etape = 0;
         }
 
-        else if (etape == ETAPE_FIN_JEU) {
+        else if (etape == 3) {
             // Attendre ECHAP pour quitter
             if (IsKeyPressed(KEY_ESCAPE)) break;
         }
@@ -122,15 +115,15 @@ int main(void) {
         // ============================================================
         BeginDrawing();
 
-        if (etape == ETAPE_LANCER) {
+        if (etape == 0) {
             affichage_jeu(&jeu, joueur, 0, nblancer, achoisides);
 
         }
-        else if (etape == ETAPE_ACTIONS) {
+        else if (etape == 1) {
             affichage_actions(&jeu, joueur, &ea);
 
         }
-        else if (etape == ETAPE_FIN_JEU) {
+        else if (etape == 3) {
             // Afficher le plateau en arrière-plan puis l'écran de fin
             affichage_jeu(&jeu, joueur, 0, 0, false);
             affichage_fin(&jeu, gagnant);

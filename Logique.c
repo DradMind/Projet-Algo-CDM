@@ -13,7 +13,6 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
 
     jeu->nb_joueurs = nbJoueurs;
 
-    // Réserves : 20 cromagnons par joueur
     for (int i = 0; i < 4; i++) {
         jeu->Joueurs[i].numerojoueur = i;
         jeu->Joueurs[i].reserve = 20;
@@ -26,7 +25,8 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
             { 3, 2, 2, 2 },
             { 1, 3, 0, 3 },
             { 3, 5, 2, 2 }
-        };
+		}; //ça marche sur plusieurs ligne perso je met comme ça pour pas faire un truc super long
+
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 jeu->plateau[i][j].TypeCase = base[i][j];
@@ -58,16 +58,16 @@ void logiquede(Jeu* jeu, int joueur) {
 
 int possedetitanosaure(Jeu* jeu, int joueur) {
     (void)jeu; (void)joueur;
-    return 0; // dinos pas encore implémentés
+    return 0; // dinos pas encore fait
 }
 
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
-    // La position des dés est définie dans Graphiques.h via TABLEAU_X/Y/DIE_H
+    // La position des dés est définie dans Graphiques.h via TABLEAU_X/Y/DE_H
     // On recalcule ici de façon identique à afficher_de()
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
         int x = TABLEAU_X;
-        int y = TABLEAU_Y + i * (DIE_H + PE(1, GetScreenHeight()));
-        Rectangle rect = { (float)x, (float)y, (float)DIE_H, (float)DIE_H };
+        int y = TABLEAU_Y + i * (DE_H + PE(1, GetScreenHeight()));
+        Rectangle rect = { (float)x, (float)y, (float)DE_H, (float)DE_H };
 
         if (CheckCollisionPointRec(pos_souris, rect) &&
             IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -85,7 +85,7 @@ bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
 //  PIONS
 // =============================================================
 
-void rajouter_pion(Jeu* jeu, int ligne, int col, int joueur) {
+void rajouter_pion(Jeu* jeu, int ligne, int col, int joueur) { // la fonction ne rajoute pas encore les dinos 
     for (int p = 0; p < 10; p++) {
         if (jeu->PlateauPion[ligne][col][p].TypePion == 0) {
             jeu->PlateauPion[ligne][col][p].TypePion = 1;
@@ -94,10 +94,9 @@ void rajouter_pion(Jeu* jeu, int ligne, int col, int joueur) {
             return;
         }
     }
-    // Case pleine (10 pions max), on ne fait rien
 }
 
-void enlever_pion(Jeu* jeu, int ligne, int col, int place) {
+void enlever_pion(Jeu* jeu, int ligne, int col, int place) { //tout a 0 comme si y avait rien
     if (jeu->PlateauPion[ligne][col][place].TypePion != 0) {
         jeu->PlateauPion[ligne][col][place].TypePion = 0;
         jeu->PlateauPion[ligne][col][place].joueur = 0;
@@ -114,9 +113,9 @@ int compter_pions_joueur(Jeu* jeu, int joueur, int ligne, int col) {
     return nb;
 }
 
-bool case_adjacente(int l1, int c1, int l2, int c2) {
-    int dl = l1 - l2;
-    int dc = c1 - c2;
+bool case_adjacente(int ligne1, int colonne1, int ligne2, int colonne2) {
+    int dl = ligne1 - ligne2;
+    int dc = colonne1 - colonne2;
     // Voisins 4-connexes (pas de diagonale)
     return (dl == 0 && (dc == 1 || dc == -1)) ||
         (dc == 0 && (dl == 1 || dl == -1));
@@ -141,11 +140,11 @@ int trouver_volcan_col(Jeu* jeu) {
 }
 
 void avancer_volcan(Jeu* jeu) {
-    jeu->marqueur_volcan++;
+    jeu->eruption_volcan++;
 }
 
 bool verifier_eruption(Jeu* jeu) {
-    return jeu->marqueur_volcan >= 6;
+    return jeu->eruption_volcan >= 6;
 }
 
 // Calcul des points : 1 pt par cromagnon sur une case non-volcan
@@ -287,8 +286,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         if (case_adjacente(ea->orig_ligne, ea->orig_col, clic_ligne, clic_col)) {
             // Trouver la place du pion sur la case source
             for (int p = 0; p < 10; p++) {
-                if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion == 1 &&
-                    jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
+                if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion == 1 && jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
                     enlever_pion(jeu, ea->orig_ligne, ea->orig_col, p);
                     rajouter_pion(jeu, clic_ligne, clic_col, joueur);
                     ea->nb_actions[3]--;
@@ -303,8 +301,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
     }
 
     // Vérifier si plus rien à faire
-    if (ea->nb_actions[1] == 0 && ea->nb_actions[2] == 0 &&
-        ea->nb_actions[3] == 0) {
+    if (ea->nb_actions[1] == 0 && ea->nb_actions[2] == 0 &&ea->nb_actions[3] == 0) {
         ea->sous_etat = ACTION_FINI;
         return true;
     }
