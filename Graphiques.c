@@ -53,8 +53,8 @@ bool clic_sur_plateau(Vector2 souris, int* ligne, int* col) {
 void Dessiner_HDP(Jeu* jeu, int joueur) {
     int L = GetScreenWidth();
     int H = HDP_H;
-    DrawRectangle(0, 0, L, H, COL_BG_DARK);
-    DrawLine(0, H, L, H, COL_BORDER_LIT);
+    DrawRectangle(0, 0, L, H, FOND_SOMBRE);
+    DrawLine(0, H, L, H, COL_BORD_LIT);
     DrawText("COLERE DE LA MONTAGNE DE FEU", PE(2, L), PE(1, GetScreenHeight()), PE(3, GetScreenHeight()), COL_ACCENT);
 
     int rayon = PE(2, GetScreenHeight());
@@ -92,7 +92,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
     int tot = 4 * cs + 3 * espace;
 
     DrawRectangleRounded((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, (Color) { 12, 8, 3, 255 });
-    DrawRectangleRoundedLines((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, COL_BORDER);
+    DrawRectangleRoundedLines((Rectangle) { bx - 8, by - 8, tot + 16, tot + 16 }, 0.04f, 4, COL_BORD);
 
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
@@ -100,8 +100,8 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
             int cx = bx + col * (cs + espace);
             int cy = by + row * (cs + espace);
 
-            Color fond = (type >= 0 && type < 6) ? COULEUR_CASE[type] : COL_BG_MID;
-            Color bordure = (type >= 0 && type < 6) ? COULEUR_CASE_BORD[type] : COL_BORDER;
+            Color fond = (type >= 0 && type < 6) ? COULEUR_CASE[type] : FOND_MID;
+            Color bordure = (type >= 0 && type < 6) ? COULEUR_CASE_BORD[type] : COL_BORD;
             Color lblcol = (type >= 0 && type < 6) ? COULEUR_CASE_LABEL[type] : COL_TEXT_DIM;
 
             // Halo volcan
@@ -176,8 +176,8 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
     int PY = PANNEAU_Y;
     int H = GetScreenHeight();
 
-    DrawRectangle(PX, HDP_H, PY, H - HDP_H, COL_BG_DARK);
-	DrawRectangleLines(PX, HDP_H, PY, H - HDP_H, COL_BORDER_LIT);
+    DrawRectangle(PX, HDP_H, PY, H - HDP_H, FOND_SOMBRE);
+	DrawRectangleLines(PX, HDP_H, PY, H - HDP_H, COL_BORD_LIT);
 
     int y = HDP_H + PE(1, H);
     DrawText("DES", PX + PE(2, PY), y, PE(2, H), COL_ACCENT);
@@ -212,7 +212,7 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
 
     // Scores
     int sy = HDP_H + PE(58, H);
-    DrawLine(PX + PE(2, PY), sy, PX + PY - PE(2, PY), sy, COL_BORDER); sy += PE(1, H);
+    DrawLine(PX + PE(2, PY), sy, PX + PY - PE(2, PY), sy, COL_BORD); sy += PE(1, H);
     DrawText("SCORES", PX + PE(2, PY), sy, PE(2, H), COL_ACCENT); sy += PE(2, H) + PE(1, H);
 
     for (int i = 0; i < 4; i++) {
@@ -220,7 +220,7 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
         if (i == joueur)
             actif = true;
         int ry2 = sy + i * (PE(5, H) + PE(1, H));
-        carte(PX + PE(2, PY), ry2, PY - PE(4, PY), PE(5, H),actif ? (Color) { 22, 15, 6, 255 } : COL_BG_MID, actif ? COL_BORDER_LIT : COL_BORDER);
+        carte(PX + PE(2, PY), ry2, PY - PE(4, PY), PE(5, H),actif ? (Color) { 22, 15, 6, 255 } : FOND_MID, actif ? COL_BORD_LIT : COL_BORD);
         pion(PX + PE(4, PY) + PE(2, H), ry2 + PE(2, H) + 2, PE(2, H), COULEUR_JOUEUR[i]);
         char nom[12]; 
         snprintf(nom, sizeof(nom), "Joueur %d", i + 1);
@@ -244,7 +244,7 @@ void dessiner_menu_actions(EtatAction* ea) {
     int fh = h / 5;
     int ft = PE(2, GetScreenHeight());
 
-    carte(bx, by, fw, h, COL_BG_DARK, COL_BORDER_LIT);
+    carte(bx, by, fw, h, FOND_SOMBRE, COL_BORD_LIT);
     DrawText("CHOISIR UNE ACTION", bx + PE(2, fw), by + fh / 2, ft - 2, COL_ACCENT_DIM);
 
     const char* labels[] = { "Caverne", "Hutte", "Empreinte", "Terminer le tour" };
@@ -257,8 +257,8 @@ void dessiner_menu_actions(EtatAction* ea) {
         bool sel = (ea->selection_menu == i);
         bool dispo = (faces[i] == -1) || (ea->nb_actions[faces[i]] > 0);
 
-        Color fond_l = sel ? (Color) { 30, 22, 10, 255 } : COL_BG_MID;
-        Color bord_l = sel ? COL_ACCENT : COL_BORDER;
+        Color fond_l = sel ? (Color) { 30, 22, 10, 255 } : FOND_MID;
+        Color bord_l = sel ? COL_ACCENT : COL_BORD;
         Color txt_col = dispo ? (sel ? COL_TEXT_BRIGHT : COL_TEXT) : COL_TEXT_DIM;
 
         carte(bx + PE(1, fw), ry, fw - PE(2, fw), fh, fond_l, bord_l);
@@ -298,14 +298,14 @@ void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
     int flab = PE(2, GetScreenHeight());
     int fval = PE(4, GetScreenHeight());
 
-    carte(bx, y, cw, h, COL_BG_DARK, COL_BORDER);
+    carte(bx, y, cw, h, FOND_SOMBRE, COL_BORD);
     DrawText("PHASE", bx + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
     DrawText(phases[etape], bx + PE(2, cw), y + PE(5, h) + flab + PE(2, h), flab, COL_TEXT_BRIGHT);
     char tour[24]; snprintf(tour, sizeof(tour), "Tour du joueur %d", joueur + 1);
     DrawText(tour, bx + PE(2, cw), y + h - flab - PE(5, h), flab - 2, COL_TEXT_DIM);
 
     int bx2 = bx + cw + gap;
-    carte(bx2, y, cw, h, COL_BG_DARK, COL_BORDER);
+    carte(bx2, y, cw, h, FOND_SOMBRE, COL_BORD);
     DrawText("LANCERS", bx2 + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
     char lstr[4]; snprintf(lstr, sizeof(lstr), "%d", nblancer);
     int lw = MeasureText(lstr, fval);
@@ -313,12 +313,50 @@ void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
     DrawText("/ 3", bx2 + (cw + lw) / 2 + 4, y + h / 2 - flab / 2, flab, COL_TEXT_DIM);
 
     int bx3 = bx + 2 * (cw + gap);
-    carte(bx3, y, cw, h, COL_BG_DARK, COL_BORDER);
+    carte(bx3, y, cw, h, FOND_SOMBRE, COL_BORD);
     DrawText("RESERVE", bx3 + PE(2, cw), y + PE(5, h), flab - 2, COL_ACCENT_DIM);
     char rstr[4]; snprintf(rstr, sizeof(rstr), "%d", jeu->Joueurs[joueur].reserve);
     int rw = MeasureText(rstr, fval);
     DrawText(rstr, bx3 + (cw - rw) / 2, y + h / 2 - fval / 2, fval, COL_TEXT_BRIGHT);
 }
+
+// =============================================================
+//  BOUGER LE VOLCAN
+// =============================================================
+bool bouger_volcan(Jeu* jeu) {
+	int posx = trouver_volcan_col(jeu);
+	int posy = trouver_volcan_ligne(jeu);
+    if (IsKeyPressed(KEY_UP)) {
+        if (posy > 0) {
+            jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy - 1][posx].TypeCase;
+            jeu->plateau[posy - 1][posx].TypeCase = 0;
+            return true;
+        }
+
+    }
+    else if (IsKeyPressed(KEY_DOWN)) {
+        if (posy < 3) {
+            jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy + 1][posx].TypeCase;
+            jeu->plateau[posy + 1][posx].TypeCase = 0;
+            return true;
+        }
+    }
+    else if (IsKeyPressed(KEY_LEFT)) {
+        if (posx > 0) {
+            jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy][posx - 1].TypeCase;
+            jeu->plateau[posy][posx - 1].TypeCase = 0;
+            return true;
+        }
+    }
+    else if (IsKeyPressed(KEY_RIGHT)) {
+        if (posx < 3) {
+            jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy][posx + 1].TypeCase;
+            jeu->plateau[posy][posx + 1].TypeCase = 0;
+            return true;
+        }
+    }
+}
+
 
 // =============================================================
 //  STATUS BAR
@@ -327,14 +365,14 @@ void dessiner_statusbar(int etape, bool achoisides) {
     int sy = STATUS_Y;
     int sw = GetScreenWidth();
     int sh = GetScreenHeight() - sy;
-    DrawRectangle(0, sy, sw, sh, COL_BG_DARK);
-    DrawLine(0, sy, sw, sy, COL_BORDER_LIT);
+    DrawRectangle(0, sy, sw, sh, FOND_SOMBRE);
+    DrawLine(0, sy, sw, sy, COL_BORD_LIT);
 
     int fy = sy + (sh - PE(2, GetScreenHeight())) / 2;
     int ftaille = PE(2, GetScreenHeight());
     const char* phases[] = { "Lancer des des","Actions","Seismes","Fin de tour" };
     DrawText(phases[etape], PE(2, sw), fy, ftaille, COL_ACCENT);
-    DrawLine(PE(14, sw), sy + PE(15, sh), PE(14, sw), sy + PE(85, sh), COL_BORDER);
+    DrawLine(PE(14, sw), sy + PE(15, sh), PE(14, sw), sy + PE(85, sh), COL_BORD);
 
     const char* msg = "";
     if (etape == 0)
@@ -351,7 +389,7 @@ void dessiner_statusbar(int etape, bool achoisides) {
 void affichage_fin(Jeu* jeu, int gagnant) {
     int sw = GetScreenWidth();
     int sh = GetScreenHeight();
-    ClearBackground(COL_BG);
+    ClearBackground(FOND);
 
     // Overlay sombre
     DrawRectangle(0, 0, sw, sh, (Color) { 0, 0, 0, 160 });
@@ -360,7 +398,7 @@ void affichage_fin(Jeu* jeu, int gagnant) {
     int bh = PE(50, sh);
     int bx = (sw - bw) / 2;
     int by = (sh - bh) / 2;
-    carte(bx, by, bw, bh, COL_BG_DARK, COL_BORDER_LIT);
+    carte(bx, by, bw, bh, FOND_SOMBRE, COL_BORD_LIT);
 
     int ft_big = PE(5, sh);
     int ft_med = PE(3, sh);
@@ -380,8 +418,7 @@ void affichage_fin(Jeu* jeu, int gagnant) {
     for (int i = 0; i < 4; i++) {
         char sc[24];
         snprintf(sc, sizeof(sc), "Joueur %d : %d pts", i + 1, jeu->Joueurs[i].points);
-        DrawText(sc, bx + PE(10, bw), by + PE(52, bh) + i * (ft_sml + 4), ft_sml,
-            i == gagnant ? COL_ACCENT : COL_TEXT_DIM);
+        DrawText(sc, bx + PE(10, bw), by + PE(52, bh) + i * (ft_sml + 4), ft_sml, i == gagnant ? COL_ACCENT : COL_TEXT_DIM);
     }
 
     texte_centre("Appuyez sur ECHAP pour quitter", bx, by + PE(88, bh), bw, ft_sml - 2, COL_TEXT_DIM);
@@ -391,7 +428,7 @@ void affichage_fin(Jeu* jeu, int gagnant) {
 //  RENDU COMPLET – étape 0 (lancers)
 // =============================================================
 void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoisides) {
-    ClearBackground(COL_BG);
+    ClearBackground(FOND);
     Dessiner_HDP(jeu, joueur);
     afficherplateau(jeu, NULL, joueur);
     dessiner_panel_des(jeu, joueur);
@@ -403,7 +440,7 @@ void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoiside
 //  RENDU COMPLET – étape 1 (actions)
 // =============================================================
 void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
-    ClearBackground(COL_BG);
+    ClearBackground(FOND);
     Dessiner_HDP(jeu, joueur);
     afficherplateau(jeu, ea, joueur);
     dessiner_panel_des(jeu, joueur);
@@ -415,17 +452,8 @@ void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
 //  FENETRE
 // =============================================================
 void initialiser_fenetre(void) {
-    // 1. Tell Raylib to respect High-DPI scaling from the start
-    SetConfigFlags(FLAG_WINDOW_HIGHDPI);
-
-    // 2. IMPORTANT: Do not hardcode 3840 unless you want a window 
-    // that covers your ENTIRE desktop across scaling.
-    // 1920x1080 is much safer as a "logical" resolution.
-    InitWindow(1920, 1080, "Colere de la Montagne de Feu");
-
-    // 3. Set the window to appear on the correct monitor
-    // and maximize it if you want it to fill the screen properly
-    if (IsWindowReady()) {
-        SetTargetFPS(60);
-    }
+    int ecran = GetCurrentMonitor();
+    InitWindow(GetMonitorWidth(ecran), GetMonitorHeight(ecran), "Colere de la Montagne de Feu");
+    SetWindowPosition(0, 0);
+	SetTargetFPS(GetMonitorRefreshRate(ecran));
 }

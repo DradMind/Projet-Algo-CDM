@@ -145,9 +145,11 @@ void avancer_volcan(Jeu* jeu) {
     jeu->eruption_volcan++;
 }
 
-bool verifier_eruption(Jeu* jeu) {
+bool verifier_volcan(Jeu* jeu) {
     return jeu->eruption_volcan >= 6;
 }
+
+
 
 // Calcul des points : 1 pt par cromagnon sur une case non-volcan
 void calculer_points(Jeu* jeu) {
@@ -168,7 +170,7 @@ void calculer_points(Jeu* jeu) {
 }
 
 int joueur_gagnant(Jeu* jeu) {
-    if (!verifier_eruption(jeu)){
+    if (!verifier_volcan(jeu)){
         return -1;
     }
     calculer_points(jeu);

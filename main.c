@@ -52,15 +52,13 @@ int main(void) {
                     init_etat_action(&jeu, &ea, joueur);
 
                     // Si éruption déclenchée par les faces Volcan
-                    if (verifier_eruption(&jeu)) {
+                    if (verifier_volcan(&jeu)) {
                         calculer_points(&jeu);
                         gagnant = joueur_gagnant(&jeu);
                         etape = 3;
                     }
                     else {
-                        etape = (ea.sous_etat == ACTION_FINI)
-                            ? 2
-                            : 1;
+                        etape = (ea.sous_etat == ACTION_FINI) ? 2 : 1;
                     }
                 }
             }
@@ -78,7 +76,7 @@ int main(void) {
             bool fini = traiter_action(&jeu, &ea, joueur, clic_l, clic_c, clic_valide);
 
             if (fini) {
-                if (verifier_eruption(&jeu)) {
+                if (verifier_volcan(&jeu)) {
                     calculer_points(&jeu);
                     gagnant = joueur_gagnant(&jeu);
                     etape = 3;

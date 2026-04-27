@@ -87,7 +87,7 @@ bool case_adjacente(int l1, int c1, int l2, int c2); // voisins directs (4-conne
 
 // Volcan / éruption
 void avancer_volcan(Jeu* jeu);
-bool verifier_eruption(Jeu* jeu); // true si marqueur >= 6
+bool verifier_volcan(Jeu* jeu); // true si marqueur >= 6
 void calculer_points(Jeu* jeu);   // compte les pions sur chaque case → points
 
 // Le reste

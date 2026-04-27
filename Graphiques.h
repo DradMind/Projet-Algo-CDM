@@ -41,11 +41,11 @@ int PE(float pourcentage, float valeur);
 // =============================================================
 //  Palette de couleurs pour le jeu 
 // =============================================================
-#define COL_BG          (Color){  8,   5,   2, 255}
-#define COL_BG_DARK     (Color){ 17,  13,   7, 255}
-#define COL_BG_MID      (Color){ 25,  18,  10, 255}
-#define COL_BORDER      (Color){ 61,  36,  16, 255}
-#define COL_BORDER_LIT  (Color){240, 104,   5, 255}
+#define FOND            (Color){  8,   5,   2, 255}
+#define FOND_SOMBRE       (Color){ 17,  13,   7, 255}
+#define FOND_MID        (Color){ 25,  18,  10, 255}
+#define COL_BORD      (Color){ 61,  36,  16, 255}
+#define COL_BORD_LIT  (Color){240, 104,   5, 255}
 #define COL_ACCENT      (Color){240, 104,   5, 255}
 #define COL_ACCENT_DIM  (Color){140,  60,   5, 255}
 #define COL_TEXT        (Color){212, 184, 150, 255}
