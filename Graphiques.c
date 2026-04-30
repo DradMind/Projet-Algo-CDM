@@ -327,11 +327,9 @@ bool bouger_volcan(Jeu* jeu) {
 	int posx = trouver_volcan_col(jeu);
 	int posy = trouver_volcan_ligne(jeu);
     if (IsKeyPressed(KEY_UP)) {
-        if (posy > 0) {
-            jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy - 1][posx].TypeCase;
-            jeu->plateau[posy - 1][posx].TypeCase = 0;
-            return true;
-        }
+        jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy - 1][posx].TypeCase;
+        jeu->plateau[posy - 1][posx].TypeCase = 0;
+        return true;
 
     }
     else if (IsKeyPressed(KEY_DOWN)) {
