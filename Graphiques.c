@@ -336,7 +336,7 @@ bool bouger_volcan(Jeu* jeu) {
         if (posy < 3) {
             jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy + 1][posx].TypeCase;
             jeu->plateau[posy + 1][posx].TypeCase = 0;
-            return true;
+            return true; 
         }
     }
     else if (IsKeyPressed(KEY_LEFT)) {
