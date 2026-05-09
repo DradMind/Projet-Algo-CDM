@@ -20,6 +20,10 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
         jeu->Joueurs[i].dino_possede = DINO_AUCUN;
         jeu->Joueurs[i].oeufs = 0;
     }
+    
+    for (int i = 0; i < 4; i++) {
+        jeu->dinos_disponibles[i] = 2; // 2 de chaque espèce
+    }
 
     if (plateauBase) {
         int base[4][4] = {
@@ -173,7 +177,17 @@ void avancer_volcan(Jeu* jeu) {
 }
 
 bool verifier_volcan(Jeu* jeu) {
-    return jeu->eruption_volcan >= 6;
+    int vl = trouver_volcan_ligne(jeu);
+    int vc = trouver_volcan_col(jeu);
+    if (vl < 0) return false;
+    
+    int nb_pions = 0;
+    for (int p = 0; p < 10; p++) {
+        if (jeu->PlateauPion[vl][vc][p].TypePion != 0) {
+            nb_pions++;
+        }
+    }
+    return nb_pions >= 6; // Seuil d'éruption basé sur les pions
 }
 
 // =============================================================
@@ -326,10 +340,12 @@ void executer_eruption_reset(Jeu* jeu) {
                 int j = jeu->PlateauPion[vl][vc][p].joueur;
                 if (jeu->PlateauPion[vl][vc][p].TypePion == 1)
                     jeu->Joueurs[j].reserve++;
-                // dino perdu (pas remis en réserve)
+                // dino remis en réserve commune
                 if (jeu->PlateauPion[vl][vc][p].TypePion == 2) {
+                    TypeDino d = jeu->PlateauPion[vl][vc][p].dino;
                     jeu->Joueurs[j].a_dino = false;
                     jeu->Joueurs[j].dino_possede = DINO_AUCUN;
+                    if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
                 }
                 enlever_pion(jeu, vl, vc, p);
             }
@@ -357,8 +373,10 @@ void executer_eruption_reset(Jeu* jeu) {
                                 if (jeu->PlateauPion[rl][rc][p].TypePion == 1)
                                     jeu->Joueurs[j].reserve++;
                                 if (jeu->PlateauPion[rl][rc][p].TypePion == 2) {
+                                    TypeDino d = jeu->PlateauPion[rl][rc][p].dino;
                                     jeu->Joueurs[j].a_dino = false;
                                     jeu->Joueurs[j].dino_possede = DINO_AUCUN;
+                                    if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
                                 }
                                 enlever_pion(jeu, rl, rc, p);
                             }
@@ -377,6 +395,33 @@ void init_phase_eruption(PhaseEruption* pe) {
     pe->phase = ERUPTION_VOLCAN_SCORE;
     pe->points_calcules = false;
     pe->moves_restants = 1; // 1 déplacement de tuile autorisé
+    pe->est_decalage_seul = false;
+}
+
+void init_phase_decalage(PhaseEruption* pe) {
+    pe->phase = ERUPTION_DEPLACEMENT;
+    pe->points_calcules = true;
+    pe->moves_restants = 1;
+    pe->est_decalage_seul = true;
+}
+
+bool joueur_a_majorite_volcan(Jeu* jeu, int joueur) {
+    int vl = trouver_volcan_ligne(jeu);
+    int vc = trouver_volcan_col(jeu);
+    if (vl < 0) return false;
+
+    int totaux[4] = { 0 };
+    for (int p = 0; p < 10; p++)
+        if (jeu->PlateauPion[vl][vc][p].TypePion != 0)
+            totaux[jeu->PlateauPion[vl][vc][p].joueur]++;
+
+    int best_val = totaux[joueur];
+    if (best_val == 0) return false;
+
+    for (int i = 0; i < 4; i++) {
+        if (i != joueur && totaux[i] > best_val) return false;
+    }
+    return true;
 }
 
 // Retourne true quand toute la phase éruption est terminée
@@ -400,53 +445,52 @@ bool traiter_eruption(Jeu* jeu, PhaseEruption* pe) {
             int posy = trouver_volcan_ligne(jeu);
             bool bouge = false;
 
-            if (IsKeyPressed(KEY_UP) && posy > 0) {
-                // Déplacer les pions de la case cible vers réserve
-                for (int p = 0; p < 10; p++)
-                    if (jeu->PlateauPion[posy - 1][posx][p].TypePion != 0) {
-                        int j = jeu->PlateauPion[posy - 1][posx][p].joueur;
-                        if (jeu->PlateauPion[posy - 1][posx][p].TypePion == 1)
-                            jeu->Joueurs[j].reserve++;
-                        enlever_pion(jeu, posy - 1, posx, p);
-                    }
-                jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy - 1][posx].TypeCase;
-                jeu->plateau[posy - 1][posx].TypeCase = 0;
+            if (IsKeyPressed(KEY_UP)) {
+                // Décaler colonne posx vers le haut
+                Case c0 = jeu->plateau[0][posx];
+                Pion p0[10]; memcpy(p0, jeu->PlateauPion[0][posx], sizeof(p0));
+                for (int l = 0; l < 3; l++) {
+                    jeu->plateau[l][posx] = jeu->plateau[l+1][posx];
+                    memcpy(jeu->PlateauPion[l][posx], jeu->PlateauPion[l+1][posx], sizeof(jeu->PlateauPion[0][0]));
+                }
+                jeu->plateau[3][posx] = c0;
+                memcpy(jeu->PlateauPion[3][posx], p0, sizeof(p0));
                 bouge = true;
             }
-            else if (IsKeyPressed(KEY_DOWN) && posy < 3) {
-                for (int p = 0; p < 10; p++)
-                    if (jeu->PlateauPion[posy + 1][posx][p].TypePion != 0) {
-                        int j = jeu->PlateauPion[posy + 1][posx][p].joueur;
-                        if (jeu->PlateauPion[posy + 1][posx][p].TypePion == 1)
-                            jeu->Joueurs[j].reserve++;
-                        enlever_pion(jeu, posy + 1, posx, p);
-                    }
-                jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy + 1][posx].TypeCase;
-                jeu->plateau[posy + 1][posx].TypeCase = 0;
+            else if (IsKeyPressed(KEY_DOWN)) {
+                // Décaler colonne posx vers le bas
+                Case c3 = jeu->plateau[3][posx];
+                Pion p3[10]; memcpy(p3, jeu->PlateauPion[3][posx], sizeof(p3));
+                for (int l = 3; l > 0; l--) {
+                    jeu->plateau[l][posx] = jeu->plateau[l-1][posx];
+                    memcpy(jeu->PlateauPion[l][posx], jeu->PlateauPion[l-1][posx], sizeof(jeu->PlateauPion[0][0]));
+                }
+                jeu->plateau[0][posx] = c3;
+                memcpy(jeu->PlateauPion[0][posx], p3, sizeof(p3));
                 bouge = true;
             }
-            else if (IsKeyPressed(KEY_LEFT) && posx > 0) {
-                for (int p = 0; p < 10; p++)
-                    if (jeu->PlateauPion[posy][posx - 1][p].TypePion != 0) {
-                        int j = jeu->PlateauPion[posy][posx - 1][p].joueur;
-                        if (jeu->PlateauPion[posy][posx - 1][p].TypePion == 1)
-                            jeu->Joueurs[j].reserve++;
-                        enlever_pion(jeu, posy, posx - 1, p);
-                    }
-                jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy][posx - 1].TypeCase;
-                jeu->plateau[posy][posx - 1].TypeCase = 0;
+            else if (IsKeyPressed(KEY_LEFT)) {
+                // Décaler ligne posy vers la gauche
+                Case c0 = jeu->plateau[posy][0];
+                Pion p0[10]; memcpy(p0, jeu->PlateauPion[posy][0], sizeof(p0));
+                for (int c = 0; c < 3; c++) {
+                    jeu->plateau[posy][c] = jeu->plateau[posy][c+1];
+                    memcpy(jeu->PlateauPion[posy][c], jeu->PlateauPion[posy][c+1], sizeof(jeu->PlateauPion[0][0]));
+                }
+                jeu->plateau[posy][3] = c0;
+                memcpy(jeu->PlateauPion[posy][3], p0, sizeof(p0));
                 bouge = true;
             }
-            else if (IsKeyPressed(KEY_RIGHT) && posx < 3) {
-                for (int p = 0; p < 10; p++)
-                    if (jeu->PlateauPion[posy][posx + 1][p].TypePion != 0) {
-                        int j = jeu->PlateauPion[posy][posx + 1][p].joueur;
-                        if (jeu->PlateauPion[posy][posx + 1][p].TypePion == 1)
-                            jeu->Joueurs[j].reserve++;
-                        enlever_pion(jeu, posy, posx + 1, p);
-                    }
-                jeu->plateau[posy][posx].TypeCase = jeu->plateau[posy][posx + 1].TypeCase;
-                jeu->plateau[posy][posx + 1].TypeCase = 0;
+            else if (IsKeyPressed(KEY_RIGHT)) {
+                // Décaler ligne posy vers la droite
+                Case c3 = jeu->plateau[posy][3];
+                Pion p3[10]; memcpy(p3, jeu->PlateauPion[posy][3], sizeof(p3));
+                for (int c = 3; c > 0; c--) {
+                    jeu->plateau[posy][c] = jeu->plateau[posy][c-1];
+                    memcpy(jeu->PlateauPion[posy][c], jeu->PlateauPion[posy][c-1], sizeof(jeu->PlateauPion[0][0]));
+                }
+                jeu->plateau[posy][0] = c3;
+                memcpy(jeu->PlateauPion[posy][0], p3, sizeof(p3));
                 bouge = true;
             }
 
@@ -455,7 +499,11 @@ bool traiter_eruption(Jeu* jeu, PhaseEruption* pe) {
 
         // Valider avec ENTREE (ou automatique si plus de moves)
         if (pe->moves_restants == 0 || IsKeyPressed(KEY_ENTER)) {
-            pe->phase = ERUPTION_RESET;
+            if (pe->est_decalage_seul) {
+                pe->phase = ERUPTION_FINI;
+            } else {
+                pe->phase = ERUPTION_RESET;
+            }
         }
         return false;
     }
@@ -631,25 +679,61 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
             ea->sous_etat = ACTION_DEPLACER_ORIGINE;
             return false;
         }
-        bool ptero = (jeu->Joueurs[joueur].a_dino &&
-            jeu->Joueurs[joueur].dino_possede == DINO_PTERODACTYLE);
-        bool adj = case_adjacente(ea->orig_ligne, ea->orig_col, clic_ligne, clic_col);
-        bool dist2 = ptero &&
-            (abs(ea->orig_ligne - clic_ligne) + abs(ea->orig_col - clic_col) <= 2);
+        int p_choisi = -1;
+        for (int p = 0; p < 10; p++) {
+            if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion >= 1 &&
+                jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
+                p_choisi = p;
+                break;
+            }
+        }
+        if (p_choisi == -1) return false;
 
-        if ((adj || dist2) && jeu->plateau[clic_ligne][clic_col].TypeCase != 0) {
-            for (int p = 0; p < 10; p++) {
-                if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion == 1 &&
-                    jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
-                    enlever_pion(jeu, ea->orig_ligne, ea->orig_col, p);
-                    rajouter_pion(jeu, clic_ligne, clic_col, joueur);
-                    ea->nb_actions[3]--;
-                    ea->orig_ligne = -1;
-                    ea->orig_col = -1;
-                    ea->sous_etat = ACTION_MENU;
-                    break;
+        int dl = abs(ea->orig_ligne - clic_ligne);
+        int dc = abs(ea->orig_col - clic_col);
+        bool adj = case_adjacente(ea->orig_ligne, ea->orig_col, clic_ligne, clic_col);
+
+        int type_pion = jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p_choisi].TypePion;
+        TypeDino dino_pion = jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p_choisi].dino;
+
+        bool dist2_saut_eau = false;
+        if (type_pion == 1 && !adj && ea->nb_actions[3] >= 2) {
+            if ((dl == 2 && dc == 0) || (dl == 0 && dc == 2)) {
+                int mid_l = (ea->orig_ligne + clic_ligne) / 2;
+                int mid_c = (ea->orig_col + clic_col) / 2;
+                if (jeu->plateau[mid_l][mid_c].TypeCase == 1) { // Eau
+                    dist2_saut_eau = true;
                 }
             }
+        }
+
+        int dest_type = jeu->plateau[clic_ligne][clic_col].TypeCase;
+        bool valide = false;
+        int cout = 1;
+
+        if (dest_type != 0) { // Ne peut pas aller sur le volcan
+            if (type_pion == 1) { // Cromagnon
+                if (dest_type != 1) { // Ne peut pas s'arrêter sur l'eau
+                    if (adj) { valide = true; cout = 1; }
+                    else if (dist2_saut_eau) { valide = true; cout = 2; }
+                }
+            } else if (type_pion == 2) { // Dinosaure
+                if (adj) { valide = true; cout = 1; }
+                else if (dino_pion == DINO_PTERODACTYLE && (dl + dc <= 2)) { valide = true; cout = 1; }
+            }
+        }
+
+        if (valide) {
+            enlever_pion(jeu, ea->orig_ligne, ea->orig_col, p_choisi);
+            if (type_pion == 1) {
+                rajouter_pion(jeu, clic_ligne, clic_col, joueur);
+            } else {
+                rajouter_dino(jeu, clic_ligne, clic_col, joueur, dino_pion);
+            }
+            ea->nb_actions[3] -= cout;
+            ea->orig_ligne = -1;
+            ea->orig_col = -1;
+            ea->sous_etat = ACTION_MENU;
         }
         return false;
     }
@@ -675,8 +759,9 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
             TypeDino choisi = types[ea->selection_dino];
             int cout = cout_dino[choisi];
 
-            if (jeu->Joueurs[joueur].oeufs >= cout) {
+            if (jeu->Joueurs[joueur].oeufs >= cout && jeu->dinos_disponibles[choisi - 1] > 0) {
                 jeu->Joueurs[joueur].oeufs -= cout;
+                jeu->dinos_disponibles[choisi - 1]--;
 
                 // Poser le dino sur une case du joueur, sinon première case non-volcan
                 bool pose = false;
@@ -697,7 +782,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
 
                 ea->sous_etat = ACTION_MENU;
             }
-            // Si pas assez d'oeufs, on reste dans le menu dino (le joueur voit)
+            // Si pas assez d'oeufs ou dino indisponible, on reste dans le menu dino
         }
         return false;
     }

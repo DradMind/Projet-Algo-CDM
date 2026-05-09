@@ -17,7 +17,7 @@ int PE(float pourcentage, float valeur);
 
 // Plateau
 #define PLATEAU_X       PE(3,  GetScreenWidth())
-#define PLATEAU_Y       (HDP_H + PE(3, GetScreenHeight()))
+#define PLATEAU_Y       (HDP_H + PE(2, GetScreenHeight()))
 #define CASE            PE(15, GetScreenHeight())
 #define CASE_ESPACE     PE(1,  GetScreenHeight())
 
@@ -30,7 +30,7 @@ int PE(float pourcentage, float valeur);
 
 // Bande d'info
 #define INFO_Y          (PLATEAU_Y + 4 * (CASE + CASE_ESPACE) + PE(2, GetScreenHeight()))
-#define INFO_H          PE(10, GetScreenHeight())
+#define INFO_H          PE(13, GetScreenHeight())
 #define INFO_BOITE_L    PE(10, GetScreenWidth()) // la largeu des boites d'info (phase, lancers, réserve) - on en affiche 3 côte à côte
 
 // Status bar
@@ -88,12 +88,12 @@ static const Color COULEUR_DE[] = {
     { 255,  69,   0, 255},
     { 169, 169, 169, 255},
     { 139,  69,  19, 255},
-    { 255, 255,   0, 255},
+    {  30, 144, 255, 255},
     { 255, 105, 180, 255},
     {  30, 144, 255, 255},
 };
 static const char* NOM_FACE[] = {
-    "Volcan","Caverne","Hutte","Empreinte","Oeuf","Deplacement"
+    "Volcan","Caverne","Hutte","Deplacement","Oeuf","Deplacement"
 };
 
 // Joueurs a voir si on a le temps de faire un nombre de joueurs variable

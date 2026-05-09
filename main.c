@@ -43,13 +43,18 @@ int main(void) {
                 }
                 else {
                     init_etat_action(&jeu, &ea, joueur);
-                    if (verifier_volcan(&jeu)) {
-                        // Éruption déclenchée par les faces Volcan
-                        init_phase_eruption(&pe);
-                        etape = 2;
-                    }
-                    else {
-                        etape = (ea.sous_etat == ACTION_FINI) ? 3 : 1;
+                    if (ea.sous_etat == ACTION_FINI) {
+                        if (verifier_volcan(&jeu)) {
+                            init_phase_eruption(&pe);
+                            etape = 2;
+                        } else if (joueur_a_majorite_volcan(&jeu, joueur)) {
+                            init_phase_decalage(&pe);
+                            etape = 5;
+                        } else {
+                            etape = 3;
+                        }
+                    } else {
+                        etape = 1;
                     }
                 }
             }
@@ -67,8 +72,10 @@ int main(void) {
                 if (verifier_volcan(&jeu)) {
                     init_phase_eruption(&pe);
                     etape = 2;
-                }
-                else {
+                } else if (joueur_a_majorite_volcan(&jeu, joueur)) {
+                    init_phase_decalage(&pe);
+                    etape = 5;
+                } else {
                     etape = 3;
                 }
             }
@@ -106,6 +113,14 @@ int main(void) {
             if (IsKeyPressed(KEY_E)) break;
         }
 
+        // ── Étape 5 : décalage ──
+        else if (etape == 5) {
+            bool decalage_fini = traiter_eruption(&jeu, &pe);
+            if (decalage_fini) {
+                etape = 3;
+            }
+        }
+
         // ============================================================
         //  RENDU
         // ============================================================
@@ -115,7 +130,7 @@ int main(void) {
             affichage_jeu(&jeu, joueur, 0, nblancer, achoisides);
         else if (etape == 1)
             affichage_actions(&jeu, joueur, &ea);
-        else if (etape == 2)
+        else if (etape == 2 || etape == 5)
             affichage_eruption(&jeu, &pe, joueur);
         else if (etape == 4) {
             affichage_jeu(&jeu, joueur, 0, 0, false);

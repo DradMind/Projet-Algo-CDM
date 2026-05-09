@@ -32,7 +32,7 @@ typedef struct {
 
 typedef struct {
     bool bloque;
-    int  action;  // 0=Volcan 1=Caverne 2=Hutte 3=Empreinte 4=Oeuf 5=Deplacement
+    int  action;  // 0=Volcan 1=Caverne 2=Hutte 3=Deplacement 4=Oeuf 5=Deplacement
     bool selectionne;
 } Des;
 
@@ -52,9 +52,10 @@ typedef struct {
     Pion   PlateauPion[4][4][10];
     Des    Listede[7];
     Joueur Joueurs[4];
-    int    eruption_volcan;  // 0-6
+    int    dinos_disponibles[4]; // Stock par type de dino
+    int    eruption_volcan;      // obsolète si on utilise le nombre de pions
     int    nb_joueurs;
-    int    nb_eruptions;     // nombre total d'éruptions depuis le début
+    int    nb_eruptions;         // nombre total d'éruptions depuis le début
 } Jeu;
 
 // =============================================================
@@ -95,6 +96,7 @@ typedef struct {
     EtatEruption phase;
     bool         points_calcules;
     int          moves_restants;     // déplacements de tuile autorisés (1 par éruption)
+    bool         est_decalage_seul;
 } PhaseEruption;
 
 // =============================================================
@@ -140,3 +142,5 @@ int  joueur_gagnant(Jeu* jeu);
 // Utilitaires
 int  trouver_volcan_ligne(Jeu* jeu);
 int  trouver_volcan_col(Jeu* jeu);
+void init_phase_decalage(PhaseEruption* pe);
+bool joueur_a_majorite_volcan(Jeu* jeu, int joueur);
