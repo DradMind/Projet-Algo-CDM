@@ -12,10 +12,10 @@
 // Types de dinosaures (4 types, chacun avec un pouvoir)
 typedef enum {
     DINO_AUCUN = 0,
-    DINO_TRICERATOPS = 1,  // +1 dé supplémentaire
+    DINO_TRICERATOPS = 1,  // +1 lancer par tour (4 lancers au lieu de 3)
     DINO_PTERODACTYLE = 2,  // déplacement de 2 cases au lieu de 1
     DINO_BRACHIO = 3,   // peut déployer sur n'importe quelle case (pas seulement hutte/caverne)
-    DINO_TITANOSAURE = 4,   // +1 dé (déjà dans possedetitanosaure)
+    DINO_TITANOSAURE = 4,   // +1 dé supplémentaire
 } TypeDino;
 
 typedef struct {
@@ -104,6 +104,7 @@ typedef struct {
 void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs);
 void logiquede(Jeu* jeu, int joueur);
 int  possedetitanosaure(Jeu* jeu, int joueur);
+int  nb_lancers_total(Jeu* jeu, int joueur);   // 3 (+1 si TRICERATOPS)
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
 
 // Actions

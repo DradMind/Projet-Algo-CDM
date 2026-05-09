@@ -56,8 +56,8 @@ int PE(float pourcentage, float valeur);
 
 // Cases
 static const Color COULEUR_CASE[] = {
-	{  90,  21,   0, 255},
-    {   8,  32,  64, 255}, 
+    {  90,  21,   0, 255},
+    {   8,  32,  64, 255},
     {  14,  45,  14, 255},
     {  122,  126,   20, 255},
     {  45,  26,   6, 255},

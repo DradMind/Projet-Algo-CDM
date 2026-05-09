@@ -63,6 +63,13 @@ int possedetitanosaure(Jeu* jeu, int joueur) {
     return 0;
 }
 
+int nb_lancers_total(Jeu* jeu, int joueur) {
+    if (jeu->Joueurs[joueur].a_dino &&
+        jeu->Joueurs[joueur].dino_possede == DINO_TRICERATOPS)
+        return 4;
+    return 3;
+}
+
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
         int x = TABLEAU_X;
@@ -512,6 +519,10 @@ void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur) {
     jeu->Joueurs[joueur].oeufs += ea->nb_actions[4];
     ea->nb_actions[4] = 0; // pas une action directe, c'est un stock
 
+    // La face Deplacement (5) compte aussi comme une action de déplacement (3)
+    ea->nb_actions[3] += ea->nb_actions[5];
+    ea->nb_actions[5] = 0;
+
     ea->sous_etat = ACTION_MENU;
     ea->action_en_cours = -1;
     ea->orig_ligne = -1;
@@ -533,9 +544,6 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
 
         if (IsKeyPressed(KEY_ENTER)) {
             int sel = ea->selection_menu;
-
-            // Coûts en oeufs par dino
-            int cout_dino[] = { 0, 2, 2, 3, 3 }; // index = TypeDino
 
             if (sel == 0 && ea->nb_actions[1] > 0) {
                 ea->action_en_cours = 1;
@@ -567,7 +575,14 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
     }
 
     // ── DEPLOYER ──
-    if (ea->sous_etat == ACTION_DEPLOYER_CASE && clic_valide) {
+    if (ea->sous_etat == ACTION_DEPLOYER_CASE) {
+        if (IsKeyPressed(KEY_E)) {
+            ea->sous_etat = ACTION_MENU;
+            ea->action_en_cours = -1;
+            return false;
+        }
+        if (!clic_valide) return false;
+
         int type_cible = (ea->action_en_cours == 1) ? 5 : 4;
         bool brachio = (jeu->Joueurs[joueur].a_dino &&
             jeu->Joueurs[joueur].dino_possede == DINO_BRACHIO);
@@ -580,12 +595,19 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
             rajouter_pion(jeu, clic_ligne, clic_col, joueur);
             ea->nb_actions[ea->action_en_cours]--;
             ea->sous_etat = ACTION_MENU;
+            ea->action_en_cours = -1;
         }
         return false;
     }
 
     // ── DÉPLACER ORIGINE ──
-    if (ea->sous_etat == ACTION_DEPLACER_ORIGINE && clic_valide) {
+    if (ea->sous_etat == ACTION_DEPLACER_ORIGINE) {
+        if (IsKeyPressed(KEY_E)) {
+            ea->sous_etat = ACTION_MENU;
+            return false;
+        }
+        if (!clic_valide) return false;
+
         if (compter_pions_joueur(jeu, joueur, clic_ligne, clic_col) > 0 &&
             jeu->plateau[clic_ligne][clic_col].TypeCase != 0) {
             ea->orig_ligne = clic_ligne;
@@ -596,7 +618,15 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
     }
 
     // ── DÉPLACER DESTINATION ──
-    if (ea->sous_etat == ACTION_DEPLACER_DEST && clic_valide) {
+    if (ea->sous_etat == ACTION_DEPLACER_DEST) {
+        if (IsKeyPressed(KEY_E)) {
+            ea->sous_etat = ACTION_MENU;
+            ea->orig_ligne = -1;
+            ea->orig_col = -1;
+            return false;
+        }
+        if (!clic_valide) return false;
+
         if (clic_ligne == ea->orig_ligne && clic_col == ea->orig_col) {
             ea->sous_etat = ACTION_DEPLACER_ORIGINE;
             return false;
@@ -607,7 +637,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         bool dist2 = ptero &&
             (abs(ea->orig_ligne - clic_ligne) + abs(ea->orig_col - clic_col) <= 2);
 
-        if (adj || dist2) {
+        if ((adj || dist2) && jeu->plateau[clic_ligne][clic_col].TypeCase != 0) {
             for (int p = 0; p < 10; p++) {
                 if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion == 1 &&
                     jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
@@ -634,7 +664,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
             ea->selection_dino = (ea->selection_dino + 1) % nb_dinos;
 
         // Annuler avec ECHAP
-        if (IsKeyPressed(KEY_ESCAPE)) {
+        if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;
             return false;
         }

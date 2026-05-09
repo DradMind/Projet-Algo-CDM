@@ -15,7 +15,7 @@ int main(void) {
 
     int  joueur = 0;
     int  etape = 0;   // 0=lancers 1=actions 2=eruption 3=fin_tour 4=fin_partie
-    int  nblancer = 3;
+    int  nblancer = nb_lancers_total(&jeu, joueur);
     bool achoisides = true;
     int  gagnant = -1;
 
@@ -33,7 +33,7 @@ int main(void) {
                 logiquede(&jeu, joueur);
                 achoisides = false;
                 nblancer--;
-            }
+            } 
             if (!achoisides)
                 selectiondes(&jeu, joueur, souris, true);
 
@@ -91,7 +91,7 @@ int main(void) {
         // ── Étape 3 : fin de tour, passer au joueur suivant ──
         else if (etape == 3) {
             joueur = (joueur + 1) % jeu.nb_joueurs;
-            nblancer = 3;
+            nblancer = nb_lancers_total(&jeu, joueur);
             achoisides = true;
             for (int i = 0; i < 7; i++) {
                 jeu.Listede[i].bloque = false;
@@ -103,7 +103,7 @@ int main(void) {
 
         // ── Étape 4 : fin de partie ──
         else if (etape == 4) {
-            if (IsKeyPressed(KEY_ESCAPE)) break;
+            if (IsKeyPressed(KEY_E)) break;
         }
 
         // ============================================================
