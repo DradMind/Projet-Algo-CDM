@@ -130,10 +130,8 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                 bool surligne_origine = false;
 
                 if (ea->sous_etat == ACTION_DEPLOYER_CASE) {
-                    int type_cible = (ea->action_en_cours == 1) ? 5 : 4;
-                    bool brachio = (jeu->Joueurs[joueur].a_dino &&
-                        jeu->Joueurs[joueur].dino_possede == DINO_BRACHIO);
-                    bool case_ok = brachio ? (type != 0) : (type == type_cible);
+                    int type_cible = (ea->action_en_cours == 1) ? 4 : 5;
+                    bool case_ok = (type == type_cible);
                     if (case_ok && jeu->Joueurs[joueur].reserve > 0) surligne_valide = true;
                 }
                 else if (ea->sous_etat == ACTION_DEPLACER_ORIGINE) {
@@ -496,7 +494,7 @@ static void dessiner_menu_volcan(Jeu* jeu, int joueur, EtatAction* ea) {
     for (int i = 0; i < 2; i++) {
         int  ligne_y = boite_y + hauteur_ligne + i * (hauteur_ligne + 2);
         bool selectionne = (ea->selection_menu == i);
-        bool dispo = (i == 0) ? true : jeu->Joueurs[joueur].a_dino;
+        bool dispo = (i == 0) ? true : a_dino_sacrifiable(jeu, joueur);
 
         Color col_fond = selectionne ? (Color) { 30, 22, 10, 255 } : FOND_MID;
         Color col_bord = selectionne ? COL_ACCENT : COL_BORD;

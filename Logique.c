@@ -190,6 +190,22 @@ bool verifier_volcan(Jeu* jeu) {
     return nb_pions >= 6; // Seuil d'éruption basé sur les pions
 }
 
+bool a_dino_sacrifiable(Jeu* jeu, int joueur) {
+    int vl = trouver_volcan_ligne(jeu);
+    int vc = trouver_volcan_col(jeu);
+    for (int l = 0; l < 4; l++) {
+        for (int c = 0; c < 4; c++) {
+            if (l == vl && c == vc) continue;
+            for (int p = 0; p < 10; p++) {
+                if (jeu->PlateauPion[l][c][p].TypePion == 2 && jeu->PlateauPion[l][c][p].joueur == joueur) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 // =============================================================
 //  RÉGIONS (flood-fill 4-connexe sur cases de même type)
 // =============================================================
@@ -219,12 +235,27 @@ int taille_region(Jeu* jeu, int ligne, int col, bool visite[4][4]) {
 // Retourne le joueur majoritaire dans un ensemble de cases, ou -1 si égalité
 int joueur_majoritaire_region(Jeu* jeu, bool cellules[4][4]) {
     int totaux[4] = { 0 };
+    bool tric_present = false;
     for (int l = 0; l < 4; l++)
         for (int c = 0; c < 4; c++)
             if (cellules[l][c])
                 for (int p = 0; p < 10; p++)
-                    if (jeu->PlateauPion[l][c][p].TypePion != 0)
-                        totaux[jeu->PlateauPion[l][c][p].joueur]++;
+                    if (jeu->PlateauPion[l][c][p].TypePion == 2 && jeu->PlateauPion[l][c][p].dino == DINO_TRICERATOPS)
+                        tric_present = true;
+
+    for (int l = 0; l < 4; l++)
+        for (int c = 0; c < 4; c++)
+            if (cellules[l][c])
+                for (int p = 0; p < 10; p++) {
+                    if (jeu->PlateauPion[l][c][p].TypePion == 1) {
+                        if (!tric_present) totaux[jeu->PlateauPion[l][c][p].joueur]++;
+                    } else if (jeu->PlateauPion[l][c][p].TypePion == 2) {
+                        if (jeu->PlateauPion[l][c][p].dino == DINO_BRACHIO)
+                            totaux[jeu->PlateauPion[l][c][p].joueur] += 3;
+                        else
+                            totaux[jeu->PlateauPion[l][c][p].joueur]++;
+                    }
+                }
 
     int best = -1, best_val = 0;
     bool egalite = false;
@@ -273,10 +304,20 @@ static void points_volcan(Jeu* jeu) {
 
     for (int i = 0; i < 4; i++) {
         if (totaux[i] == 0) continue;
-        if (!egalite && totaux[i] == best_val)
+        if (totaux[i] == best_val)
             jeu->Joueurs[i].points += 3;
         else
             jeu->Joueurs[i].points += 1;
+    }
+
+    // Toutes les figurines sur le Volcan retournent dans les réserves
+    for (int p = 0; p < 10; p++) {
+        if (jeu->PlateauPion[vl][vc][p].TypePion == 1) {
+            jeu->Joueurs[jeu->PlateauPion[vl][vc][p].joueur].reserve++;
+        } else if (jeu->PlateauPion[vl][vc][p].TypePion == 2) {
+            jeu->dinos_disponibles[jeu->PlateauPion[vl][vc][p].dino - 1]++;
+        }
+        enlever_pion(jeu, vl, vc, p);
     }
 }
 
@@ -299,8 +340,27 @@ static void points_regions(Jeu* jeu) {
             int  taille = flood_fill(jeu, l, c, type, visite, cellules);
             int  gagnant = joueur_majoritaire_region(jeu, cellules);
 
-            if (gagnant >= 0)
+            if (gagnant >= 0) {
                 jeu->Joueurs[gagnant].points += taille;
+
+                // Les joueurs qui marquent des points reprennent leurs figurines
+                for (int l2 = 0; l2 < 4; l2++) {
+                    for (int c2 = 0; c2 < 4; c2++) {
+                        if (cellules[l2][c2]) {
+                            for (int p = 0; p < 10; p++) {
+                                if (jeu->PlateauPion[l2][c2][p].TypePion != 0 && jeu->PlateauPion[l2][c2][p].joueur == gagnant) {
+                                    if (jeu->PlateauPion[l2][c2][p].TypePion == 1) {
+                                        jeu->Joueurs[gagnant].reserve++;
+                                    } else if (jeu->PlateauPion[l2][c2][p].TypePion == 2) {
+                                        jeu->dinos_disponibles[jeu->PlateauPion[l2][c2][p].dino - 1]++;
+                                    }
+                                    enlever_pion(jeu, l2, c2, p);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -326,33 +386,9 @@ void calculer_points_eruption(Jeu* jeu) {
 
 // =============================================================
 //  RESET APRÈS ÉRUPTION
-//  - Vide le volcan et les régions scorées
-//  - Replace les pions éliminés en réserve
+//  - Réinitialise le compteur d'éruption (les pions ont déjà été enlevés)
 // =============================================================
 void executer_eruption_reset(Jeu* jeu) {
-    int vl = trouver_volcan_ligne(jeu);
-    int vc = trouver_volcan_col(jeu);
-
-    // Vider TOUT le plateau, remettre pions en réserve et dinos dans le stock
-    for (int l = 0; l < 4; l++) {
-        for (int c = 0; c < 4; c++) {
-            for (int p = 0; p < 10; p++) {
-                if (jeu->PlateauPion[l][c][p].TypePion != 0) {
-                    int j = jeu->PlateauPion[l][c][p].joueur;
-                    if (jeu->PlateauPion[l][c][p].TypePion == 1)
-                        jeu->Joueurs[j].reserve++;
-                    if (jeu->PlateauPion[l][c][p].TypePion == 2) {
-                        TypeDino d = jeu->PlateauPion[l][c][p].dino;
-                        jeu->Joueurs[j].a_dino = false;
-                        jeu->Joueurs[j].dino_possede = DINO_AUCUN;
-                        if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
-                    }
-                    enlever_pion(jeu, l, c, p);
-                }
-            }
-        }
-    }
-
     jeu->eruption_volcan = 0;
     jeu->nb_eruptions++;
 }
@@ -526,6 +562,9 @@ int joueur_gagnant(Jeu* jeu) {
 void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur) {
     memset(ea, 0, sizeof(EtatAction));
     int nb = 5 + possedetitanosaure(jeu, joueur);
+    for (int i = 0; i < nb; i++) {
+        ea->nb_actions[jeu->Listede[i].action]++;
+    }
     // Les faces Oeuf s'ajoutent à la réserve d'oeufs du joueur
     for (int i = 0; i < ea->nb_actions[4]; i++) {
         if (jeu->Joueurs[joueur].reserve > 0) {
@@ -567,7 +606,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         if (IsKeyPressed(KEY_DOWN)) ea->selection_menu = 1;
         
         if (IsKeyPressed(KEY_ENTER)) {
-            if (ea->selection_menu == 1 && !jeu->Joueurs[joueur].a_dino) {
+            if (ea->selection_menu == 1 && !a_dino_sacrifiable(jeu, joueur)) {
                 // Pas de dino à sacrifier
                 return false;
             }
@@ -596,7 +635,8 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
                     // Sacrifier un Dinosaure
                     bool trouve = false;
                     for (int l = 0; l < 4 && !trouve; l++)
-                        for (int c = 0; c < 4 && !trouve; c++)
+                        for (int c = 0; c < 4 && !trouve; c++) {
+                            if (l == vl && c == vc) continue;
                             for (int p = 0; p < 10; p++)
                                 if (jeu->PlateauPion[l][c][p].TypePion == 2 && jeu->PlateauPion[l][c][p].joueur == joueur) {
                                     TypeDino d = jeu->PlateauPion[l][c][p].dino;
@@ -605,6 +645,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
                                     trouve = true;
                                     break;
                                 }
+                        }
                 }
             }
             
@@ -666,12 +707,8 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         }
         if (!clic_valide) return false;
 
-        int type_cible = (ea->action_en_cours == 1) ? 5 : 4;
-        bool brachio = (jeu->Joueurs[joueur].a_dino &&
-            jeu->Joueurs[joueur].dino_possede == DINO_BRACHIO);
-        bool case_ok = brachio
-            ? (jeu->plateau[clic_ligne][clic_col].TypeCase != 0)
-            : (jeu->plateau[clic_ligne][clic_col].TypeCase == type_cible);
+        int type_cible = (ea->action_en_cours == 1) ? 4 : 5;
+        bool case_ok = (jeu->plateau[clic_ligne][clic_col].TypeCase == type_cible);
 
         if (case_ok && jeu->Joueurs[joueur].reserve > 0) {
             jeu->Joueurs[joueur].reserve--;
