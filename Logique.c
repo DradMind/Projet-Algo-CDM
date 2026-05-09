@@ -333,53 +333,23 @@ void executer_eruption_reset(Jeu* jeu) {
     int vl = trouver_volcan_ligne(jeu);
     int vc = trouver_volcan_col(jeu);
 
-    // Remettre les pions du volcan en réserve
-    if (vl >= 0) {
-        for (int p = 0; p < 10; p++) {
-            if (jeu->PlateauPion[vl][vc][p].TypePion != 0) {
-                int j = jeu->PlateauPion[vl][vc][p].joueur;
-                if (jeu->PlateauPion[vl][vc][p].TypePion == 1)
-                    jeu->Joueurs[j].reserve++;
-                // dino remis en réserve commune
-                if (jeu->PlateauPion[vl][vc][p].TypePion == 2) {
-                    TypeDino d = jeu->PlateauPion[vl][vc][p].dino;
-                    jeu->Joueurs[j].a_dino = false;
-                    jeu->Joueurs[j].dino_possede = DINO_AUCUN;
-                    if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
-                }
-                enlever_pion(jeu, vl, vc, p);
-            }
-        }
-    }
-
-    // Vider les régions Jungle et Prairie scorées, remettre pions en réserve
-    bool visite[4][4] = { {false} };
+    // Vider TOUT le plateau, remettre pions en réserve et dinos dans le stock
     for (int l = 0; l < 4; l++) {
         for (int c = 0; c < 4; c++) {
-            if (visite[l][c]) continue;
-            int type = jeu->plateau[l][c].TypeCase;
-            if (type != 2 && type != 3) { visite[l][c] = true; continue; }
-
-            bool cellules[4][4] = { {false} };
-            flood_fill(jeu, l, c, type, visite, cellules);
-
-            // Vider toutes les cases de cette région
-            for (int rl = 0; rl < 4; rl++)
-                for (int rc = 0; rc < 4; rc++)
-                    if (cellules[rl][rc])
-                        for (int p = 0; p < 10; p++)
-                            if (jeu->PlateauPion[rl][rc][p].TypePion != 0) {
-                                int j = jeu->PlateauPion[rl][rc][p].joueur;
-                                if (jeu->PlateauPion[rl][rc][p].TypePion == 1)
-                                    jeu->Joueurs[j].reserve++;
-                                if (jeu->PlateauPion[rl][rc][p].TypePion == 2) {
-                                    TypeDino d = jeu->PlateauPion[rl][rc][p].dino;
-                                    jeu->Joueurs[j].a_dino = false;
-                                    jeu->Joueurs[j].dino_possede = DINO_AUCUN;
-                                    if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
-                                }
-                                enlever_pion(jeu, rl, rc, p);
-                            }
+            for (int p = 0; p < 10; p++) {
+                if (jeu->PlateauPion[l][c][p].TypePion != 0) {
+                    int j = jeu->PlateauPion[l][c][p].joueur;
+                    if (jeu->PlateauPion[l][c][p].TypePion == 1)
+                        jeu->Joueurs[j].reserve++;
+                    if (jeu->PlateauPion[l][c][p].TypePion == 2) {
+                        TypeDino d = jeu->PlateauPion[l][c][p].dino;
+                        jeu->Joueurs[j].a_dino = false;
+                        jeu->Joueurs[j].dino_possede = DINO_AUCUN;
+                        if (d >= 1 && d <= 4) jeu->dinos_disponibles[d - 1]++;
+                    }
+                    enlever_pion(jeu, l, c, p);
+                }
+            }
         }
     }
 
@@ -419,7 +389,7 @@ bool joueur_a_majorite_volcan(Jeu* jeu, int joueur) {
     if (best_val == 0) return false;
 
     for (int i = 0; i < 4; i++) {
-        if (i != joueur && totaux[i] > best_val) return false;
+        if (i != joueur && totaux[i] >= best_val) return false;
     }
     return true;
 }
@@ -556,22 +526,31 @@ int joueur_gagnant(Jeu* jeu) {
 void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur) {
     memset(ea, 0, sizeof(EtatAction));
     int nb = 5 + possedetitanosaure(jeu, joueur);
-    for (int i = 0; i < nb; i++)
-        ea->nb_actions[jeu->Listede[i].action]++;
-
-    for (int v = 0; v < ea->nb_actions[0]; v++)
-        avancer_volcan(jeu);
-    ea->nb_actions[0] = 0;
-
     // Les faces Oeuf s'ajoutent à la réserve d'oeufs du joueur
-    jeu->Joueurs[joueur].oeufs += ea->nb_actions[4];
+    for (int i = 0; i < ea->nb_actions[4]; i++) {
+        if (jeu->Joueurs[joueur].reserve > 0) {
+            jeu->Joueurs[joueur].reserve--;
+            jeu->Joueurs[joueur].oeufs++;
+        } else {
+            bool trouve = false;
+            for (int l = 0; l < 4 && !trouve; l++)
+                for (int c = 0; c < 4 && !trouve; c++)
+                    for (int p = 0; p < 10; p++)
+                        if (jeu->PlateauPion[l][c][p].TypePion == 1 && jeu->PlateauPion[l][c][p].joueur == joueur) {
+                            enlever_pion(jeu, l, c, p);
+                            trouve = true;
+                            break;
+                        }
+            if (trouve) jeu->Joueurs[joueur].oeufs++;
+        }
+    }
     ea->nb_actions[4] = 0; // pas une action directe, c'est un stock
 
     // La face Deplacement (5) compte aussi comme une action de déplacement (3)
     ea->nb_actions[3] += ea->nb_actions[5];
     ea->nb_actions[5] = 0;
 
-    ea->sous_etat = ACTION_MENU;
+    ea->sous_etat = (ea->nb_actions[0] > 0) ? ACTION_VOLCAN_MENU : ACTION_MENU;
     ea->action_en_cours = -1;
     ea->orig_ligne = -1;
     ea->orig_col = -1;
@@ -581,6 +560,62 @@ void init_etat_action(Jeu* jeu, EtatAction* ea, int joueur) {
 bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
     int clic_ligne, int clic_col, bool clic_valide) {
     if (ea->sous_etat == ACTION_FINI) return true;
+
+    // ── VOLCAN MENU ──
+    if (ea->sous_etat == ACTION_VOLCAN_MENU) {
+        if (IsKeyPressed(KEY_UP)) ea->selection_menu = 0;
+        if (IsKeyPressed(KEY_DOWN)) ea->selection_menu = 1;
+        
+        if (IsKeyPressed(KEY_ENTER)) {
+            if (ea->selection_menu == 1 && !jeu->Joueurs[joueur].a_dino) {
+                // Pas de dino à sacrifier
+                return false;
+            }
+            
+            int vl = trouver_volcan_ligne(jeu);
+            int vc = trouver_volcan_col(jeu);
+            if (vl >= 0) {
+                if (ea->selection_menu == 0) {
+                    // Sacrifier un Cromagnon
+                    if (jeu->Joueurs[joueur].reserve > 0) {
+                        jeu->Joueurs[joueur].reserve--;
+                        rajouter_pion(jeu, vl, vc, joueur);
+                    } else {
+                        bool trouve = false;
+                        for (int l = 0; l < 4 && !trouve; l++)
+                            for (int c = 0; c < 4 && !trouve; c++)
+                                for (int p = 0; p < 10; p++)
+                                    if (jeu->PlateauPion[l][c][p].TypePion == 1 && jeu->PlateauPion[l][c][p].joueur == joueur) {
+                                        enlever_pion(jeu, l, c, p);
+                                        rajouter_pion(jeu, vl, vc, joueur);
+                                        trouve = true;
+                                        break;
+                                    }
+                    }
+                } else {
+                    // Sacrifier un Dinosaure
+                    bool trouve = false;
+                    for (int l = 0; l < 4 && !trouve; l++)
+                        for (int c = 0; c < 4 && !trouve; c++)
+                            for (int p = 0; p < 10; p++)
+                                if (jeu->PlateauPion[l][c][p].TypePion == 2 && jeu->PlateauPion[l][c][p].joueur == joueur) {
+                                    TypeDino d = jeu->PlateauPion[l][c][p].dino;
+                                    enlever_pion(jeu, l, c, p);
+                                    rajouter_dino(jeu, vl, vc, joueur, d);
+                                    trouve = true;
+                                    break;
+                                }
+                }
+            }
+            
+            ea->nb_actions[0]--;
+            ea->selection_menu = 0;
+            if (ea->nb_actions[0] <= 0) {
+                ea->sous_etat = ACTION_MENU;
+            }
+        }
+        return false;
+    }
 
     // ── MENU ──
     if (ea->sous_etat == ACTION_MENU) {
@@ -648,7 +683,6 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         return false;
     }
 
-    // ── DÉPLACER ORIGINE ──
     if (ea->sous_etat == ACTION_DEPLACER_ORIGINE) {
         if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;
@@ -658,8 +692,40 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
 
         if (compter_pions_joueur(jeu, joueur, clic_ligne, clic_col) > 0 &&
             jeu->plateau[clic_ligne][clic_col].TypeCase != 0) {
+            int nb_cro = 0;
+            int nb_dino = 0;
+            for (int p = 0; p < 10; p++) {
+                if (jeu->PlateauPion[clic_ligne][clic_col][p].joueur == joueur) {
+                    if (jeu->PlateauPion[clic_ligne][clic_col][p].TypePion == 1) nb_cro++;
+                    if (jeu->PlateauPion[clic_ligne][clic_col][p].TypePion == 2) nb_dino++;
+                }
+            }
+
             ea->orig_ligne = clic_ligne;
             ea->orig_col = clic_col;
+
+            if (nb_cro > 0 && nb_dino > 0) {
+                ea->sous_etat = ACTION_CHOISIR_PION;
+                ea->type_pion_selectionne = 1; // Default select cromagnon
+            } else {
+                ea->type_pion_selectionne = (nb_dino > 0) ? 2 : 1;
+                ea->sous_etat = ACTION_DEPLACER_DEST;
+            }
+        }
+        return false;
+    }
+
+    // ── CHOISIR PION (Dino ou Cromagnon) ──
+    if (ea->sous_etat == ACTION_CHOISIR_PION) {
+        if (IsKeyPressed(KEY_UP)) ea->type_pion_selectionne = 1;
+        if (IsKeyPressed(KEY_DOWN)) ea->type_pion_selectionne = 2;
+        if (IsKeyPressed(KEY_E)) {
+            ea->sous_etat = ACTION_MENU;
+            ea->orig_ligne = -1;
+            ea->orig_col = -1;
+            return false;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
             ea->sous_etat = ACTION_DEPLACER_DEST;
         }
         return false;
@@ -681,7 +747,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         }
         int p_choisi = -1;
         for (int p = 0; p < 10; p++) {
-            if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion >= 1 &&
+            if (jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].TypePion == ea->type_pion_selectionne &&
                 jeu->PlateauPion[ea->orig_ligne][ea->orig_col][p].joueur == joueur) {
                 p_choisi = p;
                 break;
@@ -761,6 +827,7 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
 
             if (jeu->Joueurs[joueur].oeufs >= cout && jeu->dinos_disponibles[choisi - 1] > 0) {
                 jeu->Joueurs[joueur].oeufs -= cout;
+                jeu->Joueurs[joueur].reserve += cout; // Les Cromagnons reviennent
                 jeu->dinos_disponibles[choisi - 1]--;
 
                 // Poser le dino sur une case du joueur, sinon première case non-volcan

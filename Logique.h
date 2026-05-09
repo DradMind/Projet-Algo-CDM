@@ -68,6 +68,8 @@ typedef enum {
     ACTION_DEPLACER_ORIGINE,
     ACTION_DEPLACER_DEST,
     ACTION_OEUF_CHOISIR,     // joueur choisit quel dino faire éclore
+    ACTION_CHOISIR_PION,     // joueur choisit quel pion déplacer s'il y a un dino et un cromagnon
+    ACTION_VOLCAN_MENU,      // joueur choisit quel pion sacrifier au volcan
     ACTION_FINI
 } SousEtatAction;
 
@@ -79,6 +81,7 @@ typedef struct {
     int            orig_ligne;
     int            orig_col;
     int            selection_dino;   // curseur dans le menu d'éclosion
+    int            type_pion_selectionne; // 1 = Cromagnon, 2 = Dino, 0 = Non défini
 } EtatAction;
 
 // =============================================================
