@@ -3,23 +3,21 @@
 #include "Logique.h"
 #include <time.h>
 
-// =============================================================
-//  Étapes du tour
-// =============================================================
 int main(void) {
     srand((unsigned int)time(NULL));
     initialiser_fenetre();
 
     Jeu jeu = { 0 };
-    EtatAction ea = { 0 };
+    EtatAction   ea = { 0 };
+    PhaseEruption pe = { 0 };
 
     initialiser_plateau(&jeu, false, 2);
 
-    int joueur = 0;
-    int etape = 0;
-    int nblancer = 3;
-    bool achoisides = true;  // true = joueur doit appuyer sur ESPACE
-    int gagnant = -1;
+    int  joueur = 0;
+    int  etape = 0;   // 0=lancers 1=actions 2=eruption 3=fin_tour 4=fin_partie
+    int  nblancer = 3;
+    bool achoisides = true;
+    int  gagnant = -1;
 
     while (!WindowShouldClose()) {
 
@@ -29,82 +27,82 @@ int main(void) {
         //  LOGIQUE
         // ============================================================
 
+        // ── Étape 0 : lancers ──
         if (etape == 0) {
-
-            // Lancer avec ESPACE
             if (achoisides && IsKeyPressed(KEY_SPACE)) {
                 logiquede(&jeu, joueur);
                 achoisides = false;
                 nblancer--;
             }
-
-            // Bloquer/débloquer un dé au clic
             if (!achoisides)
                 selectiondes(&jeu, joueur, souris, true);
 
-            // ENTREE : valider la sélection et relancer ou passer aux actions
             if (!achoisides && IsKeyPressed(KEY_ENTER)) {
                 if (nblancer > 0) {
-                    achoisides = true;  // prêt pour le prochain lancer
+                    achoisides = true;
                 }
                 else {
-                    // Plus de lancers : passer aux actions
                     init_etat_action(&jeu, &ea, joueur);
-
-                    // Si éruption déclenchée par les faces Volcan
                     if (verifier_volcan(&jeu)) {
-                        calculer_points(&jeu);
-                        gagnant = joueur_gagnant(&jeu);
-                        etape = 3;
+                        // Éruption déclenchée par les faces Volcan
+                        init_phase_eruption(&pe);
+                        etape = 2;
                     }
                     else {
-                        etape = (ea.sous_etat == ACTION_FINI) ? 2 : 1;
+                        etape = (ea.sous_etat == ACTION_FINI) ? 3 : 1;
                     }
                 }
             }
         }
 
+        // ── Étape 1 : actions ──
         else if (etape == 1) {
-
-            // Clic sur le plateau → transmis à traiter_action
-            int clic_l = -1;
-            int clic_c = -1;
+            int  clic_l = -1, clic_c = -1;
             bool clic_valide = false;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                 clic_valide = clic_sur_plateau(souris, &clic_l, &clic_c);
 
             bool fini = traiter_action(&jeu, &ea, joueur, clic_l, clic_c, clic_valide);
-
             if (fini) {
                 if (verifier_volcan(&jeu)) {
-                    calculer_points(&jeu);
-                    gagnant = joueur_gagnant(&jeu);
-                    etape = 3;
+                    init_phase_eruption(&pe);
+                    etape = 2;
                 }
                 else {
-                    etape = 2;
+                    etape = 3;
                 }
             }
         }
 
+        // ── Étape 2 : éruption ──
         else if (etape == 2) {
-            // Réinitialiser pour le joueur suivant
-            joueur++;
+            bool eruption_finie = traiter_eruption(&jeu, &pe);
+            if (eruption_finie) {
+                if (partie_terminee(&jeu)) {
+                    gagnant = joueur_gagnant(&jeu);
+                    etape = 4;
+                }
+                else {
+                    etape = 3;
+                }
+            }
+        }
+
+        // ── Étape 3 : fin de tour, passer au joueur suivant ──
+        else if (etape == 3) {
+            joueur = (joueur + 1) % jeu.nb_joueurs;
             nblancer = 3;
             achoisides = true;
-
-            // Débloquer tous les dés pour le nouveau joueur
             for (int i = 0; i < 7; i++) {
                 jeu.Listede[i].bloque = false;
                 jeu.Listede[i].selectionne = false;
                 jeu.Listede[i].action = 0;
             }
-
             etape = 0;
         }
 
-        else if (etape == 3) {
-            // Attendre ECHAP pour quitter
+        // ── Étape 4 : fin de partie ──
+        else if (etape == 4) {
             if (IsKeyPressed(KEY_ESCAPE)) break;
         }
 
@@ -113,16 +111,13 @@ int main(void) {
         // ============================================================
         BeginDrawing();
 
-        if (etape == 0) {
+        if (etape == 0)
             affichage_jeu(&jeu, joueur, 0, nblancer, achoisides);
-
-        }
-        else if (etape == 1) {
+        else if (etape == 1)
             affichage_actions(&jeu, joueur, &ea);
-
-        }
-        else if (etape == 3) {
-            // Afficher le plateau en arrière-plan puis l'écran de fin
+        else if (etape == 2)
+            affichage_eruption(&jeu, &pe, joueur);
+        else if (etape == 4) {
             affichage_jeu(&jeu, joueur, 0, 0, false);
             affichage_fin(&jeu, gagnant);
         }

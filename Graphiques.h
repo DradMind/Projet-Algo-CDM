@@ -122,8 +122,9 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur);
 void dessiner_panel_des(Jeu* jeu, int joueur);
 void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer);
 void dessiner_statusbar(int etape, bool achoisides);
-void dessiner_menu_actions(EtatAction* ea);
+void dessiner_menu_actions(EtatAction* ea, int nb_oeufs);
 void dessiner_eruption_volcan(Jeu* jeu);
+void affichage_eruption(Jeu* jeu, PhaseEruption* pe, int joueur);
 
 // Convertit le clic souris en ligne/col du plateau (-1 si hors plateau)
 bool clic_sur_plateau(Vector2 souris, int* ligne, int* col);
