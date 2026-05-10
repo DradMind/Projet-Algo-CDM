@@ -145,7 +145,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
             DrawRectangleRoundedLines((Rectangle) { case_x, case_y, taille_case, taille_case }, 0.1f, 8, couleur_bordure);
 
             int taille_label = PE(1, GetScreenHeight());
-            texte_centre(NOM_CASE[type], case_x, case_y + taille_case - taille_label - PE(1, GetScreenHeight()), taille_case, taille_label, couleur_label);
+            texte_centre(NOM_CASE[type], case_x, case_y + taille_case - taille_label - PE(12, GetScreenHeight()), taille_case, taille_label, couleur_label);
 
             // Pions + dinos
             int nb_pions = 0;
@@ -180,11 +180,17 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                 Color couleur_pion = (joueur_pion >= 0 && joueur_pion < 4) ? COULEUR_JOUEUR[joueur_pion] : COL_TEXT;
 
                 if (jeu->PlateauPion[ligne][col][p].TypePion == 2) {
-                    // Dino : carré
+                    // Dino : carré avec texte
+                    TypeDino d = jeu->PlateauPion[ligne][col][p].dino;
+                    const char* d_nom[] = { "", "Tr", "Pt", "Br", "Ti", "St", "An", "Pl", "Ty" };
                     int dx = debut_x + dessines * espacement;
                     int dy = case_y + taille_case - rayon_pion * 2 - PE(1, GetScreenHeight());
                     DrawRectangle(dx, dy, rayon_pion * 2, rayon_pion * 2, couleur_pion);
                     DrawRectangleLines(dx, dy, rayon_pion * 2, rayon_pion * 2, (Color) { 80, 220, 80, 255 });
+                    
+                    int font_size = rayon_pion * 1.2;
+                    int text_w = MeasureText(d_nom[d], font_size);
+                    DrawText(d_nom[d], dx + (rayon_pion * 2 - text_w) / 2, dy + (rayon_pion * 2 - font_size) / 2, font_size, COL_TEXT_BRIGHT);
                 }
                 else {
                     pion(debut_x + dessines * espacement + rayon_pion, case_y + taille_case - rayon_pion - PE(1, GetScreenHeight()), rayon_pion, couleur_pion);
@@ -261,7 +267,7 @@ void dessiner_panneau_des(Jeu* jeu, int joueur) {
 
         // Icône / nom dino
         if (jeu->Joueurs[i].a_dino) {
-            const char* nom_dino[] = { "", "Tric.", "Ptero", "Brach", "Titan" };
+            const char* nom_dino[] = { "", "Tric.", "Ptero", "Bront", "Titan", "Stego", "Ankyl", "Plesi", "Tyran" };
             DrawText(nom_dino[jeu->Joueurs[i].dino_possede], panneau_x + PE(4, panneau_largeur) + PE(5, hauteur_ecran), ligne_y + (PE(5, hauteur_ecran) - PE(2, hauteur_ecran)) / 2 + PE(2, hauteur_ecran) + 2, PE(2, hauteur_ecran) - 2, (Color) { 80, 220, 80, 255 });
         }
     }

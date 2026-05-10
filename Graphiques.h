@@ -93,7 +93,7 @@ static const Color COULEUR_DE[] = {
     {  30, 144, 255, 255},
 };
 static const char* NOM_FACE[] = {
-    "Volcan","Caverne","Hutte","Deplacement","Oeuf","Deplacement"
+    "Volcan","Hutte","Caverne","Deplacement","Oeuf","Deplacement"
 };
 
 // Joueurs a voir si on a le temps de faire un nombre de joueurs variable
