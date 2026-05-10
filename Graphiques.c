@@ -741,4 +741,5 @@ void initialiser_fenetre(void) {
     InitWindow(GetMonitorWidth(ecran), GetMonitorHeight(ecran), "Colere de la Montagne de Feu");
     SetWindowPosition(0, 0);
     SetTargetFPS(GetMonitorRefreshRate(ecran));
+	ToggleBorderlessWindowed();
 }
