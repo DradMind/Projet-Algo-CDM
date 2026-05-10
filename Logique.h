@@ -9,13 +9,17 @@
 //  STRUCTURES
 // =============================================================
 
-// Types de dinosaures (4 types, chacun avec un pouvoir)
+// Types de dinosaures (8 types officiels)
 typedef enum {
     DINO_AUCUN = 0,
-    DINO_TRICERATOPS = 1,  // +1 lancer par tour (4 lancers au lieu de 3)
-    DINO_PTERODACTYLE = 2,  // déplacement de 2 cases au lieu de 1
-    DINO_BRACHIO = 3,   // peut déployer sur n'importe quelle case (pas seulement hutte/caverne)
-    DINO_TITANOSAURE = 4,   // +1 dé supplémentaire
+    DINO_TRICERATOPS = 1,
+    DINO_PTERANODON = 2,
+    DINO_BRONTOSAURE = 3,
+    DINO_TITANOSAURE = 4,
+    DINO_STEGOSAURE = 5,
+    DINO_ANKYLOSAURE = 6,
+    DINO_PLESIOSAURE = 7,
+    DINO_TYRANNOSAURE = 8
 } TypeDino;
 
 typedef struct {
@@ -52,7 +56,8 @@ typedef struct {
     Pion   PlateauPion[4][4][10];
     Des    Listede[7];
     Joueur Joueurs[4];
-    int    dinos_disponibles[4]; // Stock par type de dino
+    TypeDino dinos_en_jeu[4];    // Les 4 dinosaures choisis pour la partie
+    int    dinos_disponibles[8]; // Stock par type de dino
     int    eruption_volcan;      // obsolète si on utilise le nombre de pions
     int    nb_joueurs;
     int    nb_eruptions;         // nombre total d'éruptions depuis le début

@@ -9,7 +9,7 @@
 int PE(float pourcentage, float valeur);
 
 // =============================================================
-//  LAYOUT
+//  LAYOUT (J'ai ajusté les valeurs pour le 1080p et la 4k, normaleme,t ça devrait être bon pour toi 
 // =============================================================
 
 // Topbar
@@ -119,7 +119,7 @@ void affichage_fin(Jeu* jeu, int gagnant);
 // Sous-fonctions
 void Dessiner_HDP(Jeu* jeu, int joueur);
 void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur);
-void dessiner_panel_des(Jeu* jeu, int joueur);
+void dessiner_panneau_des(Jeu* jeu, int joueur);
 void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer);
 void dessiner_statusbar(int etape, bool achoisides);
 void dessiner_menu_actions(EtatAction* ea, int nb_oeufs);

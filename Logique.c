@@ -21,8 +21,24 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
         jeu->Joueurs[i].oeufs = 0;
     }
     
+    for (int i = 0; i < 8; i++) {
+        jeu->dinos_disponibles[i] = 0; // On met tout à 0 au départ
+    }
+
+    // Sélection de 4 dinosaures aléatoires
+    TypeDino pool_dinos[8] = {
+        DINO_TRICERATOPS, DINO_PTERANODON, DINO_BRONTOSAURE, DINO_TITANOSAURE,
+        DINO_STEGOSAURE, DINO_ANKYLOSAURE, DINO_PLESIOSAURE, DINO_TYRANNOSAURE
+    };
+    for (int i = 7; i > 0; i--) {
+        int r = rand() % (i + 1);
+        TypeDino tmp = pool_dinos[i];
+        pool_dinos[i] = pool_dinos[r];
+        pool_dinos[r] = tmp;
+    }
     for (int i = 0; i < 4; i++) {
-        jeu->dinos_disponibles[i] = 2; // 2 de chaque espèce
+        jeu->dinos_en_jeu[i] = pool_dinos[i];
+        jeu->dinos_disponibles[pool_dinos[i] - 1] = 2;
     }
 
     if (plateauBase) {
@@ -247,7 +263,7 @@ int joueur_majoritaire_region(Jeu* jeu, bool cellules[4][4]) {
                     if (jeu->PlateauPion[l][c][p].TypePion == 1) {
                         if (!tric_present) totaux[jeu->PlateauPion[l][c][p].joueur]++;
                     } else if (jeu->PlateauPion[l][c][p].TypePion == 2) {
-                        if (jeu->PlateauPion[l][c][p].dino == DINO_BRACHIO)
+                        if (jeu->PlateauPion[l][c][p].dino == DINO_BRONTOSAURE)
                             totaux[jeu->PlateauPion[l][c][p].joueur] += 3;
                         else
                             totaux[jeu->PlateauPion[l][c][p].joueur]++;
@@ -327,18 +343,43 @@ static void points_regions(Jeu* jeu) {
         for (int c = 0; c < 4; c++) {
             if (visite[l][c]) continue;
             int type = jeu->plateau[l][c].TypeCase;
-            // On score uniquement Jungle et Prairie
-            if (type != 2 && type != 3) {
+            // On score Jungle, Prairie, et potentiellement Lagon (Eau)
+            if (type != 1 && type != 2 && type != 3) {
                 visite[l][c] = true;
                 continue;
             }
 
             bool cellules[4][4] = { {false} };
             int  taille = flood_fill(jeu, l, c, type, visite, cellules);
+
+            if (type == 1) { // Lagon : score uniquement si un Plésiosaure y est présent
+                bool plesio = false;
+                for (int l2 = 0; l2 < 4; l2++)
+                    for (int c2 = 0; c2 < 4; c2++)
+                        if (cellules[l2][c2])
+                            for (int p = 0; p < 10; p++)
+                                if (jeu->PlateauPion[l2][c2][p].TypePion == 2 && jeu->PlateauPion[l2][c2][p].dino == DINO_PLESIOSAURE)
+                                    plesio = true;
+                if (!plesio) continue;
+            }
+
             int  gagnant = joueur_majoritaire_region(jeu, cellules);
 
             if (gagnant >= 0) {
                 jeu->Joueurs[gagnant].points += taille;
+                
+                // Pouvoir de l'Ankylosaure : +2 pts si majorité stricte (ce qui est le cas si gagnant >= 0)
+                bool ankylosaure_present = false;
+                for (int l2 = 0; l2 < 4; l2++)
+                    for (int c2 = 0; c2 < 4; c2++)
+                        if (cellules[l2][c2])
+                            for (int p = 0; p < 10; p++)
+                                if (jeu->PlateauPion[l2][c2][p].TypePion == 2 && jeu->PlateauPion[l2][c2][p].dino == DINO_ANKYLOSAURE && jeu->PlateauPion[l2][c2][p].joueur == gagnant)
+                                    ankylosaure_present = true;
+                
+                if (ankylosaure_present) {
+                    jeu->Joueurs[gagnant].points += 2;
+                }
 
                 // Les joueurs qui marquent des points reprennent leurs figurines
                 for (int l2 = 0; l2 < 4; l2++) {
@@ -414,9 +455,14 @@ bool joueur_a_majorite_volcan(Jeu* jeu, int joueur) {
     if (vl < 0) return false;
 
     int totaux[4] = { 0 };
-    for (int p = 0; p < 10; p++)
-        if (jeu->PlateauPion[vl][vc][p].TypePion != 0)
+    for (int p = 0; p < 10; p++) {
+        if (jeu->PlateauPion[vl][vc][p].TypePion != 0) {
             totaux[jeu->PlateauPion[vl][vc][p].joueur]++;
+            if (jeu->PlateauPion[vl][vc][p].TypePion == 2 && jeu->PlateauPion[vl][vc][p].dino == DINO_STEGOSAURE && jeu->PlateauPion[vl][vc][p].joueur == joueur) {
+                return true; // Le Stégosaure donne automatiquement le droit de déclencher le séisme
+            }
+        }
+    }
 
     int best_val = totaux[joueur];
     if (best_val == 0) return false;
@@ -838,8 +884,14 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
                     else if (dist2_saut_eau) { valide = true; cout = 2; }
                 }
             } else if (type_pion == 2) { // Dinosaure
-                if (adj) { valide = true; cout = 1; }
-                else if (dino_pion == DINO_PTERODACTYLE && (dl + dc <= 2)) { valide = true; cout = 1; }
+                if (adj) {
+                    if (dest_type != 1 || dino_pion == DINO_PLESIOSAURE) {
+                        valide = true; cout = 1; 
+                    }
+                }
+                else if (dino_pion == DINO_PTERANODON && (dest_type == 2 || dest_type == 3)) { 
+                    valide = true; cout = 1; 
+                }
             }
         }
 
@@ -849,6 +901,18 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
                 rajouter_pion(jeu, clic_ligne, clic_col, joueur);
             } else {
                 rajouter_dino(jeu, clic_ligne, clic_col, joueur, dino_pion);
+                
+                // Pouvoir du Tyrannosaure : retirer 1 Cro-Magnon adverse
+                if (dino_pion == DINO_TYRANNOSAURE && (dest_type == 2 || dest_type == 3)) {
+                    for (int p = 0; p < 10; p++) {
+                        if (jeu->PlateauPion[clic_ligne][clic_col][p].TypePion == 1 && jeu->PlateauPion[clic_ligne][clic_col][p].joueur != joueur) {
+                            int adv = jeu->PlateauPion[clic_ligne][clic_col][p].joueur;
+                            jeu->Joueurs[adv].reserve++;
+                            enlever_pion(jeu, clic_ligne, clic_col, p);
+                            break; // On n'en retire qu'un seul
+                        }
+                    }
+                }
             }
             ea->nb_actions[3] -= cout;
             ea->orig_ligne = -1;
@@ -858,25 +922,24 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         return false;
     }
 
-    // ── OEUF : choisir un dino ──
+    // choisir un dino
     if (ea->sous_etat == ACTION_OEUF_CHOISIR) {
-        int cout_dino[] = { 0, 2, 2, 3, 3 }; // DINO_AUCUN, TRIC, PTERO, BRACH, TITAN
+        // Coûts officiels: 0=Aucun, 1=Tric:3, 2=Pter:2, 3=Bron:3, 4=Tita:5, 5=Steg:3, 6=Anky:3, 7=Ples:2, 8=Tyra:4
+        int cout_dino[] = { 0, 3, 2, 3, 5, 3, 3, 2, 4 };
         int nb_dinos = 4;
         if (IsKeyPressed(KEY_UP))
             ea->selection_dino = (ea->selection_dino - 1 + nb_dinos) % nb_dinos;
         if (IsKeyPressed(KEY_DOWN))
             ea->selection_dino = (ea->selection_dino + 1) % nb_dinos;
 
-        // Annuler avec ECHAP
+        // Annuler avec E
         if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;
             return false;
         }
 
         if (IsKeyPressed(KEY_ENTER)) {
-            TypeDino types[] = { DINO_TRICERATOPS, DINO_PTERODACTYLE,
-                                 DINO_BRACHIO, DINO_TITANOSAURE };
-            TypeDino choisi = types[ea->selection_dino];
+            TypeDino choisi = jeu->dinos_en_jeu[ea->selection_dino];
             int cout = cout_dino[choisi];
 
             if (jeu->Joueurs[joueur].oeufs >= cout && jeu->dinos_disponibles[choisi - 1] > 0) {

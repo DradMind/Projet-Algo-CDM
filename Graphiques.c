@@ -126,7 +126,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                     if (ligne == ea->orig_ligne && col == ea->orig_col)
                         surligne_origine = true;
                     else {
-                        bool ptero = (jeu->Joueurs[joueur].a_dino && jeu->Joueurs[joueur].dino_possede == DINO_PTERODACTYLE);
+                        bool ptero = (jeu->Joueurs[joueur].a_dino && jeu->Joueurs[joueur].dino_possede == DINO_PTERANODON);
                         bool adj = case_adjacente(ea->orig_ligne, ea->orig_col, ligne, col);
                         bool dist2 = ptero && (abs(ea->orig_ligne - ligne) + abs(ea->orig_col - col) <= 2);
                         if (adj || dist2) surligne_valide = true;
@@ -177,8 +177,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                 if (jeu->PlateauPion[ligne][col][p].TypePion == 0) continue;
 
                 int joueur_pion = jeu->PlateauPion[ligne][col][p].joueur;
-                Color couleur_pion = (joueur_pion >= 0 && joueur_pion < 4)
-                    ? COULEUR_JOUEUR[joueur_pion] : COL_TEXT;
+                Color couleur_pion = (joueur_pion >= 0 && joueur_pion < 4) ? COULEUR_JOUEUR[joueur_pion] : COL_TEXT;
 
                 if (jeu->PlateauPion[ligne][col][p].TypePion == 2) {
                     // Dino : carré
@@ -199,7 +198,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
 // =============================================================
 //  PANNEAU DÉS (droite)
 // =============================================================
-void dessiner_panel_des(Jeu* jeu, int joueur) {
+void dessiner_panneau_des(Jeu* jeu, int joueur) {
     int panneau_x = PANNEAU_X;
     int panneau_largeur = PANNEAU_Y;
     int hauteur_ecran = GetScreenHeight();
@@ -318,7 +317,7 @@ void dessiner_menu_actions(EtatAction* ea, int nb_oeufs) {
 // =============================================================
 //  MENU CHOIX DINO
 // =============================================================
-static void dessiner_menu_dino(EtatAction* ea) {
+static void dessiner_menu_dino(Jeu* jeu, EtatAction* ea) {
     if (ea->sous_etat != ACTION_OEUF_CHOISIR) return;
 
     int boite_x = PLATEAU_X;
@@ -331,22 +330,24 @@ static void dessiner_menu_dino(EtatAction* ea) {
     carte(boite_x, boite_y, boite_largeur, boite_h, FOND_SOMBRE, COL_BORD_LIT);
     DrawText("CHOISIR UN DINOSAURE", boite_x + PE(2, boite_largeur), boite_y + hauteur_ligne / 2, taille_police - 2, COL_ACCENT_DIM);
 
-    const char* noms[] = {
-        "Triceratops  (+1 lancer)",
-        "Pterodactyle (+2 cases)",
-        "Brachiosaurus (deploie partout)",
-        "Titanosaure  (+1 de)"
+    const char* noms_tous[] = {
+        "", "Triceratops (3)", "Pteranodon (2)", 
+        "Brontosaure (3)", "Titanosaure (5)",
+        "Stegosaure (3)", "Ankylosaure (3)",
+        "Plesiosaure (2)", "Tyrannosaure (4)"
     };
+    
     for (int i = 0; i < 4; i++) {
+        TypeDino td = jeu->dinos_en_jeu[i];
         int  ligne_y = boite_y + hauteur_ligne + i * (hauteur_ligne + 2);
         bool selectionne = (ea->selection_dino == i);
 
         carte(boite_x + PE(1, boite_largeur), ligne_y, boite_largeur - PE(2, boite_largeur), hauteur_ligne, selectionne ? (Color) { 13, 26, 13, 255 } : FOND_MID, selectionne ? COL_VALIDE : COL_BORD);
         if (selectionne)
             DrawText(">", boite_x + PE(2, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, COL_VALIDE);
-        DrawText(noms[i], boite_x + PE(5, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
+        DrawText(noms_tous[td], boite_x + PE(5, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
     }
-    DrawText("Haut/Bas : choisir   Entree : confirmer   ESC : retour", boite_x + PE(2, boite_largeur), boite_y + boite_h - taille_police - 4, taille_police - 2, COL_TEXT_DIM);
+    DrawText("Haut/Bas: naviguer   Entree: confirmer   E: retour", boite_x + PE(2, boite_largeur), boite_y + boite_h - taille_police - 4, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -459,7 +460,7 @@ static void dessiner_hint_action(EtatAction* ea) {
 
     DrawText(titre, boite_x + PE(3, boite_largeur), boite_y + PE(15, boite_h), taille_police + 2, COL_ACCENT);
     DrawText(description, boite_x + PE(3, boite_largeur), boite_y + PE(45, boite_h), taille_police, COL_TEXT_BRIGHT);
-    DrawText("ECHAP : annuler et revenir au menu", boite_x + PE(3, boite_largeur), boite_y + boite_h - taille_police - 6, taille_police - 2, COL_TEXT_DIM);
+    DrawText("Touche E : annuler et revenir au menu", boite_x + PE(3, boite_largeur), boite_y + boite_h - taille_police - 6, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -530,13 +531,25 @@ void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
     carte(boite6_x, boite6_y, largeur_boite_dinos, boite_h, FOND_SOMBRE, COL_BORD);
     DrawText("DINOSAURES DISPONIBLES", boite6_x + PE(2, largeur_boite_dinos), boite6_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
 
-    const char* nom_dinos[] = { "Triceratops (2)", "Pterodactyle (2)", "Brachiosaurus (3)", "Titanosaure (3)" };
-    char d_buf[64];
-    snprintf(d_buf, sizeof(d_buf), "%s: %d/2  %s: %d/2", nom_dinos[0], jeu->dinos_disponibles[0], nom_dinos[1], jeu->dinos_disponibles[1]);
-    DrawText(d_buf, boite6_x + PE(2, largeur_boite_dinos), boite6_y + boite_h / 3, taille_petite - 2, COL_TEXT_BRIGHT);
+    const char* trigrammes[] = { "", "Tri", "Pte", "Bro", "Tit", "Ste", "Ank", "Ple", "Tyr" };
     
-    snprintf(d_buf, sizeof(d_buf), "%s: %d/2  %s: %d/2", nom_dinos[2], jeu->dinos_disponibles[2], nom_dinos[3], jeu->dinos_disponibles[3]);
-    DrawText(d_buf, boite6_x + PE(2, largeur_boite_dinos), boite6_y + 2 * boite_h / 3, taille_petite - 2, COL_TEXT_BRIGHT);
+    char d_buf1[128];
+    char d_buf2[128];
+    TypeDino d1 = jeu->dinos_en_jeu[0];
+    TypeDino d2 = jeu->dinos_en_jeu[1];
+    TypeDino d3 = jeu->dinos_en_jeu[2];
+    TypeDino d4 = jeu->dinos_en_jeu[3];
+
+    snprintf(d_buf1, sizeof(d_buf1), "%s:%d/2    %s:%d/2", 
+             trigrammes[d1], jeu->dinos_disponibles[d1 - 1], 
+             trigrammes[d2], jeu->dinos_disponibles[d2 - 1]);
+             
+    snprintf(d_buf2, sizeof(d_buf2), "%s:%d/2    %s:%d/2", 
+             trigrammes[d3], jeu->dinos_disponibles[d3 - 1], 
+             trigrammes[d4], jeu->dinos_disponibles[d4 - 1]);
+
+    DrawText(d_buf1, boite6_x + PE(2, largeur_boite_dinos), boite6_y + boite_h / 3, taille_petite - 2, COL_TEXT_BRIGHT);
+    DrawText(d_buf2, boite6_x + PE(2, largeur_boite_dinos), boite6_y + 2 * boite_h / 3, taille_petite - 2, COL_TEXT_BRIGHT);
 }
 
 // =============================================================
@@ -575,7 +588,7 @@ void affichage_eruption(Jeu* jeu, PhaseEruption* pe, int joueur) {
     ClearBackground(FOND);
     Dessiner_HDP(jeu, joueur);
     afficherplateau(jeu, NULL, joueur);
-    dessiner_panel_des(jeu, joueur);
+    dessiner_panneau_des(jeu, joueur);
 
     int largeur_ecran = GetScreenWidth();
     int hauteur_ecran = GetScreenHeight();
@@ -672,7 +685,7 @@ void affichage_fin(Jeu* jeu, int gagnant) {
         bool est_gagnant = (jeu->Joueurs[i].points == meilleur_score);
         DrawText(score_str, boite_x + PE(10, boite_largeur), boite_y + PE(52, boite_hauteur) + i * (taille_petite + 4), taille_petite, est_gagnant ? COL_ACCENT : COL_TEXT_DIM);
     }
-    texte_centre("ECHAP pour quitter", boite_x, boite_y + PE(88, boite_hauteur),
+    texte_centre("E pour quitter", boite_x, boite_y + PE(88, boite_hauteur),
         boite_largeur, taille_petite - 2, COL_TEXT_DIM);
 }
 
@@ -683,7 +696,7 @@ void affichage_jeu(Jeu* jeu, int joueur, int etape, int nblancer, bool achoiside
     ClearBackground(FOND);
     Dessiner_HDP(jeu, joueur);
     afficherplateau(jeu, NULL, joueur);
-    dessiner_panel_des(jeu, joueur);
+    dessiner_panneau_des(jeu, joueur);
     dessiner_info_strip(jeu, joueur, etape, nblancer);
     dessiner_statusbar(etape, achoisides);
 }
@@ -695,10 +708,10 @@ void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
     ClearBackground(FOND);
     Dessiner_HDP(jeu, joueur);
     afficherplateau(jeu, ea, joueur);
-    dessiner_panel_des(jeu, joueur);
+    dessiner_panneau_des(jeu, joueur);
 
     int sous = ea->sous_etat;
-    if (sous == ACTION_OEUF_CHOISIR) dessiner_menu_dino(ea);
+    if (sous == ACTION_OEUF_CHOISIR) dessiner_menu_dino(jeu, ea);
     if (sous == ACTION_CHOISIR_PION) dessiner_menu_choix_pion(ea);
     if (sous == ACTION_VOLCAN_MENU) dessiner_menu_volcan(jeu, joueur, ea);
 
