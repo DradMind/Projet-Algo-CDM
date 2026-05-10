@@ -61,15 +61,13 @@ void logiquede(Jeu* jeu, int joueur) {
 }
 
 int possedetitanosaure(Jeu* jeu, int joueur) {
-    if (jeu->Joueurs[joueur].a_dino &&
-        jeu->Joueurs[joueur].dino_possede == DINO_TITANOSAURE)
+    if (jeu->Joueurs[joueur].a_dino && jeu->Joueurs[joueur].dino_possede == DINO_TITANOSAURE)
         return 1;
     return 0;
 }
 
 int nb_lancers_total(Jeu* jeu, int joueur) {
-    if (jeu->Joueurs[joueur].a_dino &&
-        jeu->Joueurs[joueur].dino_possede == DINO_TRICERATOPS)
+    if (jeu->Joueurs[joueur].a_dino && jeu->Joueurs[joueur].dino_possede == DINO_TRICERATOPS)
         return 4;
     return 3;
 }
@@ -134,8 +132,7 @@ void enlever_pion(Jeu* jeu, int ligne, int col, int place) {
 int compter_pions_joueur(Jeu* jeu, int joueur, int ligne, int col) {
     int nb = 0;
     for (int p = 0; p < 10; p++)
-        if (jeu->PlateauPion[ligne][col][p].TypePion >= 1 &&
-            jeu->PlateauPion[ligne][col][p].joueur == joueur)
+        if (jeu->PlateauPion[ligne][col][p].TypePion >= 1 && jeu->PlateauPion[ligne][col][p].joueur == joueur)
             nb++;
     return nb;
 }
@@ -454,49 +451,69 @@ bool traiter_eruption(Jeu* jeu, PhaseEruption* pe) {
             if (IsKeyPressed(KEY_UP)) {
                 // Décaler colonne posx vers le haut
                 Case c0 = jeu->plateau[0][posx];
-                Pion p0[10]; memcpy(p0, jeu->PlateauPion[0][posx], sizeof(p0));
+                Pion p0[10];
+                for (int p = 0; p < 10; p++) p0[p] = jeu->PlateauPion[0 ][posx][p];
+
                 for (int l = 0; l < 3; l++) {
                     jeu->plateau[l][posx] = jeu->plateau[l+1][posx];
-                    memcpy(jeu->PlateauPion[l][posx], jeu->PlateauPion[l+1][posx], sizeof(jeu->PlateauPion[0][0]));
+                    for (int p = 0; p < 10; p++) {
+                        jeu->PlateauPion[l][posx][p] = jeu->PlateauPion[l+1][posx][p];
+                    }
                 }
+
                 jeu->plateau[3][posx] = c0;
-                memcpy(jeu->PlateauPion[3][posx], p0, sizeof(p0));
+                for (int p = 0; p < 10; p++) jeu->PlateauPion[3][posx][p] = p0[p];
                 bouge = true;
             }
             else if (IsKeyPressed(KEY_DOWN)) {
                 // Décaler colonne posx vers le bas
                 Case c3 = jeu->plateau[3][posx];
-                Pion p3[10]; memcpy(p3, jeu->PlateauPion[3][posx], sizeof(p3));
+                Pion p3[10];
+                for (int p = 0; p < 10; p++) p3[p] = jeu->PlateauPion[3][posx][p];
+
                 for (int l = 3; l > 0; l--) {
                     jeu->plateau[l][posx] = jeu->plateau[l-1][posx];
-                    memcpy(jeu->PlateauPion[l][posx], jeu->PlateauPion[l-1][posx], sizeof(jeu->PlateauPion[0][0]));
+                    for (int p = 0; p < 10; p++) {
+                        jeu->PlateauPion[l][posx][p] = jeu->PlateauPion[l-1][posx][p];
+                    }
                 }
+
                 jeu->plateau[0][posx] = c3;
-                memcpy(jeu->PlateauPion[0][posx], p3, sizeof(p3));
+                for (int p = 0; p < 10; p++) jeu->PlateauPion[0][posx][p] = p3[p];
                 bouge = true;
             }
             else if (IsKeyPressed(KEY_LEFT)) {
                 // Décaler ligne posy vers la gauche
                 Case c0 = jeu->plateau[posy][0];
-                Pion p0[10]; memcpy(p0, jeu->PlateauPion[posy][0], sizeof(p0));
+                Pion p0[10];
+                for (int p = 0; p < 10; p++) p0[p] = jeu->PlateauPion[posy][0][p];
+
                 for (int c = 0; c < 3; c++) {
                     jeu->plateau[posy][c] = jeu->plateau[posy][c+1];
-                    memcpy(jeu->PlateauPion[posy][c], jeu->PlateauPion[posy][c+1], sizeof(jeu->PlateauPion[0][0]));
+                    for (int p = 0; p < 10; p++) {
+                        jeu->PlateauPion[posy][c][p] = jeu->PlateauPion[posy][c+1][p];
+                    }
                 }
+
                 jeu->plateau[posy][3] = c0;
-                memcpy(jeu->PlateauPion[posy][3], p0, sizeof(p0));
+                for (int p = 0; p < 10; p++) jeu->PlateauPion[posy][3][p] = p0[p];
                 bouge = true;
             }
             else if (IsKeyPressed(KEY_RIGHT)) {
                 // Décaler ligne posy vers la droite
                 Case c3 = jeu->plateau[posy][3];
-                Pion p3[10]; memcpy(p3, jeu->PlateauPion[posy][3], sizeof(p3));
+                Pion p3[10];
+                for (int p = 0; p < 10; p++) p3[p] = jeu->PlateauPion[posy][3][p];
+
                 for (int c = 3; c > 0; c--) {
                     jeu->plateau[posy][c] = jeu->plateau[posy][c-1];
-                    memcpy(jeu->PlateauPion[posy][c], jeu->PlateauPion[posy][c-1], sizeof(jeu->PlateauPion[0][0]));
+                    for (int p = 0; p < 10; p++) {
+                        jeu->PlateauPion[posy][c][p] = jeu->PlateauPion[posy][c-1][p];
+                    }
                 }
+
                 jeu->plateau[posy][0] = c3;
-                memcpy(jeu->PlateauPion[posy][0], p3, sizeof(p3));
+                for (int p = 0; p < 10; p++) jeu->PlateauPion[posy][0][p] = p3[p];
                 bouge = true;
             }
 

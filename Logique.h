@@ -132,6 +132,7 @@ void calculer_points_eruption(Jeu* jeu);  // points majorité volcan + régions
 void executer_eruption_reset(Jeu* jeu);   // vide le volcan, replace les pions
 void init_phase_eruption(PhaseEruption* pe);
 bool traiter_eruption(Jeu* jeu, PhaseEruption* pe); // true = éruption terminée
+bool a_dino_sacrifiable(Jeu* jeu, int joueur);
 
 // Régions (flood-fill pour trouver régions connectées)
 int  taille_region(Jeu* jeu, int ligne, int col, bool visite[4][4]);

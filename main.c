@@ -7,7 +7,7 @@ int main(void) {
     srand((unsigned int)time(NULL));
     initialiser_fenetre();
 
-    Jeu jeu = { 0 };
+	Jeu jeu = { 0 }; //On définit tout à 0 pour éviter les problèmes de valeurs indéfinies
     EtatAction   ea = { 0 };
     PhaseEruption pe = { 0 };
 
@@ -113,10 +113,10 @@ int main(void) {
             if (IsKeyPressed(KEY_E)) break;
         }
 
-        // ── Étape 5 : décalage ──
+        // ── Étape 5 : séismes ──
         else if (etape == 5) {
-            bool decalage_fini = traiter_eruption(&jeu, &pe);
-            if (decalage_fini) {
+            bool seisme_fini = traiter_eruption(&jeu, &pe);
+            if (seisme_fini) {
                 etape = 3;
             }
         }

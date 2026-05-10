@@ -33,11 +33,7 @@ static void pion(int centre_x, int centre_y, int rayon, Color couleur) {
 bool clic_sur_plateau(Vector2 souris, int* ligne, int* col) {
     for (int l = 0; l < 4; l++) {
         for (int c = 0; c < 4; c++) {
-            Rectangle rect = {
-                (float)(PLATEAU_X + c * (CASE + CASE_ESPACE)),
-                (float)(PLATEAU_Y + l * (CASE + CASE_ESPACE)),
-                (float)CASE, (float)CASE
-            };
+            Rectangle rect = { (float)(PLATEAU_X + c * (CASE + CASE_ESPACE)), (float)(PLATEAU_Y + l * (CASE + CASE_ESPACE)), (float)CASE, (float)CASE };
             if (CheckCollisionPointRec(souris, rect)) {
                 *ligne = l; *col = c;
                 return true;
@@ -57,9 +53,7 @@ void Dessiner_HDP(Jeu* jeu, int joueur) {
 
     DrawRectangle(0, 0, largeur_ecran, hauteur_bandeau, FOND_SOMBRE);
     DrawLine(0, hauteur_bandeau, largeur_ecran, hauteur_bandeau, COL_BORD_LIT);
-    DrawText("COLERE DE LA MONTAGNE DE FEU",
-        PE(2, largeur_ecran), PE(1, hauteur_ecran),
-        PE(3, hauteur_ecran), COL_ACCENT);
+    DrawText("COLERE DE LA MONTAGNE DE FEU", PE(2, largeur_ecran), PE(1, hauteur_ecran), PE(3, hauteur_ecran), COL_ACCENT);
 
     int rayon = PE(2, hauteur_ecran);
     int cercle_x_dep = PE(80, largeur_ecran);
@@ -77,11 +71,7 @@ void Dessiner_HDP(Jeu* jeu, int joueur) {
         char label[3];
         snprintf(label, sizeof(label), "J%d", i + 1);
         int largeur_label = MeasureText(label, PE(2, hauteur_ecran));
-        DrawText(label, cx - largeur_label / 2, cercle_y - PE(1, hauteur_ecran),
-            PE(2, hauteur_ecran),
-            (Color) {
-            255, 255, 255, i == joueur ? 220 : 100
-        });
+        DrawText(label, cx - largeur_label / 2, cercle_y - PE(1, hauteur_ecran), PE(2, hauteur_ecran), (Color) { 255, 255, 255, i == joueur ? 220 : 100 });
 
         // Indicateur dino
         if (jeu->Joueurs[i].a_dino) {
@@ -101,10 +91,8 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
     int espace = CASE_ESPACE;
     int taille_total = 4 * taille_case + 3 * espace;
 
-    DrawRectangleRounded((Rectangle) { origine_x - 8, origine_y - 8, taille_total + 16, taille_total + 16 },
-        0.04f, 4, (Color) { 12, 8, 3, 255 });
-    DrawRectangleRoundedLines((Rectangle) { origine_x - 8, origine_y - 8, taille_total + 16, taille_total + 16 },
-        0.04f, 4, COL_BORD);
+    DrawRectangleRounded((Rectangle) { origine_x - 8, origine_y - 8, taille_total + 16, taille_total + 16 }, 0.04f, 4, (Color) { 12, 8, 3, 255 });
+    DrawRectangleRoundedLines((Rectangle) { origine_x - 8, origine_y - 8, taille_total + 16, taille_total + 16 }, 0.04f, 4, COL_BORD);
 
     for (int ligne = 0; ligne < 4; ligne++) {
         for (int col = 0; col < 4; col++) {
@@ -118,11 +106,7 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
 
             // Halo orange autour du volcan
             if (type == 0)
-                DrawRectangleRounded(
-                    (Rectangle) {
-                case_x - 3, case_y - 3, taille_case + 6, taille_case + 6
-            },
-                    0.1f, 4, (Color) { 255, 60, 0, 40 });
+                DrawRectangleRounded( (Rectangle) { case_x - 3, case_y - 3, taille_case + 6, taille_case + 6 }, 0.1f, 4, (Color) { 255, 60, 0, 40 });
 
             // Surlignage selon état du tour
             if (ea != NULL) {
@@ -142,40 +126,26 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                     if (ligne == ea->orig_ligne && col == ea->orig_col)
                         surligne_origine = true;
                     else {
-                        bool ptero = (jeu->Joueurs[joueur].a_dino &&
-                            jeu->Joueurs[joueur].dino_possede == DINO_PTERODACTYLE);
+                        bool ptero = (jeu->Joueurs[joueur].a_dino && jeu->Joueurs[joueur].dino_possede == DINO_PTERODACTYLE);
                         bool adj = case_adjacente(ea->orig_ligne, ea->orig_col, ligne, col);
-                        bool dist2 = ptero &&
-                            (abs(ea->orig_ligne - ligne) + abs(ea->orig_col - col) <= 2);
+                        bool dist2 = ptero && (abs(ea->orig_ligne - ligne) + abs(ea->orig_col - col) <= 2);
                         if (adj || dist2) surligne_valide = true;
                     }
                 }
 
                 if (surligne_valide)
-                    DrawRectangleRounded(
-                        (Rectangle) {
-                    case_x - 4, case_y - 4, taille_case + 8, taille_case + 8
-                },
-                        0.1f, 4, (Color) { 42, 180, 42, 60 });
+                    DrawRectangleRounded( (Rectangle) { case_x - 4, case_y - 4, taille_case + 8, taille_case + 8 },  0.1f, 4, (Color) { 42, 180, 42, 60 });
                 if (surligne_origine)
-                    DrawRectangleRounded(
-                        (Rectangle) {
-                    case_x - 4, case_y - 4, taille_case + 8, taille_case + 8
-                },
-                        0.1f, 4, (Color) { 240, 140, 0, 80 });
+                    DrawRectangleRounded( (Rectangle) { case_x - 4, case_y - 4, taille_case + 8, taille_case + 8 }, 0.1f, 4, (Color) { 240, 140, 0, 80 });
                 if (surligne_valide)  couleur_bordure = COL_VALIDE;
                 if (surligne_origine) couleur_bordure = COL_ACCENT;
             }
 
-            DrawRectangleRounded((Rectangle) { case_x, case_y, taille_case, taille_case },
-                0.1f, 8, couleur_fond);
-            DrawRectangleRoundedLines((Rectangle) { case_x, case_y, taille_case, taille_case },
-                0.1f, 8, couleur_bordure);
+            DrawRectangleRounded((Rectangle) { case_x, case_y, taille_case, taille_case }, 0.1f, 8, couleur_fond);
+            DrawRectangleRoundedLines((Rectangle) { case_x, case_y, taille_case, taille_case }, 0.1f, 8, couleur_bordure);
 
             int taille_label = PE(1, GetScreenHeight());
-            texte_centre(NOM_CASE[type], case_x,
-                case_y + taille_case - taille_label - PE(1, GetScreenHeight()),
-                taille_case, taille_label, couleur_label);
+            texte_centre(NOM_CASE[type], case_x, case_y + taille_case - taille_label - PE(1, GetScreenHeight()), taille_case, taille_label, couleur_label);
 
             // Pions + dinos
             int nb_pions = 0;
@@ -215,15 +185,10 @@ void afficherplateau(Jeu* jeu, EtatAction* ea, int joueur) {
                     int dx = debut_x + dessines * espacement;
                     int dy = case_y + taille_case - rayon_pion * 2 - PE(1, GetScreenHeight());
                     DrawRectangle(dx, dy, rayon_pion * 2, rayon_pion * 2, couleur_pion);
-                    DrawRectangleLines(dx, dy, rayon_pion * 2, rayon_pion * 2,
-                        (Color) {
-                        80, 220, 80, 255
-                    });
+                    DrawRectangleLines(dx, dy, rayon_pion * 2, rayon_pion * 2, (Color) { 80, 220, 80, 255 });
                 }
                 else {
-                    pion(debut_x + dessines * espacement + rayon_pion,
-                        case_y + taille_case - rayon_pion - PE(1, GetScreenHeight()),
-                        rayon_pion, couleur_pion);
+                    pion(debut_x + dessines * espacement + rayon_pion, case_y + taille_case - rayon_pion - PE(1, GetScreenHeight()), rayon_pion, couleur_pion);
                 }
                 dessines++;
             }
@@ -243,8 +208,7 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
     DrawRectangleLines(panneau_x, HDP_H, panneau_largeur, hauteur_ecran - HDP_H, COL_BORD_LIT);
 
     int titre_y = HDP_H + PE(1, hauteur_ecran);
-    DrawText("DES", panneau_x + PE(2, panneau_largeur), titre_y,
-        PE(2, hauteur_ecran), COL_ACCENT);
+    DrawText("DES", panneau_x + PE(2, panneau_largeur), titre_y, PE(2, hauteur_ecran), COL_ACCENT);
 
     int nb_des = 5 + possedetitanosaure(jeu, joueur);
     int taille_face = PE(5, hauteur_ecran);
@@ -259,71 +223,47 @@ void dessiner_panel_des(Jeu* jeu, int joueur) {
         int de_y = TABLEAU_Y + i * (DE_H + PE(1, hauteur_ecran));
 
         if (selectionne)
-            carte(de_x - 4, de_y - 3, panneau_largeur - PE(3, panneau_largeur), DE_H + 6,
-                (Color) {
-            13, 26, 13, 255
-        }, (Color) { 42, 106, 42, 255 });
+            carte(de_x - 4, de_y - 3, panneau_largeur - PE(3, panneau_largeur), DE_H + 6, (Color) { 13, 26, 13, 255 }, (Color) { 42, 106, 42, 255 });
 
         Color couleur_face = bloque ? (Color) { 100, 20, 10, 255 } : COULEUR_DE[action];
         DrawRectangleRounded((Rectangle) { de_x, de_y, taille_face, taille_face }, 0.15f, 6, couleur_face);
-        DrawRectangleRoundedLines((Rectangle) { de_x, de_y, taille_face, taille_face }, 0.15f, 6,
-            bloque ? RED : BLACK);
+        DrawRectangleRoundedLines((Rectangle) { de_x, de_y, taille_face, taille_face }, 0.15f, 6, bloque ? RED : BLACK);
 
         int texte_x = de_x + taille_face + PE(1, panneau_largeur);
         DrawText(NOM_FACE[action], texte_x, de_y + PE(1, hauteur_ecran), taille_police, COL_TEXT);
         if (bloque)
-            DrawText("BLOQUE", texte_x, de_y + PE(3, hauteur_ecran),
-                taille_police, (Color) { 220, 60, 30, 255 });
+            DrawText("BLOQUE", texte_x, de_y + PE(3, hauteur_ecran), taille_police, (Color) { 220, 60, 30, 255 });
         else if (selectionne)
-            DrawText("selectionne", texte_x, de_y + PE(3, hauteur_ecran),
-                taille_police, (Color) { 42, 180, 42, 255 });
+            DrawText("selectionne", texte_x, de_y + PE(3, hauteur_ecran), taille_police, (Color) { 42, 180, 42, 255 });
     }
 
     // ----- SCORES -----
     int score_y = HDP_H + PE(58, hauteur_ecran);
-    DrawLine(panneau_x + PE(2, panneau_largeur), score_y,
-        panneau_x + panneau_largeur - PE(2, panneau_largeur), score_y, COL_BORD);
+    DrawLine(panneau_x + PE(2, panneau_largeur), score_y, panneau_x + panneau_largeur - PE(2, panneau_largeur), score_y, COL_BORD);
     score_y += PE(1, hauteur_ecran);
-    DrawText("SCORES", panneau_x + PE(2, panneau_largeur), score_y,
-        PE(2, hauteur_ecran), COL_ACCENT);
+    DrawText("SCORES", panneau_x + PE(2, panneau_largeur), score_y, PE(2, hauteur_ecran), COL_ACCENT);
     score_y += PE(2, hauteur_ecran) + PE(1, hauteur_ecran);
 
     for (int i = 0; i < jeu->nb_joueurs; i++) {
         bool actif = (i == joueur);
         int  ligne_y = score_y + i * (PE(5, hauteur_ecran) + PE(1, hauteur_ecran));
 
-        carte(panneau_x + PE(2, panneau_largeur), ligne_y,
-            panneau_largeur - PE(4, panneau_largeur), PE(5, hauteur_ecran),
-            actif ? (Color) { 22, 15, 6, 255 } : FOND_MID,
-            actif ? COL_BORD_LIT : COL_BORD);
+        carte(panneau_x + PE(2, panneau_largeur), ligne_y, panneau_largeur - PE(4, panneau_largeur), PE(5, hauteur_ecran), actif ? (Color) { 22, 15, 6, 255 } : FOND_MID, actif ? COL_BORD_LIT : COL_BORD);
 
-        pion(panneau_x + PE(4, panneau_largeur) + PE(2, hauteur_ecran),
-            ligne_y + PE(2, hauteur_ecran) + 2,
-            PE(2, hauteur_ecran), COULEUR_JOUEUR[i]);
+        pion(panneau_x + PE(4, panneau_largeur) + PE(2, hauteur_ecran), ligne_y + PE(2, hauteur_ecran) + 2, PE(2, hauteur_ecran), COULEUR_JOUEUR[i]);
 
         char nom[12];
         snprintf(nom, sizeof(nom), "Joueur %d", i + 1);
-        DrawText(nom,
-            panneau_x + PE(4, panneau_largeur) + PE(5, hauteur_ecran),
-            ligne_y + (PE(5, hauteur_ecran) - PE(2, hauteur_ecran)) / 2,
-            PE(2, hauteur_ecran),
-            actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
+        DrawText(nom, panneau_x + PE(4, panneau_largeur) + PE(5, hauteur_ecran), ligne_y + (PE(5, hauteur_ecran) - PE(2, hauteur_ecran)) / 2, PE(2, hauteur_ecran), actif ? COL_TEXT_BRIGHT : COL_TEXT_DIM);
 
         char points_str[8];
         snprintf(points_str, sizeof(points_str), "%d", jeu->Joueurs[i].points);
-        DrawText(points_str,
-            panneau_x + panneau_largeur - PE(8, panneau_largeur),
-            ligne_y + (PE(5, hauteur_ecran) - PE(3, hauteur_ecran)) / 2,
-            PE(3, hauteur_ecran),
-            actif ? COL_ACCENT : COL_TEXT_DIM);
+        DrawText(points_str, panneau_x + panneau_largeur - PE(8, panneau_largeur), ligne_y + (PE(5, hauteur_ecran) - PE(3, hauteur_ecran)) / 2, PE(3, hauteur_ecran), actif ? COL_ACCENT : COL_TEXT_DIM);
 
         // Icône / nom dino
         if (jeu->Joueurs[i].a_dino) {
             const char* nom_dino[] = { "", "Tric.", "Ptero", "Brach", "Titan" };
-            DrawText(nom_dino[jeu->Joueurs[i].dino_possede],
-                panneau_x + PE(4, panneau_largeur) + PE(5, hauteur_ecran),
-                ligne_y + (PE(5, hauteur_ecran) - PE(2, hauteur_ecran)) / 2 + PE(2, hauteur_ecran) + 2,
-                PE(2, hauteur_ecran) - 2, (Color) { 80, 220, 80, 255 });
+            DrawText(nom_dino[jeu->Joueurs[i].dino_possede], panneau_x + PE(4, panneau_largeur) + PE(5, hauteur_ecran), ligne_y + (PE(5, hauteur_ecran) - PE(2, hauteur_ecran)) / 2 + PE(2, hauteur_ecran) + 2, PE(2, hauteur_ecran) - 2, (Color) { 80, 220, 80, 255 });
         }
     }
 }
@@ -372,8 +312,7 @@ void dessiner_menu_actions(EtatAction* ea, int nb_oeufs) {
     }
 
     int aide_y = boite_y + boite_h + hauteur_ligne - taille_police;
-    DrawText("Haut/Bas : naviguer   Entree : valider   T : terminer",
-        boite_x + PE(2, boite_largeur), aide_y, taille_police - 2, COL_TEXT_DIM);
+    DrawText("Haut/Bas : naviguer   Entree : valider   T : terminer", boite_x + PE(2, boite_largeur), aide_y, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -390,8 +329,7 @@ static void dessiner_menu_dino(EtatAction* ea) {
     int taille_police = PE(2, GetScreenHeight());
 
     carte(boite_x, boite_y, boite_largeur, boite_h, FOND_SOMBRE, COL_BORD_LIT);
-    DrawText("CHOISIR UN DINOSAURE", boite_x + PE(2, boite_largeur),
-        boite_y + hauteur_ligne / 2, taille_police - 2, COL_ACCENT_DIM);
+    DrawText("CHOISIR UN DINOSAURE", boite_x + PE(2, boite_largeur), boite_y + hauteur_ligne / 2, taille_police - 2, COL_ACCENT_DIM);
 
     const char* noms[] = {
         "Triceratops  (+1 lancer)",
@@ -403,23 +341,12 @@ static void dessiner_menu_dino(EtatAction* ea) {
         int  ligne_y = boite_y + hauteur_ligne + i * (hauteur_ligne + 2);
         bool selectionne = (ea->selection_dino == i);
 
-        carte(boite_x + PE(1, boite_largeur), ligne_y,
-            boite_largeur - PE(2, boite_largeur), hauteur_ligne,
-            selectionne ? (Color) { 13, 26, 13, 255 } : FOND_MID,
-            selectionne ? COL_VALIDE : COL_BORD);
+        carte(boite_x + PE(1, boite_largeur), ligne_y, boite_largeur - PE(2, boite_largeur), hauteur_ligne, selectionne ? (Color) { 13, 26, 13, 255 } : FOND_MID, selectionne ? COL_VALIDE : COL_BORD);
         if (selectionne)
-            DrawText(">", boite_x + PE(2, boite_largeur),
-                ligne_y + (hauteur_ligne - taille_police) / 2,
-                taille_police, COL_VALIDE);
-        DrawText(noms[i], boite_x + PE(5, boite_largeur),
-            ligne_y + (hauteur_ligne - taille_police) / 2,
-            taille_police,
-            selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
+            DrawText(">", boite_x + PE(2, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, COL_VALIDE);
+        DrawText(noms[i], boite_x + PE(5, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
     }
-    DrawText("Haut/Bas : choisir   Entree : confirmer   ESC : retour",
-        boite_x + PE(2, boite_largeur),
-        boite_y + boite_h - taille_police - 4,
-        taille_police - 2, COL_TEXT_DIM);
+    DrawText("Haut/Bas : choisir   Entree : confirmer   ESC : retour", boite_x + PE(2, boite_largeur), boite_y + boite_h - taille_police - 4, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -448,23 +375,12 @@ static void dessiner_menu_choix_pion(EtatAction* ea) {
         int  ligne_y = boite_y + hauteur_ligne + i * (hauteur_ligne + 2);
         bool selectionne = (ea->type_pion_selectionne == type_pion);
 
-        carte(boite_x + PE(1, boite_largeur), ligne_y,
-            boite_largeur - PE(2, boite_largeur), hauteur_ligne,
-            selectionne ? (Color) { 13, 26, 13, 255 } : FOND_MID,
-            selectionne ? COL_VALIDE : COL_BORD);
+        carte(boite_x + PE(1, boite_largeur), ligne_y, boite_largeur - PE(2, boite_largeur), hauteur_ligne, selectionne ? (Color) { 13, 26, 13, 255 } : FOND_MID, selectionne ? COL_VALIDE : COL_BORD);
         if (selectionne)
-            DrawText(">", boite_x + PE(2, boite_largeur),
-                ligne_y + (hauteur_ligne - taille_police) / 2,
-                taille_police, COL_VALIDE);
-        DrawText(noms[i], boite_x + PE(5, boite_largeur),
-            ligne_y + (hauteur_ligne - taille_police) / 2,
-            taille_police,
-            selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
+            DrawText(">", boite_x + PE(2, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, COL_VALIDE);
+        DrawText(noms[i], boite_x + PE(5, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, selectionne ? COL_TEXT_BRIGHT : COL_TEXT);
     }
-    DrawText("Haut/Bas : choisir   Entree : confirmer   ESC : retour",
-        boite_x + PE(2, boite_largeur),
-        boite_y + boite_h - taille_police - 4,
-        taille_police - 2, COL_TEXT_DIM);
+    DrawText("Haut/Bas : choisir   Entree : confirmer   ESC : retour", boite_x + PE(2, boite_largeur),  boite_y + boite_h - taille_police - 4, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -484,8 +400,7 @@ static void dessiner_menu_volcan(Jeu* jeu, int joueur, EtatAction* ea) {
     
     char titre[64];
     snprintf(titre, sizeof(titre), "SACRIFICE VOLCAN (%d restant%s)", ea->nb_actions[0], ea->nb_actions[0] > 1 ? "s" : "");
-    DrawText(titre, boite_x + PE(2, boite_largeur),
-        boite_y + hauteur_ligne / 2, taille_police - 2, COL_ACCENT_DIM);
+    DrawText(titre, boite_x + PE(2, boite_largeur), boite_y + hauteur_ligne / 2, taille_police - 2, COL_ACCENT_DIM);
 
     const char* noms[] = {
         "Sacrifier un Cromagnon",
@@ -500,20 +415,12 @@ static void dessiner_menu_volcan(Jeu* jeu, int joueur, EtatAction* ea) {
         Color col_bord = selectionne ? COL_ACCENT : COL_BORD;
         Color col_text = dispo ? (selectionne ? COL_TEXT_BRIGHT : COL_TEXT) : COL_TEXT_DIM;
 
-        carte(boite_x + PE(1, boite_largeur), ligne_y,
-            boite_largeur - PE(2, boite_largeur), hauteur_ligne, col_fond, col_bord);
+        carte(boite_x + PE(1, boite_largeur), ligne_y, boite_largeur - PE(2, boite_largeur), hauteur_ligne, col_fond, col_bord);
         if (selectionne)
-            DrawText(">", boite_x + PE(2, boite_largeur),
-                ligne_y + (hauteur_ligne - taille_police) / 2,
-                taille_police, COL_ACCENT);
-        DrawText(noms[i], boite_x + PE(5, boite_largeur),
-            ligne_y + (hauteur_ligne - taille_police) / 2,
-            taille_police, col_text);
+            DrawText(">", boite_x + PE(2, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, COL_ACCENT);
+        DrawText(noms[i], boite_x + PE(5, boite_largeur), ligne_y + (hauteur_ligne - taille_police) / 2, taille_police, col_text);
     }
-    DrawText("Haut/Bas : choisir   Entree : valider",
-        boite_x + PE(2, boite_largeur),
-        boite_y + boite_h - taille_police - 4,
-        taille_police - 2, COL_TEXT_DIM);
+    DrawText("Haut/Bas : choisir   Entree : valider", boite_x + PE(2, boite_largeur), boite_y + boite_h - taille_police - 4, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -550,14 +457,9 @@ static void dessiner_hint_action(EtatAction* ea) {
         description = "Cliquez sur la case de destination (adjacente)";
     }
 
-    DrawText(titre, boite_x + PE(3, boite_largeur),
-        boite_y + PE(15, boite_h), taille_police + 2, COL_ACCENT);
-    DrawText(description, boite_x + PE(3, boite_largeur),
-        boite_y + PE(45, boite_h), taille_police, COL_TEXT_BRIGHT);
-    DrawText("ECHAP : annuler et revenir au menu",
-        boite_x + PE(3, boite_largeur),
-        boite_y + boite_h - taille_police - 6,
-        taille_police - 2, COL_TEXT_DIM);
+    DrawText(titre, boite_x + PE(3, boite_largeur), boite_y + PE(15, boite_h), taille_police + 2, COL_ACCENT);
+    DrawText(description, boite_x + PE(3, boite_largeur), boite_y + PE(45, boite_h), taille_police, COL_TEXT_BRIGHT);
+    DrawText("ECHAP : annuler et revenir au menu", boite_x + PE(3, boite_largeur), boite_y + boite_h - taille_police - 6, taille_police - 2, COL_TEXT_DIM);
 }
 
 // =============================================================
@@ -575,73 +477,58 @@ void dessiner_info_strip(Jeu* jeu, int joueur, int etape, int nblancer) {
 
     // PHASE
     carte(boite_x, boite_y, largeur_boite, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("PHASE", boite_x + PE(2, largeur_boite), boite_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
-    DrawText(phases[etape], boite_x + PE(2, largeur_boite),
-        boite_y + PE(5, boite_h) + taille_petite + PE(2, boite_h),
-        taille_petite, COL_TEXT_BRIGHT);
+    DrawText("PHASE", boite_x + PE(2, largeur_boite), boite_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
+    DrawText(phases[etape], boite_x + PE(2, largeur_boite), boite_y + PE(5, boite_h) + taille_petite + PE(2, boite_h), taille_petite, COL_TEXT_BRIGHT);
     char tour_txt[24];
     snprintf(tour_txt, sizeof(tour_txt), "Tour du joueur %d", joueur + 1);
-    DrawText(tour_txt, boite_x + PE(2, largeur_boite),
-        boite_y + boite_h - taille_petite - PE(5, boite_h),
-        taille_petite - 2, COL_TEXT_DIM);
+    DrawText(tour_txt, boite_x + PE(2, largeur_boite), boite_y + boite_h - taille_petite - PE(5, boite_h), taille_petite - 2, COL_TEXT_DIM);
 
     // LANCERS
     int boite2_x = boite_x + largeur_boite + gap;
     carte(boite2_x, boite_y, largeur_boite, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("LANCERS", boite2_x + PE(2, largeur_boite), boite_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
+    DrawText("LANCERS", boite2_x + PE(2, largeur_boite), boite_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
     char lancer_str[4];
     snprintf(lancer_str, sizeof(lancer_str), "%d", nblancer);
     int largeur_lancer = MeasureText(lancer_str, taille_grande);
-    DrawText(lancer_str, boite2_x + (largeur_boite - largeur_lancer) / 2,
-        boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_ACCENT);
+    DrawText(lancer_str, boite2_x + (largeur_boite - largeur_lancer) / 2, boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_ACCENT);
 
     int max_lancers = nb_lancers_total(jeu, joueur);
     char total_str[8];
     snprintf(total_str, sizeof(total_str), "/ %d", max_lancers);
-    DrawText(total_str, boite2_x + (largeur_boite + largeur_lancer) / 2 + 4,
-        boite_y + boite_h / 2 - taille_petite / 2, taille_petite, COL_TEXT_DIM);
+    DrawText(total_str, boite2_x + (largeur_boite + largeur_lancer) / 2 + 4, boite_y + boite_h / 2 - taille_petite / 2, taille_petite, COL_TEXT_DIM);
 
     // RESERVE
     int boite3_x = boite_x + 2 * (largeur_boite + gap);
     carte(boite3_x, boite_y, largeur_boite, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("RESERVE", boite3_x + PE(2, largeur_boite), boite_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
+    DrawText("RESERVE", boite3_x + PE(2, largeur_boite), boite_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
     char reserve_str[4];
     snprintf(reserve_str, sizeof(reserve_str), "%d", jeu->Joueurs[joueur].reserve);
     int largeur_reserve = MeasureText(reserve_str, taille_grande);
-    DrawText(reserve_str, boite3_x + (largeur_boite - largeur_reserve) / 2,
-        boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_TEXT_BRIGHT);
+    DrawText(reserve_str, boite3_x + (largeur_boite - largeur_reserve) / 2, boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_TEXT_BRIGHT);
 
     // OEUFS
     int boite4_x = boite_x + 3 * (largeur_boite + gap);
     carte(boite4_x, boite_y, largeur_boite, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("OEUFS", boite4_x + PE(2, largeur_boite), boite_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
+    DrawText("OEUFS", boite4_x + PE(2, largeur_boite), boite_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
     char oeufs_str[4];
     snprintf(oeufs_str, sizeof(oeufs_str), "%d", jeu->Joueurs[joueur].oeufs);
     int largeur_oeufs = MeasureText(oeufs_str, taille_grande);
-    DrawText(oeufs_str, boite4_x + (largeur_boite - largeur_oeufs) / 2,
-        boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_VALIDE);
+    DrawText(oeufs_str, boite4_x + (largeur_boite - largeur_oeufs) / 2, boite_y + boite_h / 2 - taille_grande / 2, taille_grande, COL_VALIDE);
 
     // SEUIL
     int boite5_x = boite_x + 4 * (largeur_boite + gap);
     carte(boite5_x, boite_y, largeur_boite, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("SEUIL", boite5_x + PE(2, largeur_boite), boite_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
+    DrawText("VICTOIRE", boite5_x + PE(2, largeur_boite), boite_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
     char seuil_str[8];
     snprintf(seuil_str, sizeof(seuil_str), "%d pts", seuil_victoire(jeu->nb_joueurs));
-    DrawText(seuil_str, boite5_x + PE(2, largeur_boite),
-        boite_y + boite_h / 2 - taille_petite / 2, taille_petite, COL_TEXT_DIM);
+    DrawText(seuil_str, boite5_x + PE(2, largeur_boite), boite_y + boite_h / 2 - taille_petite / 2, taille_petite, COL_TEXT_DIM);
 
     // RESERVE DINOS
     int boite6_x = boite_x + PE(42, GetScreenWidth());
     int boite6_y = boite_y - PE(15.5, GetScreenHeight());
-    int largeur_boite_dinos = 2 * largeur_boite;
+    float largeur_boite_dinos = 2.6 * largeur_boite;
     carte(boite6_x, boite6_y, largeur_boite_dinos, boite_h, FOND_SOMBRE, COL_BORD);
-    DrawText("DINOSAURES DISPONIBLES", boite6_x + PE(2, largeur_boite_dinos), boite6_y + PE(5, boite_h),
-        taille_petite - 2, COL_ACCENT_DIM);
+    DrawText("DINOSAURES DISPONIBLES", boite6_x + PE(2, largeur_boite_dinos), boite6_y + PE(5, boite_h), taille_petite - 2, COL_ACCENT_DIM);
 
     const char* nom_dinos[] = { "Triceratops (2)", "Pterodactyle (2)", "Brachiosaurus (3)", "Titanosaure (3)" };
     char d_buf[64];
@@ -669,14 +556,11 @@ void dessiner_statusbar(int etape, bool achoisides) {
     const char* phases[] = { "Lancer des des","Actions","Eruption","Fin de tour" };
     int idx = etape < 4 ? etape : 0;
     DrawText(phases[idx], PE(2, largeur_ecran), texte_y, taille_police, COL_ACCENT);
-    DrawLine(PE(14, largeur_ecran), barre_y + PE(15, hauteur_barre),
-        PE(14, largeur_ecran), barre_y + PE(85, hauteur_barre), COL_BORD);
+    DrawLine(PE(14, largeur_ecran), barre_y + PE(15, hauteur_barre), PE(14, largeur_ecran), barre_y + PE(85, hauteur_barre), COL_BORD);
 
     const char* msg = "";
     if (etape == 0)
-        msg = achoisides
-        ? "ESPACE pour lancer les des"
-        : "Clic pour bloquer/debloquer un de  |  ENTREE pour valider";
+        msg = achoisides ? "ESPACE pour lancer les des" : "Clic pour bloquer/debloquer un de  |  ENTREE pour valider";
     else if (etape == 1)
         msg = "Haut/Bas + ENTREE pour choisir  |  Clic plateau pour placer/deplacer  |  ESC pour annuler  |  T pour terminer";
     else if (etape == 2)
@@ -702,8 +586,7 @@ void affichage_eruption(Jeu* jeu, PhaseEruption* pe, int joueur) {
 
     if (pe->phase == ERUPTION_VOLCAN_SCORE) {
         carte(boite_x, boite_y, boite_largeur, boite_hauteur, FOND_SOMBRE, COL_ACCENT);
-        texte_centre("ERUPTION !", boite_x, boite_y + PE(8, boite_hauteur),
-            boite_largeur, PE(4, hauteur_ecran), COL_ACCENT);
+        texte_centre("ERUPTION !", boite_x, boite_y + PE(8, boite_hauteur), boite_largeur, PE(4, hauteur_ecran), COL_ACCENT);
 
         // Récap pions présents sur le volcan
         int vl = trouver_volcan_ligne(jeu);
@@ -724,23 +607,17 @@ void affichage_eruption(Jeu* jeu, PhaseEruption* pe, int joueur) {
                 ligne_y += taille_police + 4;
             }
         }
-        texte_centre("ESPACE ou ENTREE pour continuer",
-            boite_x, boite_y + PE(80, boite_hauteur),
-            boite_largeur, taille_police - 2, COL_TEXT_DIM);
+        texte_centre("ESPACE ou ENTREE pour continuer", boite_x, boite_y + PE(80, boite_hauteur), boite_largeur, taille_police - 2, COL_TEXT_DIM);
     }
     else if (pe->phase == ERUPTION_DEPLACEMENT) {
         carte(boite_x, boite_y, boite_largeur, boite_hauteur, FOND_SOMBRE, COL_BORD_LIT);
-        texte_centre("DEPLACER LE VOLCAN", boite_x, boite_y + PE(8, boite_hauteur),
-            boite_largeur, PE(3, hauteur_ecran), COL_ACCENT);
+        texte_centre("DEPLACER LE VOLCAN", boite_x, boite_y + PE(8, boite_hauteur), boite_largeur, PE(3, hauteur_ecran), COL_ACCENT);
 
         char buf[32];
         snprintf(buf, sizeof(buf), "Deplacements restants : %d", pe->moves_restants);
         int taille_police = PE(2, hauteur_ecran);
-        DrawText(buf, boite_x + PE(3, boite_largeur),
-            boite_y + PE(45, boite_hauteur), taille_police, COL_TEXT);
-        texte_centre("Fleches pour deplacer  |  ENTREE pour valider",
-            boite_x, boite_y + PE(78, boite_hauteur),
-            boite_largeur, taille_police - 2, COL_TEXT_DIM);
+        DrawText(buf, boite_x + PE(3, boite_largeur), boite_y + PE(45, boite_hauteur), taille_police, COL_TEXT);
+        texte_centre("Fleches pour deplacer  |  ENTREE pour valider", boite_x, boite_y + PE(78, boite_hauteur), boite_largeur, taille_police - 2, COL_TEXT_DIM);
     }
 
     dessiner_statusbar(2, false);
@@ -782,28 +659,18 @@ void affichage_fin(Jeu* jeu, int gagnant) {
     if (gagnant >= 0 && nb_a_meilleur == 1) {
         char msg[40];
         snprintf(msg, sizeof(msg), "Joueur %d remporte la partie !", gagnant + 1);
-        texte_centre(msg, boite_x, boite_y + PE(28, boite_hauteur),
-            boite_largeur, taille_moyenne, COULEUR_JOUEUR[gagnant]);
+        texte_centre(msg, boite_x, boite_y + PE(28, boite_hauteur), boite_largeur, taille_moyenne, COULEUR_JOUEUR[gagnant]);
     }
     else {
-        texte_centre("Egalite !", boite_x, boite_y + PE(28, boite_hauteur),
-            boite_largeur, taille_moyenne, COL_ACCENT);
+        texte_centre("Egalite !", boite_x, boite_y + PE(28, boite_hauteur), boite_largeur, taille_moyenne, COL_ACCENT);
     }
 
-    DrawText("Scores finaux :",
-        boite_x + PE(10, boite_largeur), boite_y + PE(45, boite_hauteur),
-        taille_petite, COL_TEXT_DIM);
+    DrawText("Scores finaux :", boite_x + PE(10, boite_largeur), boite_y + PE(45, boite_hauteur), taille_petite, COL_TEXT_DIM);
     for (int i = 0; i < jeu->nb_joueurs; i++) {
         char score_str[40];
-        snprintf(score_str, sizeof(score_str),
-            "Joueur %d : %d pts  (seuil : %d)",
-            i + 1, jeu->Joueurs[i].points, seuil_victoire(jeu->nb_joueurs));
+        snprintf(score_str, sizeof(score_str), "Joueur %d : %d pts  (seuil : %d)", i + 1, jeu->Joueurs[i].points, seuil_victoire(jeu->nb_joueurs));
         bool est_gagnant = (jeu->Joueurs[i].points == meilleur_score);
-        DrawText(score_str,
-            boite_x + PE(10, boite_largeur),
-            boite_y + PE(52, boite_hauteur) + i * (taille_petite + 4),
-            taille_petite,
-            est_gagnant ? COL_ACCENT : COL_TEXT_DIM);
+        DrawText(score_str, boite_x + PE(10, boite_largeur), boite_y + PE(52, boite_hauteur) + i * (taille_petite + 4), taille_petite, est_gagnant ? COL_ACCENT : COL_TEXT_DIM);
     }
     texte_centre("ECHAP pour quitter", boite_x, boite_y + PE(88, boite_hauteur),
         boite_largeur, taille_petite - 2, COL_TEXT_DIM);
@@ -835,10 +702,7 @@ void affichage_actions(Jeu* jeu, int joueur, EtatAction* ea) {
     if (sous == ACTION_CHOISIR_PION) dessiner_menu_choix_pion(ea);
     if (sous == ACTION_VOLCAN_MENU) dessiner_menu_volcan(jeu, joueur, ea);
 
-    if (sous == ACTION_DEPLOYER_CASE ||
-        sous == ACTION_DEPLACER_ORIGINE ||
-        sous == ACTION_DEPLACER_DEST) {
-        dessiner_hint_action(ea);
+    if (sous == ACTION_DEPLOYER_CASE || sous == ACTION_DEPLACER_ORIGINE ||  sous == ACTION_DEPLACER_DEST) { dessiner_hint_action(ea);
     }
     else if (sous == ACTION_MENU) {
         dessiner_menu_actions(ea, jeu->Joueurs[joueur].oeufs);
