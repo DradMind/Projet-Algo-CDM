@@ -9,7 +9,16 @@
 //  STRUCTURES
 // =============================================================
 
-// Types de dinosaures (8 types officiels)
+// Types de dinosaures 
+// Chaque dinosaure a un pouvoir unique qui s'active à un moment précis du jeu :
+// - TRICERATOPS : +1 à la valeur des groupes lors du calcul de majorité
+// - PTERANODON : Peut voler vers n'importe quelle case Jungle ou Prairie
+// - BRONTOSAURE : Compte pour 2 pions lors du calcul de majorité
+// - TITANOSAURE : Donne 1 dé supplémentaire par tour
+// - STEGOSAURE : Permet de déclencher des séismes même sans majorité s'il est sur le Volcan
+// - ANKYLOSAURE : Donne +2 points bonus en cas de victoire stricte d'une région
+// - PLESIOSAURE : Permet d'aller sur l'Eau et fait marquer des points aux Lagons
+// - TYRANNOSAURE : "Mange" (renvoie en réserve) un Cro-Magnon ennemi lors de son arrivée
 typedef enum {
     DINO_AUCUN = 0,
     DINO_TRICERATOPS = 1,
@@ -40,27 +49,29 @@ typedef struct {
     bool selectionne;
 } Des;
 
+// Représentation d'un Joueur
 typedef struct {
-    int      numerojoueur;
-    int      reserve;       // cromagnons en réserve
-    int      points;
-    TypeDino dino_possede;  // dino actif du joueur (1 max pour l'instant)
-    bool     a_dino;        // true si le joueur possède un dino sur le plateau
-    int      dino_ligne;    // position du dino sur le plateau
-    int      dino_col;
-    int      oeufs;         // oeufs en attente d'éclosion
+    int      numerojoueur;          // Identifiant du joueur (0 à 3)
+    int      reserve;               // Nombre de Cro-Magnons disponibles dans la réserve du joueur
+    int      points;                // Score actuel du joueur
+    TypeDino dino_possede;          // Le type de dinosaure actuellement actif du joueur
+    bool     a_dino;                // true si le joueur a fait éclore un dinosaure
+    int      dino_ligne;            // Position Y du dinosaure sur le plateau (si posé)
+    int      dino_col;              // Position X du dinosaure sur le plateau (si posé)
+    int      oeufs;                 // Nombre d'actions "Oeuf" accumulées, prêtes à être dépensées
 } Joueur;
 
+// Structure principale de l'état du jeu
 typedef struct {
-    Case   plateau[4][4];
-    Pion   PlateauPion[4][4][10];
-    Des    Listede[7];
-    Joueur Joueurs[4];
-    TypeDino dinos_en_jeu[4];    // Les 4 dinosaures choisis pour la partie
-    int    dinos_disponibles[8]; // Stock par type de dino
-    int    eruption_volcan;      // obsolète si on utilise le nombre de pions
-    int    nb_joueurs;
-    int    nb_eruptions;         // nombre total d'éruptions depuis le début
+    Case   plateau[4][4];                // Grille 4x4 des tuiles du plateau
+    Pion   PlateauPion[4][4][10];        // Pile de pions (jusqu'à 10) sur chaque tuile
+    Des    Listede[7];                   // Les dés d'actions (5 par défaut + 1 pour Titanosaure)
+    Joueur Joueurs[4];                   // Les statistiques des 4 joueurs
+    TypeDino dinos_en_jeu[4];            // Les 4 dinosaures tirés au sort pour cette partie
+    int    dinos_disponibles[8];         // Quantité restante dans la boîte (2 par espèce choisie, 0 sinon)
+    int    eruption_volcan;              // Compteur obsolète (désormais basé sur le nombre de pions sur le volcan)
+    int    nb_joueurs;                   // Nombre de joueurs actifs dans la partie
+    int    nb_eruptions;                 // Nombre total d'éruptions ayant eu lieu (déclenche la fin du jeu)
 } Jeu;
 
 // =============================================================
@@ -72,9 +83,9 @@ typedef enum {
     ACTION_DEPLOYER_CASE,
     ACTION_DEPLACER_ORIGINE,
     ACTION_DEPLACER_DEST,
-    ACTION_OEUF_CHOISIR,     // joueur choisit quel dino faire éclore
-    ACTION_CHOISIR_PION,     // joueur choisit quel pion déplacer s'il y a un dino et un cromagnon
-    ACTION_VOLCAN_MENU,      // joueur choisit quel pion sacrifier au volcan
+    ACTION_OEUF_CHOISIR,     // le joueur choisit quel dino faire éclore
+    ACTION_CHOISIR_PION,     // le joueur choisit quel pion déplacer s'il y a un dino et un cromagnon
+    ACTION_VOLCAN_MENU,      // le joueur choisit quel pion sacrifier au volcan
     ACTION_FINI
 } SousEtatAction;
 
@@ -114,7 +125,7 @@ typedef struct {
 void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs);
 void logiquede(Jeu* jeu, int joueur);
 int  possedetitanosaure(Jeu* jeu, int joueur);
-int  nb_lancers_total(Jeu* jeu, int joueur);   // 3 (+1 si TRICERATOPS)
+int  nb_lancers_total(Jeu* jeu, int joueur);   // 3 (+1 si titanausore)
 bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage);
 
 // Actions
@@ -139,7 +150,7 @@ void init_phase_eruption(PhaseEruption* pe);
 bool traiter_eruption(Jeu* jeu, PhaseEruption* pe); // true = éruption terminée
 bool a_dino_sacrifiable(Jeu* jeu, int joueur);
 
-// Régions (flood-fill pour trouver régions connectées)
+// Régions (flood-fill pour trouver LES régions connectées)
 int  taille_region(Jeu* jeu, int ligne, int col, bool visite[4][4]);
 int  joueur_majoritaire_region(Jeu* jeu, bool cellules[4][4]);
 

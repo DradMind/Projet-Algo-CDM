@@ -27,8 +27,14 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
 
     // Sélection de 4 dinosaures aléatoires
     TypeDino pool_dinos[8] = {
-        DINO_TRICERATOPS, DINO_PTERANODON, DINO_BRONTOSAURE, DINO_TITANOSAURE,
-        DINO_STEGOSAURE, DINO_ANKYLOSAURE, DINO_PLESIOSAURE, DINO_TYRANNOSAURE
+        DINO_TRICERATOPS, 
+        DINO_PTERANODON, 
+        DINO_BRONTOSAURE, 
+        DINO_TITANOSAURE,
+        DINO_STEGOSAURE, 
+        DINO_ANKYLOSAURE, 
+        DINO_PLESIOSAURE, 
+        DINO_TYRANNOSAURE
     };
     for (int i = 7; i > 0; i--) {
         int r = rand() % (i + 1);
@@ -52,7 +58,7 @@ void initialiser_plateau(Jeu* jeu, bool plateauBase, int nbJoueurs) {
             for (int j = 0; j < 4; j++)
                 jeu->plateau[i][j].TypeCase = base[i][j];
     }
-    else {
+	else { //algo de fisher-yates pour mélanger les cases
         int pool[16] = { 0, 1,1,1, 2,2,2,2,2, 3,3,3,3,3, 4, 5 };
         for (int i = 15; i > 0; i--) {
             int r = rand() % (i + 1);
@@ -92,7 +98,7 @@ bool selectiondes(Jeu* jeu, int joueur, Vector2 pos_souris, bool blocage) {
     for (int i = 0; i < 5 + possedetitanosaure(jeu, joueur); i++) {
         int x = TABLEAU_X;
         int y = TABLEAU_Y + i * (DE_H + PE(1, GetScreenHeight()));
-        Rectangle rect = { (float)x, (float)y, (float)DE_H, (float)DE_H };
+        Rectangle rect = { (float)x, (float)y, (float)DE_H, (float)DE_H }; //j'ai mis des floats sinon codeblocks aime pas
         if (CheckCollisionPointRec(pos_souris, rect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (blocage)
                 jeu->Listede[i].bloque = !jeu->Listede[i].bloque;
@@ -761,7 +767,9 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         return false;
     }
 
-    // ── DEPLOYER ──
+    // ── DEPLOYER UN CROMAGNON ──
+    // État actif lorsque le joueur a sélectionné l'action "Caverne" ou "Hutte"
+    // Permet de prendre un Cro-Magnon de sa réserve et de le placer sur la case correspondante
     if (ea->sous_etat == ACTION_DEPLOYER_CASE) {
         if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;
@@ -783,6 +791,9 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         return false;
     }
 
+    // ── DÉPLACEMENT : SÉLECTION DE LA CASE D'ORIGINE ──
+    // État actif lorsque le joueur a sélectionné l'action "Déplacement"
+    // Le joueur doit d'abord cliquer sur une case contenant au moins un de ses pions
     if (ea->sous_etat == ACTION_DEPLACER_ORIGINE) {
         if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;
@@ -831,7 +842,9 @@ bool traiter_action(Jeu* jeu, EtatAction* ea, int joueur,
         return false;
     }
 
-    // ── DÉPLACER DESTINATION ──
+    // ── DÉPLACEMENT : SÉLECTION DE LA CASE DE DESTINATION ──
+    // État actif après avoir choisi l'origine et le pion à déplacer
+    // Applique les règles de mouvement et les pouvoirs des dinosaures lors de l'arrivée
     if (ea->sous_etat == ACTION_DEPLACER_DEST) {
         if (IsKeyPressed(KEY_E)) {
             ea->sous_etat = ACTION_MENU;

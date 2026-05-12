@@ -24,10 +24,13 @@ int main(void) {
         Vector2 souris = GetMousePosition();
 
         // ============================================================
-        //  LOGIQUE
+        //  BOUCLE PRINCIPALE DE LOGIQUE
+        //  La boucle de jeu est divisée en plusieurs "étapes" (phases du tour d'un joueur).
         // ============================================================
 
-        // ── Étape 0 : lancers ──
+        // ── Étape 0 : Lancer et sélection des dés ──
+        // Le joueur lance ses dés, peut bloquer certains résultats qu'il souhaite conserver,
+        // puis relancer les dés restants (jusqu'à épuisement de ses lancers autorisés).
         if (etape == 0) {
             if (achoisides && IsKeyPressed(KEY_SPACE)) {
                 logiquede(&jeu, joueur);
@@ -37,30 +40,38 @@ int main(void) {
             if (!achoisides)
                 selectiondes(&jeu, joueur, souris, true);
 
+            // Validation de la sélection avec Entrée
             if (!achoisides && IsKeyPressed(KEY_ENTER)) {
                 if (nblancer > 0) {
-                    achoisides = true;
+                    achoisides = true; // Encore des lancers possibles
                 }
                 else {
+                    // Fin des lancers : On prépare l'état pour la phase d'actions
                     init_etat_action(&jeu, &ea, joueur);
                     if (ea.sous_etat == ACTION_FINI) {
+                        // S'il n'a aucune action valide, on passe directement à la suite du tour :
+                        // 1. Vérifier si le volcan entre en éruption (6 pions)
                         if (verifier_volcan(&jeu)) {
                             init_phase_eruption(&pe);
                             etape = 2;
+                        // 2. Sinon, s'il a la majorité sur le volcan, il peut faire un "décalage" (séisme)
                         } else if (joueur_a_majorite_volcan(&jeu, joueur)) {
                             init_phase_decalage(&pe);
                             etape = 5;
+                        // 3. Sinon, c'est la fin de son tour
                         } else {
                             etape = 3;
                         }
                     } else {
+                        // Le joueur a des actions à jouer
                         etape = 1;
                     }
                 }
             }
         }
 
-        // ── Étape 1 : actions ──
+        // ── Étape 1 : Exécution des actions ──
+        // Le joueur dépense les actions obtenues sur ses dés (déployer, déplacer, incuber, etc.)
         else if (etape == 1) {
             int  clic_l = -1, clic_c = -1;
             bool clic_valide = false;
@@ -81,21 +92,25 @@ int main(void) {
             }
         }
 
-        // ── Étape 2 : éruption ──
+        // ── Étape 2 : Éruption Volcanique ──
+        // Cette phase s'enclenche lorsqu'il y a au moins 6 pions sur la case Volcan.
+        // Elle engendre le calcul des points, puis le joueur majoritaire peut déplacer une case du plateau.
         else if (etape == 2) {
             bool eruption_finie = traiter_eruption(&jeu, &pe);
             if (eruption_finie) {
+                // L'éruption est terminée. Vérifie si les conditions de victoire sont remplies
                 if (partie_terminee(&jeu)) {
                     gagnant = joueur_gagnant(&jeu);
-                    etape = 4;
+                    etape = 4; // Phase de victoire
                 }
                 else {
-                    etape = 3;
+                    etape = 3; // Fin de tour classique
                 }
             }
         }
 
-        // ── Étape 3 : fin de tour, passer au joueur suivant ──
+        // ── Étape 3 : Fin de tour ──
+        // On passe la main au joueur suivant et on réinitialise ses lancers de dés
         else if (etape == 3) {
             joueur = (joueur + 1) % jeu.nb_joueurs;
             nblancer = nb_lancers_total(&jeu, joueur);
@@ -108,12 +123,15 @@ int main(void) {
             etape = 0;
         }
 
-        // ── Étape 4 : fin de partie ──
+        // ── Étape 4 : Fin de partie ──
+        // Un joueur a atteint le score de victoire. Le jeu s'arrête.
         else if (etape == 4) {
             if (IsKeyPressed(KEY_E)) break;
         }
 
-        // ── Étape 5 : séismes ──
+        // ── Étape 5 : Séisme (Décalage de terrain) ──
+        // Identique à la seconde partie de l'éruption, mais se déclenche juste
+        // parce que le joueur a la majorité sur le volcan (sans forcément 6 pions)
         else if (etape == 5) {
             bool seisme_fini = traiter_eruption(&jeu, &pe);
             if (seisme_fini) {
